@@ -36,6 +36,16 @@ class User extends AbstractModel
         }
     }
 
+    public ?string $password_hash = null {
+        set {
+            if (is_string($value) && strlen($value) > 0) {
+                $this->password_hash = $value;
+            } else {
+                throw new \InvalidArgumentException("Password must be a non-empty string");
+            }
+        }
+    }
+
     public ?int $id_role = null {
         set {
             if (is_int($value) && $value > 0 && Role::findById($value) !== null) {
@@ -56,8 +66,6 @@ class User extends AbstractModel
         }
     }
 
-    
-
     public static function getAllUsers(): array
     {
         $pdo = Database::connection();
@@ -74,15 +82,45 @@ class User extends AbstractModel
         return $user ?: null;
     }
 
+    public static function findByEmail(string $email): ?self
+    {
+        $pdo = Database::connection();
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt->execute(['email' => $email]);
+        $user = $stmt->fetchObject(self::class);
+        return $user ?: null;
+    }
+
     #[Override]
     public function insert(): bool
     {
-        throw new \Exception('Not implemented');
+        $pdo = Database::connection();
+        $stmt = $pdo->prepare("INSERT INTO users (name, email, password_hash, id_role) VALUES (:name, :email, :password_hash, :id_role)");
+        $result = $stmt->execute([
+            'name' => $this->name,
+            'email' => $this->email,
+            'password_hash' => $this->password_hash,
+            'id_role' => $this->id_role,
+        ]);
+
+        if ($result) {
+            $this->id = (int)$pdo->lastInsertId();
+        }
+
+        return $result;
     }
 
     #[Override]
     public function update(): bool
     {
-        throw new \Exception('Not implemented');
+        $pdo = Database::connection();
+        $stmt = $pdo->prepare("UPDATE users SET name = :name, email = :email, password_hash = :password_hash, id_role = :id_role WHERE id = :id");
+        return $stmt->execute([
+            'name' => $this->name,
+            'email' => $this->email,
+            'password_hash' => $this->password_hash,
+            'id_role' => $this->id_role,
+            'id' => $this->id,
+        ]);
     }
 }

@@ -56,7 +56,7 @@ class Rating extends AbstractModel
     public static function getAverageRatingForRecipe(int $recipeId): ?float
     {
         $pdo = Database::connection();
-        $stmt = $pdo->prepare("SELECT AVG(rating) as average_rating FROM ratings WHERE recipe_id = :recipe_id");
+        $stmt = $pdo->prepare("SELECT AVG(score) as average_rating FROM ratings WHERE recipe_id = :recipe_id");
         $stmt->execute(['recipe_id' => $recipeId]);
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
         return $result && isset($result['average_rating']) ? (float)$result['average_rating'] : null;

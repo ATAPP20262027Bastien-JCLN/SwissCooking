@@ -180,11 +180,7 @@ SELECT
             WHEN 12 THEN 'Wok'
             WHEN 13 THEN 'Gâteau'
             ELSE 'Lasagnes'
-        END,
-        ' maison #',
-        n.n,
-        ' - ',
-        u.name
+        END
     ),
 
     CONCAT(

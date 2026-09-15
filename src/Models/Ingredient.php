@@ -8,7 +8,7 @@ use BastienJcln\SwissCooking\Core\Database;
 use Override;
 use PDO;
 
-class Ingerdient extends AbstractModel
+class Ingredient extends AbstractModel
 {
     protected static ?string $primaryKey = 'id';
 
@@ -37,22 +37,12 @@ class Ingerdient extends AbstractModel
             }
         }
     }
-
-    /**
-     * Quantity of this ingredient for a specific recipe.
-     *
-     * This comes from recipe_ingredients, not ingredients.
-     */
+    
     public ?float $quantity = null;
 
-    /**
-     * Unit of this ingredient for a specific recipe.
-     *
-     * This comes from recipe_ingredients, not ingredients.
-     */
     public ?string $unit = null;
 
-    public static function getAllIngerdients(): array
+    public static function getAllIngredients(): array
     {
         $pdo = Database::connection();
 

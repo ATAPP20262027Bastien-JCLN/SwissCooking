@@ -8,33 +8,42 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 use BastienJcln\SwissCooking\Models\User;
-use BastienJcln\SwissCooking\Models\Role;
 use BastienJcln\SwissCooking\Models\Recipe;
-use BastienJcln\SwissCooking\Models\Category;
-use BastienJcln\SwissCooking\Models\Ingerdient;
-use BastienJcln\SwissCooking\Models\Rating;
-use BastienJcln\SwissCooking\Models\Comment;
+
+use BastienJcln\SwissCooking\Services\ConnexionService;
 
 class HomeController extends BaseController
 {
     public function index(Request $request, Response $response): Response
     {
-        $roles = Role::getAllRoles();
-        $users = User::getAllUsers();
-        $categories = Category::getAllCategories();
-        $ingerdients = Ingerdient::getAllIngerdients();
+        if (!ConnexionService::connectedUser()) {
+            return ConnexionService::redirectIfNotConnected($request, $response);
+        }
+
         $recipes = Recipe::getAllRecipes();
-        $ratings = Rating::getAllRatings();
-        $comments = Comment::getAllComments();
+
+        $sorted = usort($recipes, function ($a, $b) {
+            return $b->averageRating <=> $a->averageRating;
+        });
+
+        if ($sorted) {
+            $recipes = array_slice($recipes, 0, 5);
+        } else {
+            $recipes = [];
+        }
+
+        $users = [];
+
+        foreach ($recipes as $recipe) {
+            $user = User::findById($recipe->user_id);
+            if ($user) {
+                $users[$recipe->id] = $user;
+            }
+        }
 
         return $this->view->render($response, 'home/index.php', [
-            'users' => $users,
-            'roles' => $roles,
-            'categories' => $categories,
-            'ingerdients' => $ingerdients,
             'recipes' => $recipes,
-            'ratings' => $ratings,
-            'comments' => $comments,
+            'users' => $users,
         ]);
     }
 }

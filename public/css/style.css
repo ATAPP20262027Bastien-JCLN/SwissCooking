@@ -1,0 +1,10 @@
+.home-recipe-card {
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.2s ease-in-out;
+}
+
+.home-recipe-card:hover {
+    color: inherit;
+    transform: translateY(-2px);
+}

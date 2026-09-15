@@ -7,7 +7,7 @@ namespace BastienJcln\SwissCooking\Models;
 use BastienJcln\SwissCooking\Core\Database;
 use BastienJcln\SwissCooking\Models\User;
 use BastienJcln\SwissCooking\Models\Category;
-use BastienJcln\SwissCooking\Models\Ingerdient;
+use BastienJcln\SwissCooking\Models\Ingredient;
 use Override;
 
 class Recipe extends AbstractModel
@@ -68,14 +68,36 @@ class Recipe extends AbstractModel
             }
 
             foreach ($value as $ingredient) {
-                if (!$ingredient instanceof Ingerdient) {
+                if (!$ingredient instanceof Ingredient) {
                     throw new \InvalidArgumentException(
-                        'All ingredients must be instances of Ingerdient'
+                        'All ingredients must be instances of Ingredient'
                     );
                 }
             }
 
             $this->ingredients = $value;
+        }
+    }
+
+    public ?float $averageRating = null {
+        set {
+            if ($value !== null && (!is_float($value) || $value < 0 || $value > 5)) {
+                throw new \InvalidArgumentException(
+                    'Average rating must be a float between 0 and 5 or null'
+                );
+            }
+            $this->averageRating = $value;
+        }
+    }
+
+    public ?string $category = null {
+        set {
+            if ($value !== null && (!is_string($value) || strlen($value) === 0)) {
+                throw new \InvalidArgumentException(
+                    'Category must be a non-empty string or null'
+                );
+            }
+            $this->category = $value;
         }
     }
 
@@ -93,7 +115,9 @@ class Recipe extends AbstractModel
         $recipes = [];
         while ($recipe = $stmt->fetchObject(self::class)) {
             $ingredientsStmt->execute(['recipe_id' => $recipe->id]);
-            $recipe->ingredients = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingerdient::class);
+            $recipe->category = Category::getCategoryNameById($recipe->category_id);
+            $recipe->ingredients = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingredient::class);
+            $recipe->averageRating = Rating::getAverageRatingForRecipe($recipe->id);
             $recipes[] = $recipe;
         }
 
@@ -114,7 +138,7 @@ class Recipe extends AbstractModel
                  WHERE ri.recipe_id = :recipe_id"
             );
             $ingredientsStmt->execute(['recipe_id' => $recipe->id]);
-            $recipe->ingredients = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingerdient::class);
+            $recipe->ingredients = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingredient::class);
         }
 
         return $recipe ?: null;
