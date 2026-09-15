@@ -17,7 +17,7 @@ abstract class BaseController
     public function __construct()
     {
         $this->view = new PhpRenderer(__DIR__ . '/../../views', [
-            'title' => 'The Wallet',
+            'title' => 'Swiss Cooking',
             'withMenu' => true,
         ]);
 
