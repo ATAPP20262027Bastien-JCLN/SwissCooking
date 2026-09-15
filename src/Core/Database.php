@@ -7,21 +7,20 @@ namespace BastienJcln\SwissCooking\Core;
 require_once __DIR__ . '/../../config/database.php';
 
 use PDO;
+use PDOException;
+use RuntimeException;
 
 class Database
 {
-    /**
-     * Open a new database connection if needed, returns the current connection
-     *
-     * @return PDO
-     */
     public static function connection(): PDO
     {
         static $pdo = null;
 
         if ($pdo === null) {
             try {
-                $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' . DB_CHARSET;
+                $dsn = 'mysql:host=' . DB_HOST
+                    . ';dbname=' . DB_NAME
+                    . ';charset=' . DB_CHARSET;
 
                 $options = [
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
@@ -29,9 +28,20 @@ class Database
                     PDO::ATTR_EMULATE_PREPARES => false,
                 ];
 
-                $pdo = new PDO($dsn, DB_USER, DB_PASSWORD, $options);
-            } catch (\Throwable $th) {
-                die("Can't connect to database");
+                $pdo = new PDO(
+                    $dsn,
+                    DB_USER,
+                    DB_PASSWORD,
+                    $options
+                );
+            } catch (PDOException $e) {
+                error_log('Database connection failed: ' . $e->getMessage());
+
+                throw new RuntimeException(
+                    'Database connection failed.',
+                    0,
+                    $e
+                );
             }
         }
 
