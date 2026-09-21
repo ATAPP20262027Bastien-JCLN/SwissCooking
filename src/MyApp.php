@@ -21,7 +21,7 @@ class MyApp
         $app->add(new SessionMiddleware());
 
         $errorMiddleware = $app->addErrorMiddleware(
-            false,
+            true,
             true,
             true
         );

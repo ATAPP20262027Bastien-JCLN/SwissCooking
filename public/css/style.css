@@ -1,3 +1,15 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -khtml-user-select: none;
+}
+
 .home-recipe-card {
     text-decoration: none;
     color: inherit;
@@ -7,4 +19,13 @@
 .home-recipe-card:hover {
     color: inherit;
     transform: translateY(-2px);
+}
+
+.navbar {
+    height: 12vh !important;
+}
+
+.main-content {
+    height: 70vh !important;
+    overflow-y: scroll;
 }

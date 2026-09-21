@@ -46,4 +46,17 @@ class HomeController extends BaseController
             'users' => $users,
         ]);
     }
+
+    public function list(Request $request, Response $response): Response
+    {
+        if (!ConnexionService::connectedUser()) {
+            return ConnexionService::redirectIfNotConnected($request, $response);
+        }
+
+        $recipes = Recipe::getAllRecipes();
+
+        return $this->view->render($response, 'home/list.php', [
+            'recipes' => $recipes,
+        ]);
+    }
 }

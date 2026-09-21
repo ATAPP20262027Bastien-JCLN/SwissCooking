@@ -131,17 +131,20 @@ class Recipe extends AbstractModel
         $stmt->execute(['id' => $id]);
         $recipe = $stmt->fetchObject(self::class);
 
+        $ingredientsStmt = $pdo->prepare(
+            "SELECT i.*, ri.quantity, ri.unit FROM ingredients i
+             JOIN recipe_ingredients ri ON i.id = ri.ingredient_id
+             WHERE ri.recipe_id = :recipe_id"
+        );
+
         if ($recipe) {
-            $ingredientsStmt = $pdo->prepare(
-                "SELECT i.*, ri.quantity, ri.unit FROM ingredients i
-                 JOIN recipe_ingredients ri ON i.id = ri.ingredient_id
-                 WHERE ri.recipe_id = :recipe_id"
-            );
             $ingredientsStmt->execute(['recipe_id' => $recipe->id]);
+            $recipe->category = Category::getCategoryNameById($recipe->category_id);
             $recipe->ingredients = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingredient::class);
+            $recipe->averageRating = Rating::getAverageRatingForRecipe($recipe->id);
         }
 
-        return $recipe ?: null;
+        return $recipe;
     }
 
     #[Override]
@@ -149,7 +152,7 @@ class Recipe extends AbstractModel
     {
         throw new \Exception('Not implemented');
     }
-
+    
     #[Override]
     public function update(): bool
     {

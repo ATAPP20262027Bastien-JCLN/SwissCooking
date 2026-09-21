@@ -2,10 +2,12 @@
 
 use BastienJcln\SwissCooking\Controllers\HomeController;
 use BastienJcln\SwissCooking\Controllers\LoginController;
-
-use BastienJcln\SwissCooking\Middleware\SessionMiddleware;
+use BastienJcln\SwissCooking\Controllers\RecipeController;
 
 $app->get('/', [HomeController::class, 'index']);
+
+$app->get('/recipes', [HomeController::class, 'list']);
+$app->get('/recipe/{id}', [RecipeController::class, 'show']);
 
 $app->get('/login', [LoginController::class, 'showLogin']);
 $app->post('/login', [LoginController::class, 'login']);
