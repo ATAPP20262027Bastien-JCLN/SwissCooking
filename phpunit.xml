@@ -7,15 +7,15 @@
 >
     <testsuites>
         <testsuite name="Unit">
-            <directory>Tests/Unit</directory>
+            <directory>tests/Unit</directory>
         </testsuite>
 
         <testsuite name="Integration">
-            <directory>Tests/Integration</directory>
+            <directory>tests/Integration</directory>
         </testsuite>
 
         <testsuite name="Feature">
-            <directory>Tests/Feature</directory>
+            <directory>tests/Feature</directory>
         </testsuite>
     </testsuites>
 </phpunit>
