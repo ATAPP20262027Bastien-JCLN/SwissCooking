@@ -15,7 +15,6 @@
                         <div class="alert alert-danger" role="alert">
                             <?= htmlspecialchars($_SESSION['error']) ?>
                         </div>
-                        <?php unset($_SESSION['error']); ?>
                     <?php endif; ?>
                     <?php if (!empty($_SESSION['errors'])) : ?>
                         <div class="alert alert-danger" role="alert">
@@ -25,7 +24,6 @@
                                 <?php endforeach; ?>
                             </ul>
                         </div>
-                        <?php unset($_SESSION['errors']); ?>
                     <?php endif; ?>
                     <form action="/register" method="POST">
                         <div class="mb-3">

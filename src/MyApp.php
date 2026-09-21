@@ -10,11 +10,15 @@ use Slim\Views\PhpRenderer;
 use Slim\Exception\HttpNotFoundException;
 use Slim\Exception\HttpInternalServerErrorException;
 
+use BastienJcln\SwissCooking\Middleware\SessionMiddleware;
+
 class MyApp
 {
     public static function create(): App
     {
         $app = AppFactory::create();
+
+        $app->add(new SessionMiddleware());
 
         $errorMiddleware = $app->addErrorMiddleware(
             false,

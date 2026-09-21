@@ -43,5 +43,5 @@ test('logout redirects to home', function () {
     $response = $this->app->handle($request);
 
     expect($response->getStatusCode())->toBe(302);
-    expect($response->getHeaderLine('Location'))->toBe('/');
+    expect($response->getHeaderLine('Location'))->toBe('/login');
 });

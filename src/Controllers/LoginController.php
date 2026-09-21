@@ -25,8 +25,6 @@ class LoginController extends BaseController
 
     public function login(Request $request, Response $response): Response
     {
-        $_SESSION['error'] = null;
-        
         $data = (array)$request->getParsedBody();
         $email = $data['email'] ?? '';
         $password = $data['password'] ?? '';
@@ -35,12 +33,13 @@ class LoginController extends BaseController
 
         if ($user && password_verify($password, $user->password_hash)) {
             $_SESSION['user_id'] = $user->id;
+            $_SESSION['error'] = null; // Clear any previous error messages
             return $response->withHeader('Location', '/')->withStatus(302);
         } else {
             $_SESSION['error'] = 'Invalid email or password';
             return $this->view->render($response, 'connexion/login.php', [
                 'error' => 'Invalid email or password',
-            ]);
+            ])->withStatus(200);
         }
     }
 
@@ -55,8 +54,6 @@ class LoginController extends BaseController
 
     public function register(Request $request, Response $response): Response
     {
-        $_SESSION['error'] = null;
-        
         $data = (array)$request->getParsedBody();
         $name = $data['name'] ?? '';
         $email = $data['email'] ?? '';
@@ -76,6 +73,7 @@ class LoginController extends BaseController
 
         if ($user->save()) {
             $_SESSION['user_id'] = $user->id;
+            $_SERVER['error'] = null; // Clear any previous error messages
             return $response->withHeader('Location', '/')->withStatus(302);
         } else {
             $_SESSION['error'] = 'Registration failed';
