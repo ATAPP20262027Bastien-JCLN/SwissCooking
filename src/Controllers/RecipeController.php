@@ -32,10 +32,8 @@ class RecipeController extends BaseController
 
         $user = null;
 
-        $ratings = Rating::getAverageRatingForRecipe($recipe->id);
-
-        if (isset($recipe->id_user)) {
-            $user = User::findById($recipe->id_user);
+        if (isset($recipe->user_id)) {
+            $user = User::findById($recipe->user_id);
         }
 
         return $this->view->render($response, 'recipe/show.php', [

@@ -13,14 +13,14 @@
                     </p>
                     <?php if (!empty($_SESSION['error'])) : ?>
                         <div class="alert alert-danger" role="alert">
-                            <?= htmlspecialchars($_SESSION['error']) ?>
+                            <?= escape($_SESSION['error']) ?>
                         </div>
                     <?php endif; ?>
                     <?php if (!empty($_SESSION['errors'])) : ?>
                         <div class="alert alert-danger" role="alert">
                             <ul class="mb-0">
                                 <?php foreach ($_SESSION['errors'] as $error) : ?>
-                                    <li><?= htmlspecialchars($error) ?></li>
+                                    <li><?= escape($error) ?></li>
                                 <?php endforeach; ?>
                             </ul>
                         </div>
@@ -37,7 +37,7 @@
                                 name="name"
                                 placeholder="Enter your name"
                                 maxlength="255"
-                                value="<?= htmlspecialchars($_POST['name'] ?? '') ?>"
+                                value="<?= escape($_POST['name'] ?? '') ?>"
                                 required
                             >
                         </div>
@@ -52,7 +52,7 @@
                                 name="email"
                                 placeholder="you@example.com"
                                 maxlength="255"
-                                value="<?= htmlspecialchars($_POST['email'] ?? '') ?>"
+                                value="<?= escape($_POST['email'] ?? '') ?>"
                                 required
                             >
                         </div>

@@ -156,9 +156,14 @@ VALUES
 -- 6. GÉNÉRATION DES 1 000 RECETTES
 -- ============================================================
 
+-- ============================================================
+-- 6. GÉNÉRATION DES 1 000 RECETTES
+-- ============================================================
+
 INSERT INTO recipes (
     name,
     description,
+    steps,
     user_id,
     category_id
 )
@@ -180,7 +185,9 @@ SELECT
             WHEN 12 THEN 'Wok'
             WHEN 13 THEN 'Gâteau'
             ELSE 'Lasagnes'
-        END
+        END,
+        ' ',
+        n.n
     ),
 
     CONCAT(
@@ -188,6 +195,55 @@ SELECT
         u.name,
         '. Une recette idéale pour un repas savoureux.'
     ),
+
+    CASE MOD(n.n, 15)
+
+        WHEN 0 THEN
+            '1. Couper le poulet en morceaux. |2. Faire chauffer l''huile dans une poêle. |3. Ajouter l''oignon et l''ail puis faire revenir quelques minutes. |4. Ajouter le poulet et cuire jusqu''à ce qu''il soit bien doré. |5. Ajouter les légumes et les épices. |6. Laisser mijoter 15 minutes. |7. Servir chaud.'
+
+        WHEN 1 THEN
+            '1. Faire bouillir une grande casserole d''eau salée. |2. Cuire les pâtes selon les indications du paquet. |3. Faire revenir l''ail et l''oignon dans l''huile d''olive. |4. Ajouter les tomates et les épices. |5. Laisser mijoter 10 minutes. |6. Égoutter les pâtes et les mélanger avec la sauce. |7. Ajouter le fromage et servir.'
+
+        WHEN 2 THEN
+            '1. Laver soigneusement les légumes. |2. Couper les tomates, la courgette et le poivron en morceaux. |3. Émincer l''oignon. |4. Placer tous les légumes dans un saladier. |5. Ajouter l''huile d''olive, le vinaigre, le sel et le poivre. |6. Mélanger délicatement. |7. Ajouter les herbes fraîches et servir.'
+
+        WHEN 3 THEN
+            '1. Préchauffer le four à 180°C. |2. Préparer la pâte et la déposer dans un moule. |3. Mélanger les œufs, le lait et la crème fraîche. |4. Ajouter les ingrédients de la garniture. |5. Verser la préparation sur la pâte. |6. Enfourner pendant environ 35 minutes. |7. Laisser légèrement refroidir avant de servir.'
+
+        WHEN 4 THEN
+            '1. Couper la viande et les légumes en morceaux. |2. Faire chauffer l''huile dans une grande poêle. |3. Faire revenir l''oignon et l''ail. |4. Ajouter la viande et cuire quelques minutes. |5. Ajouter le curry et les autres épices. |6. Verser le lait de coco et laisser mijoter 15 à 20 minutes. |7. Servir chaud avec du riz.'
+
+        WHEN 5 THEN
+            '1. Préchauffer le four à 180°C. |2. Éplucher et couper les légumes en fines tranches. |3. Faire revenir l''oignon dans une poêle. |4. Disposer les légumes dans un plat à gratin. |5. Ajouter la crème fraîche et assaisonner. |6. Recouvrir de fromage râpé. |7. Cuire au four pendant environ 40 minutes jusqu''à obtenir une belle coloration.'
+
+        WHEN 6 THEN
+            '1. Éplucher et couper les légumes. |2. Faire revenir l''oignon et l''ail dans un peu d''huile. |3. Ajouter les légumes. |4. Verser le bouillon jusqu''à couvrir les ingrédients. |5. Porter à ébullition puis laisser mijoter 25 minutes. |6. Mixer jusqu''à obtenir une texture homogène. |7. Rectifier l''assaisonnement et servir chaud.'
+
+        WHEN 7 THEN
+            '1. Préchauffer le four à 220°C. |2. Étaler la pâte à pizza sur une plaque. |3. Répartir la sauce tomate sur la pâte. |4. Ajouter la mozzarella et les autres ingrédients. |5. Assaisonner avec du basilic, du sel et du poivre. |6. Enfourner pendant 12 à 15 minutes. |7. Sortir du four et servir immédiatement.'
+
+        WHEN 8 THEN
+            '1. Faire revenir l''oignon dans une casserole avec l''huile d''olive. |2. Ajouter le riz et mélanger pendant 2 minutes. |3. Verser progressivement le bouillon chaud. |4. Remuer régulièrement pendant la cuisson. |5. Ajouter les légumes ou la viande. |6. Incorporer le parmesan et le beurre en fin de cuisson. |7. Mélanger puis servir bien chaud.'
+
+        WHEN 9 THEN
+            '1. Préchauffer le four à 180°C. |2. Assaisonner le poisson avec du sel, du poivre et du citron. |3. Déposer le poisson dans un plat. |4. Ajouter l''huile d''olive, l''ail et les herbes. |5. Enfourner pendant 15 à 20 minutes selon l''épaisseur. |6. Vérifier que le poisson est bien cuit. |7. Servir immédiatement avec les légumes ou le riz.'
+
+        WHEN 10 THEN
+            '1. Former des steaks avec la viande hachée. |2. Assaisonner avec le sel et le poivre. |3. Faire chauffer une poêle. |4. Cuire les steaks plusieurs minutes de chaque côté. |5. Faire légèrement griller les pains. |6. Ajouter le fromage et les garnitures. |7. Monter les burgers et servir chaud.'
+
+        WHEN 11 THEN
+            '1. Casser les œufs dans un bol. |2. Ajouter le lait, le sel et le poivre. |3. Battre les œufs jusqu''à obtenir un mélange homogène. |4. Faire chauffer le beurre dans une poêle. |5. Verser les œufs. |6. Ajouter les légumes, le fromage ou le jambon. |7. Plier l''omelette et servir immédiatement.'
+
+        WHEN 12 THEN
+            '1. Couper la viande et les légumes en fines lamelles. |2. Faire chauffer fortement l''huile dans un wok. |3. Ajouter la viande et la faire saisir. |4. Ajouter les légumes et faire sauter quelques minutes. |5. Ajouter l''ail, le gingembre ou les épices. |6. Verser la sauce soja et mélanger. |7. Servir chaud avec du riz ou des nouilles.'
+
+        WHEN 13 THEN
+            '1. Préchauffer le four à 180°C. |2. Mélanger le beurre et le sucre. |3. Ajouter les œufs un par un. |4. Incorporer progressivement la farine et le lait. |5. Mélanger jusqu''à obtenir une pâte homogène. |6. Verser dans un moule beurré. |7. Cuire pendant environ 35 à 45 minutes.|8. Laisser refroidir avant de servir.'
+
+        ELSE
+            '1. Préchauffer le four à 180°C. |2. Préparer la sauce tomate avec l''oignon, l''ail et les tomates. |3. Faire cuire les pâtes à lasagnes selon les indications du paquet. |4. Préparer la garniture avec la viande et les légumes. |5. Alterner les couches de pâtes, de sauce et de garniture dans un plat. |6. Recouvrir de fromage râpé. |7. Enfourner pendant environ 40 minutes. |8. Laisser reposer quelques minutes avant de servir.'
+
+    END,
 
     u.id,
 
@@ -354,6 +410,44 @@ SELECT
         WHEN 7 THEN 'J''ai beaucoup aimé cette recette.'
         WHEN 8 THEN 'Une bonne découverte.'
         ELSE 'Très bon repas, recette validée !'
+
+    END
+
+FROM users u
+
+JOIN recipes r
+    ON r.user_id <> u.id
+
+WHERE MOD(
+    u.id * 13 + r.id * 5,
+    100
+) < 10;
+
+INSERT INTO comments (
+    user_id,
+    recipe_id,
+    content
+)
+
+SELECT
+    u.id,
+    r.id,
+
+    CASE MOD(
+        u.id + r.id,
+        10
+    )
+
+        WHEN 0 THEN 'Bof sans plus.'
+        WHEN 1 THEN 'Laisse à désirer.'
+        WHEN 2 THEN 'Pas terrible, je ne recommande pas.'
+        WHEN 3 THEN 'Je n''ai pas aimé cette recette.'
+        WHEN 4 THEN 'Moyen, je m''attendais à mieux.'
+        WHEN 5 THEN 'Ca vendait du rêve mais c''est pas ça.'
+        WHEN 6 THEN 'Pas mal mais pas exceptionnel.'
+        WHEN 7 THEN 'Publicité mensongère, je suis déçu.'
+        WHEN 8 THEN 'Je ne la referai pas.'
+        ELSE 'Pas à la hauteur de mes attentes.'
 
     END
 

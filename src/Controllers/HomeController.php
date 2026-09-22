@@ -55,8 +55,11 @@ class HomeController extends BaseController
 
         $recipes = Recipe::getAllRecipes();
 
+        $users = User::getAllUsers();
+
         return $this->view->render($response, 'home/list.php', [
             'recipes' => $recipes,
+            'users' => $users,
         ]);
     }
 }

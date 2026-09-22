@@ -14,23 +14,23 @@
                                 <div class="card-body d-flex flex-column">
 
                                     <h5 class="card-title">
-                                        <?= htmlspecialchars($recipe->name) ?>
+                                        <?= escape($recipe->name) ?>
                                     </h5>
 
                                     <p class="card-text mb-2">
                                         <strong>Category:</strong>
-                                        <?= htmlspecialchars($recipe->category) ?>
+                                        <?= escape($recipe->category) ?>
                                     </p>
 
                                     <p class="card-text mb-2">
                                         <strong>Author:</strong>
                                         <?= isset($users[$recipe->id])
-                                            ? htmlspecialchars($users[$recipe->id]->name)
+                                            ? escape($users[$recipe->id]->name)
                                             : 'Unknown' ?>
                                     </p>
 
                                     <p class="card-text">
-                                        <?= htmlspecialchars($recipe->description) ?>
+                                        <?= escape($recipe->description) ?>
                                     </p>
 
                                     <div class="mt-auto">
@@ -48,7 +48,7 @@
                                         </p>
 
                                         <a
-                                            href="/recipe/<?= htmlspecialchars((string) $recipe->id) ?>"
+                                            href="/recipe/<?= escape((string) $recipe->id) ?>"
                                             class="btn btn-primary w-100"
                                         >
                                             View Recipe

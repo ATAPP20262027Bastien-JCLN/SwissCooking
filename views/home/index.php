@@ -16,20 +16,20 @@
                                 <a href="/recipe/<?= $recipe->id ?>" class="home-recipe-card">
                                     <div class="card-body p-4">
                                         <h5 class="card-title">
-                                            <?= htmlspecialchars($recipe->name) ?>
+                                            <?= escape($recipe->name) ?>
                                         </h5>
                                         <p class="card-text">
                                             <strong>Category:</strong>
-                                            <?= htmlspecialchars($recipe->category) ?>
+                                            <?= escape($recipe->category) ?>
                                         </p>
                                         <p class="card-text">
                                             <strong>Author:</strong>
                                             <?= isset($users[$recipe->id])
-                                                ? htmlspecialchars($users[$recipe->id]->name)
+                                                ? escape($users[$recipe->id]->name)
                                                 : 'Unknown' ?>
                                         </p>
                                         <p class="card-text">
-                                            <?= htmlspecialchars($recipe->description) ?>
+                                            <?= escape($recipe->description) ?>
                                         </p>
                                         <p class="card-text">
                                             <small class="text-muted">

@@ -39,6 +39,16 @@ class Recipe extends AbstractModel
         }
     }
 
+    public ?string $steps = null {
+        set {
+            if (is_string($value) && strlen($value) > 0) {
+                $this->steps = $value;
+            } else {
+                throw new \InvalidArgumentException("Steps must be a non-empty string");
+            }
+        }
+    }
+
     public ?int $user_id = null {
         set {
             if (is_int($value) && $value > 0 && User::findById($value) !== null) {
@@ -101,6 +111,17 @@ class Recipe extends AbstractModel
         }
     }
 
+    public array $comments = [] {
+        set {
+            if (!is_array($value)) {
+                throw new \InvalidArgumentException(
+                    'Comments must be an array'
+                );
+            }
+            $this->comments = $value;
+        }
+    }
+
     public static function getAllRecipes(): array
     {
         $pdo = Database::connection();
@@ -118,6 +139,7 @@ class Recipe extends AbstractModel
             $recipe->category = Category::getCategoryNameById($recipe->category_id);
             $recipe->ingredients = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingredient::class);
             $recipe->averageRating = Rating::getAverageRatingForRecipe($recipe->id);
+            $recipe->comments = Comment::getCommentsForRecipe($recipe->id);
             $recipes[] = $recipe;
         }
 
@@ -146,6 +168,7 @@ class Recipe extends AbstractModel
             $recipe->category = Category::getCategoryNameById($recipe->category_id);
             $recipe->ingredients = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingredient::class);
             $recipe->averageRating = Rating::getAverageRatingForRecipe($recipe->id);
+            $recipe->comments = Comment::getCommentsForRecipe($recipe->id);
         }
 
         return $recipe;

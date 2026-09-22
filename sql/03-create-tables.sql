@@ -29,6 +29,7 @@ CREATE TABLE recipes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
+    steps TEXT NOT NULL,
     user_id INT NULL,
     category_id INT NULL
 );
