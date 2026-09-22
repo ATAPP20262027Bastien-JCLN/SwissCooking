@@ -13,7 +13,7 @@
                     <?php foreach ($recipes as $recipe) : ?>
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="card h-100 shadow-sm text-start">
-                                <a href="#<?= $recipe->id ?>" class="home-recipe-card">
+                                <a href="/recipe/<?= $recipe->id ?>" class="home-recipe-card">
                                     <div class="card-body p-4">
                                         <h5 class="card-title">
                                             <?= htmlspecialchars($recipe->name) ?>

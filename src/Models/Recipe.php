@@ -131,6 +131,10 @@ class Recipe extends AbstractModel
         $stmt->execute(['id' => $id]);
         $recipe = $stmt->fetchObject(self::class);
 
+        if (!$recipe) {
+            return null;
+        }
+
         $ingredientsStmt = $pdo->prepare(
             "SELECT i.*, ri.quantity, ri.unit FROM ingredients i
              JOIN recipe_ingredients ri ON i.id = ri.ingredient_id

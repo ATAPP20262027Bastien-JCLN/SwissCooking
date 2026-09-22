@@ -11,6 +11,7 @@ use Slim\Exception\HttpNotFoundException;
 use Slim\Exception\HttpInternalServerErrorException;
 
 use BastienJcln\SwissCooking\Middleware\SessionMiddleware;
+use BastienJcln\SwissCooking\Middleware\ErrorMiddleware;
 
 class MyApp
 {
@@ -19,6 +20,8 @@ class MyApp
         $app = AppFactory::create();
 
         $app->add(new SessionMiddleware());
+
+        ErrorMiddleware::register($app);
 
         $errorMiddleware = $app->addErrorMiddleware(
             true,

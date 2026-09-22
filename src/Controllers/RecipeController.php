@@ -26,7 +26,7 @@ class RecipeController extends BaseController
 
         if (!$recipe) {
             return $response
-                ->withHeader('Location', '/')
+                ->withHeader('Location', '/404')
                 ->withStatus(302);
         }
 
