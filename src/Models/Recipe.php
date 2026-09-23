@@ -183,11 +183,17 @@ class Recipe extends AbstractModel
             FROM recipes
             WHERE name LIKE :name_search
                OR description LIKE :description_search
+                OR category_id IN (
+                     SELECT id
+                     FROM categories
+                     WHERE name LIKE :category_search
+                )
         ");
 
         $stmt->execute([
             'name_search' => '%' . $search . '%',
-            'description_search' => '%' . $search . '%'
+            'description_search' => '%' . $search . '%',
+            'category_search' => '%' . $search . '%'
         ]);
 
         $ingredientsStmt = $pdo->prepare(

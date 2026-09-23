@@ -2,7 +2,11 @@
 
     <?php foreach ($recipes as $recipe): ?>
 
-        <div class="col-12 col-md-6 col-lg-4 col-xl-3">
+        <div class="col-12 col-md-6 col-lg-4 col-xl-3 recipe-card"
+            data-category="<?= escape($recipe->category) ?>"
+            data-rating="<?= $recipe->averageRating !== null ? escape((string) $recipe->averageRating) : '0' ?>"
+            data-user="<?= isset($users[$recipe->id]) ? escape($users[$recipe->id]->name) : 'Unknown' ?>"
+            >
             <div class="card h-100 shadow-sm">
 
                 <div class="card-body d-flex flex-column">
