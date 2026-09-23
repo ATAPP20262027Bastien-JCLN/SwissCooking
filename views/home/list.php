@@ -144,6 +144,7 @@ searchInput.addEventListener('input', async function () {
     const search = this.value.trim();
 
     try {
+        window.URLSearchParams.set('search', search);
         const response = await fetch(
             '/recipes?search=' + encodeURIComponent(search),
             {

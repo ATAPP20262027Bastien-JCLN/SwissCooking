@@ -55,11 +55,32 @@ class HomeController extends BaseController
         }
 
         $queryParams = $request->getQueryParams();
+        $bodyParams = $request->getParsedBody();
 
         $search = trim($queryParams['search'] ?? '');
 
-        $fromCategory = isset($queryParams['fromCategory'])
-            && $queryParams['fromCategory'] === '1';
+        /*
+         * Category selected from the categories page
+         */
+        if (!empty($bodyParams['category'])) {
+            $_SESSION['category'] = trim($bodyParams['category']);
+            $_SESSION['fromCategory'] = true;
+
+            $search = $_SESSION['category'];
+        }
+
+        /*
+         * If we are coming from a category page
+         */
+        if (
+            empty($search)
+            && !empty($_SESSION['fromCategory'])
+            && !empty($_SESSION['category'])
+        ) {
+            $search = $_SESSION['category'];
+        }
+
+        $fromCategory = !empty($_SESSION['fromCategory']);
 
         if ($search !== '') {
             $recipes = Recipe::searchRecipes($search);
