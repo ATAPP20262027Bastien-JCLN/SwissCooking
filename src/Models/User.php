@@ -18,10 +18,10 @@ class User extends AbstractModel
 
     public ?string $name = null {
         set {
-            if (is_string($value) && strlen($value) > 0) {
+            if (is_string($value) && strlen($value) > 0 && strlen($value) <= 100) {
                 $this->name = $value;
             } else {
-                throw new \InvalidArgumentException("Name must be a non-empty string");
+                throw new \InvalidArgumentException("Name must be a non-empty string with a maximum length of 100 characters");
             }
         }
     }

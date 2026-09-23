@@ -85,11 +85,7 @@ class ErrorController extends BaseController
             405 => 'The request method is known by the server but is not supported by the target resource.',
             500 => 'The server has encountered a situation it does not know how to handle.',
         ];
-
-        if (!isset($pages[$statusCode])) {
-            $statusCode = 500;
-        }
-
+        
         $message = $customMessage !== ''
             ? $customMessage
             : $messages[$statusCode];

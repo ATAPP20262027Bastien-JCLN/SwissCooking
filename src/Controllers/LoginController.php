@@ -33,7 +33,7 @@ class LoginController extends BaseController
 
         if ($user && password_verify($password, $user->password_hash)) {
             $_SESSION['user_id'] = $user->id;
-            $_SESSION['error'] = null; // Clear any previous error messages
+            $_SESSION['error'] = null;
             return $response->withHeader('Location', '/')->withStatus(302);
         } else {
             $_SESSION['error'] = 'Invalid email or password';
@@ -73,7 +73,7 @@ class LoginController extends BaseController
 
         if ($user->save()) {
             $_SESSION['user_id'] = $user->id;
-            $_SERVER['error'] = null; // Clear any previous error messages
+            $_SESSION['error'] = null;
             return $response->withHeader('Location', '/')->withStatus(302);
         } else {
             $_SESSION['error'] = 'Registration failed';

@@ -1,13 +1,13 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Models;
 
 use BastienJcln\SwissCooking\Core\Database;
-use BastienJcln\SwissCooking\Models\User;
 use BastienJcln\SwissCooking\Models\Category;
 use BastienJcln\SwissCooking\Models\Ingredient;
+use BastienJcln\SwissCooking\Models\User;
 use Override;
 
 class Recipe extends AbstractModel
@@ -69,16 +69,16 @@ class Recipe extends AbstractModel
         }
     }
 
-    public array $ingredients = [] {
+    public array $ingredients = []{
         set {
-            if (!is_array($value) || count($value) === 0) {
+            if (! is_array($value) || count($value) === 0) {
                 throw new \InvalidArgumentException(
                     'Ingredients must be a non-empty array'
                 );
             }
 
             foreach ($value as $ingredient) {
-                if (!$ingredient instanceof Ingredient) {
+                if (! $ingredient instanceof Ingredient) {
                     throw new \InvalidArgumentException(
                         'All ingredients must be instances of Ingredient'
                     );
@@ -91,7 +91,7 @@ class Recipe extends AbstractModel
 
     public ?float $averageRating = null {
         set {
-            if ($value !== null && (!is_float($value) || $value < 0 || $value > 5)) {
+            if ($value !== null && (! is_float($value) || $value < 0 || $value > 5)) {
                 throw new \InvalidArgumentException(
                     'Average rating must be a float between 0 and 5 or null'
                 );
@@ -102,7 +102,7 @@ class Recipe extends AbstractModel
 
     public ?string $category = null {
         set {
-            if ($value !== null && (!is_string($value) || strlen($value) === 0)) {
+            if ($value !== null && (! is_string($value) || strlen($value) === 0)) {
                 throw new \InvalidArgumentException(
                     'Category must be a non-empty string or null'
                 );
@@ -111,9 +111,9 @@ class Recipe extends AbstractModel
         }
     }
 
-    public array $comments = [] {
+    public array $comments = []{
         set {
-            if (!is_array($value)) {
+            if (! is_array($value)) {
                 throw new \InvalidArgumentException(
                     'Comments must be an array'
                 );
@@ -124,7 +124,7 @@ class Recipe extends AbstractModel
 
     public static function getAllRecipes(): array
     {
-        $pdo = Database::connection();
+        $pdo  = Database::connection();
         $stmt = $pdo->query("SELECT * FROM recipes");
 
         $ingredientsStmt = $pdo->prepare(
@@ -136,11 +136,11 @@ class Recipe extends AbstractModel
         $recipes = [];
         while ($recipe = $stmt->fetchObject(self::class)) {
             $ingredientsStmt->execute(['recipe_id' => $recipe->id]);
-            $recipe->category = Category::getCategoryNameById($recipe->category_id);
-            $recipe->ingredients = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingredient::class);
+            $recipe->category      = Category::getCategoryNameById($recipe->category_id);
+            $recipe->ingredients   = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingredient::class);
             $recipe->averageRating = Rating::getAverageRatingForRecipe($recipe->id);
-            $recipe->comments = Comment::getCommentsForRecipe($recipe->id);
-            $recipes[] = $recipe;
+            $recipe->comments      = Comment::getCommentsForRecipe($recipe->id);
+            $recipes[]             = $recipe;
         }
 
         return $recipes;
@@ -148,12 +148,12 @@ class Recipe extends AbstractModel
 
     public static function findById(int $id): ?self
     {
-        $pdo = Database::connection();
+        $pdo  = Database::connection();
         $stmt = $pdo->prepare("SELECT * FROM recipes WHERE id = :id");
         $stmt->execute(['id' => $id]);
         $recipe = $stmt->fetchObject(self::class);
 
-        if (!$recipe) {
+        if (! $recipe) {
             return null;
         }
 
@@ -165,13 +165,66 @@ class Recipe extends AbstractModel
 
         if ($recipe) {
             $ingredientsStmt->execute(['recipe_id' => $recipe->id]);
-            $recipe->category = Category::getCategoryNameById($recipe->category_id);
-            $recipe->ingredients = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingredient::class);
+            $recipe->category      = Category::getCategoryNameById($recipe->category_id);
+            $recipe->ingredients   = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingredient::class);
             $recipe->averageRating = Rating::getAverageRatingForRecipe($recipe->id);
-            $recipe->comments = Comment::getCommentsForRecipe($recipe->id);
+            $recipe->comments      = Comment::getCommentsForRecipe($recipe->id);
         }
 
         return $recipe;
+    }
+
+    public static function searchRecipes(string $search): array
+    {
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare("
+            SELECT *
+            FROM recipes
+            WHERE name LIKE :name_search
+               OR description LIKE :description_search
+        ");
+
+        $stmt->execute([
+            'name_search' => '%' . $search . '%',
+            'description_search' => '%' . $search . '%'
+        ]);
+
+        $ingredientsStmt = $pdo->prepare(
+            "SELECT i.*, ri.quantity, ri.unit
+             FROM ingredients i
+             JOIN recipe_ingredients ri
+                 ON i.id = ri.ingredient_id
+             WHERE ri.recipe_id = :recipe_id"
+        );
+
+        $recipes = [];
+
+        while ($recipe = $stmt->fetchObject(self::class)) {
+
+            $ingredientsStmt->execute([
+                'recipe_id' => $recipe->id
+            ]);
+
+            $recipe->category =
+                Category::getCategoryNameById($recipe->category_id);
+
+            $recipe->ingredients =
+                $ingredientsStmt->fetchAll(
+                    \PDO::FETCH_CLASS,
+                    Ingredient::class
+                );
+
+            $recipe->averageRating =
+                Rating::getAverageRatingForRecipe($recipe->id);
+
+            $recipe->comments =
+                Comment::getCommentsForRecipe($recipe->id);
+
+            $recipes[] = $recipe;
+        }
+
+        return $recipes;
     }
 
     #[Override]
@@ -179,7 +232,7 @@ class Recipe extends AbstractModel
     {
         throw new \Exception('Not implemented');
     }
-    
+
     #[Override]
     public function update(): bool
     {
