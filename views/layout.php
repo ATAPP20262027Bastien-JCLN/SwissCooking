@@ -17,7 +17,6 @@
     <link rel="stylesheet" href="/css/style.css">
 
     <script>
-        // Apply saved theme before the page is displayed
         const savedTheme = localStorage.getItem('theme');
 
         if (savedTheme) {
@@ -61,7 +60,6 @@
             }
         }
 
-
         function toggleDarkMode() {
             const currentTheme =
                 document.documentElement.getAttribute('data-bs-theme');
@@ -80,7 +78,6 @@
 
             updateThemeButton();
         }
-
 
         document.addEventListener('DOMContentLoaded', function () {
 

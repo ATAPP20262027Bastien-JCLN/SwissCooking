@@ -1,4 +1,4 @@
-<div class="container py-5">
+<div class="container py-5" style="padding-bottom: 3em!important;">
     <div class="row justify-content-center mb-5">
         <div class="col-12 col-md-8 text-center">
             <h1 class="mt-0">Welcome to Swiss Cooking</h1>

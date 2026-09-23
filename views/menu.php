@@ -7,15 +7,8 @@
             Swiss Cooking
         </a>
 
-        <button
-            class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-        >
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -23,7 +16,7 @@
 
             <ul class="navbar-nav me-auto">
 
-                <?php if (!empty($_SESSION['user_id'])) : ?>
+                <?php if (!empty($_SESSION['user_id'])): ?>
 
                     <li class="nav-item">
                         <a class="nav-link" href="/">
@@ -34,6 +27,12 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/recipes">
                             Recipes
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/categories">
+                            Categories
                         </a>
                     </li>
 
@@ -57,7 +56,7 @@
                         </a>
                     </li>
 
-                <?php else : ?>
+                <?php else: ?>
 
                     <li class="nav-item">
                         <a class="nav-link" href="/login">
@@ -75,11 +74,7 @@
 
             </ul>
 
-            <button
-                type="button"
-                id="darkModeToggle"
-                class="btn btn-outline-secondary"
-            >
+            <button type="button" id="darkModeToggle" class="btn btn-outline-secondary">
                 🌙 Dark mode
             </button>
 

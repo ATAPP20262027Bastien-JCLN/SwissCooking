@@ -23,6 +23,7 @@
 
 .container {
     padding-top: 60px !important;
+    padding-bottom: 0px !important;
 }
 
 .navbar {
@@ -41,4 +42,12 @@
 .main-content {
     height: 70vh !important;
     overflow-y: scroll;
+}
+
+.category-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.category-card:hover {
+    transform: scale(1.05);
 }

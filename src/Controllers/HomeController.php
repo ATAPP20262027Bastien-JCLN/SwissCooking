@@ -1,11 +1,12 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace BastienJcln\SwissCooking\Controllers;
 
 use BastienJcln\SwissCooking\Models\Recipe;
 use BastienJcln\SwissCooking\Models\User;
+use BastienJcln\SwissCooking\Models\Category;
 use BastienJcln\SwissCooking\Services\ConnexionService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -14,7 +15,7 @@ class HomeController extends BaseController
 {
     public function index(Request $request, Response $response): Response
     {
-        if (! ConnexionService::connectedUser()) {
+        if (!ConnexionService::connectedUser()) {
             return ConnexionService::redirectIfNotConnected($request, $response);
         }
 
@@ -43,7 +44,7 @@ class HomeController extends BaseController
 
         return $this->view->render($response, 'home/index.php', [
             'recipes' => $recipes,
-            'users'   => $users,
+            'users' => $users,
         ]);
     }
 
@@ -54,7 +55,11 @@ class HomeController extends BaseController
         }
 
         $queryParams = $request->getQueryParams();
+
         $search = trim($queryParams['search'] ?? '');
+
+        $fromCategory = isset($queryParams['fromCategory'])
+            && $queryParams['fromCategory'] === '1';
 
         if ($search !== '') {
             $recipes = Recipe::searchRecipes($search);
@@ -77,8 +82,26 @@ class HomeController extends BaseController
         }
 
         return $this->view->render($response, 'home/list.php', [
+            'fromCategory' => $fromCategory,
             'recipes' => $recipes,
             'users' => $users,
+        ]);
+    }
+
+    public function categories(Request $request, Response $response): Response
+    {
+
+        if (!ConnexionService::connectedUser()) {
+            return ConnexionService::redirectIfNotConnected(
+                $request,
+                $response
+            );
+        }
+
+        $categories = Category::getAllCategories();
+
+        return $this->view->render($response, 'home/categories.php', [
+            'categories' => $categories,
         ]);
     }
 }

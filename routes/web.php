@@ -17,6 +17,8 @@ $app->get('/', [HomeController::class, 'index']);
 $app->get('/recipes', [HomeController::class, 'list']);
 $app->get('/recipe/{id}', [RecipeController::class, 'show']);
 
+$app->get('/categories', [HomeController::class, 'categories']);
+
 $app->get('/login', [LoginController::class, 'showLogin']);
 $app->post('/login', [LoginController::class, 'login']);
 $app->get('/register', [LoginController::class, 'showRegistration']);

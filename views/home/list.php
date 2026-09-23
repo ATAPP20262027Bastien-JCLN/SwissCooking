@@ -2,7 +2,15 @@
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2 class="mb-0">All Recipes</h2>
+                <div class="d-flex flex-row align-items-center gap-2 mb-2 mb-md-0">
+                    <h2 class="mb-0">All Recipes</h2>
+
+                    <?php if (!empty($fromCategory) && $fromCategory === true): ?>
+                        <a href="/categories" class="btn btn-outline-secondary mt-2">
+                            ← Back to Categories
+                        </a>
+                    <?php endif; ?>
+                </div>
 
                 <div style="max-width: 350px; width: 100%;">
                     <input
@@ -15,8 +23,7 @@
                 </div>
             </div>
 
-            <!-- Sort buttons -->
-            <div class="d-flex gap-2 mb-4 flex-wrap">
+            <div class="d-flex gap-2 mb-4 flex-wrap pb-2">
                 <button
                     type="button"
                     class="btn btn-outline-primary sort-btn"
