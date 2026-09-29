@@ -12,52 +12,35 @@
                     <?php endif; ?>
                 </div>
 
-                <div style="max-width: 350px; width: 100%;">
-                    <input
-                        type="text"
-                        id="recipeSearch"
-                        class="form-control"
-                        placeholder="Search recipes..."
-                        autocomplete="off"
-                    >
-                </div>
+                <form method="GET" action="/recipes" class="d-flex gap-2" style="max-width: 450px; width: 100%;">
+                    <input type="text" name="search" class="form-control" placeholder="Search recipes..."
+                        autocomplete="off" value="<?= escape($_GET['search'] ?? '') ?>">
+
+                    <button type="submit" class="btn btn-primary">
+                        Search
+                    </button>
+                </form>
             </div>
 
             <div class="d-flex gap-2 mb-4 flex-wrap pb-2">
-                <button
-                    type="button"
-                    class="btn btn-outline-primary sort-btn"
-                    data-sort="category"
-                >
+                <button type="button" class="btn btn-outline-primary sort-btn" data-sort="category">
                     Sort by Category
                 </button>
 
-                <button
-                    type="button"
-                    class="btn btn-outline-primary sort-btn"
-                    data-sort="rating"
-                >
+                <button type="button" class="btn btn-outline-primary sort-btn" data-sort="rating">
                     Sort by Rating
                 </button>
 
-                <button
-                    type="button"
-                    class="btn btn-outline-primary sort-btn"
-                    data-sort="user"
-                >
+                <button type="button" class="btn btn-outline-primary sort-btn" data-sort="user">
                     Sort by User
                 </button>
 
-                <button
-                    type="button"
-                    class="btn btn-outline-secondary"
-                    id="resetSort"
-                >
+                <button type="button" class="btn btn-outline-secondary" id="resetSort">
                     Reset
                 </button>
             </div>
 
-            <?php if (! empty($recipes)): ?>
+            <?php if (!empty($recipes)): ?>
 
                 <div class="row g-4 main-content" id="recipeList">
                     <?php foreach ($recipes as $recipe): ?>
@@ -65,8 +48,7 @@
                         <div class="col-12 col-md-6 col-lg-4 col-xl-3 recipe-card"
                             data-category="<?= escape($recipe->category) ?>"
                             data-rating="<?= $recipe->averageRating !== null ? escape((string) $recipe->averageRating) : '0' ?>"
-                            data-user="<?= isset($users[$recipe->id]) ? escape($users[$recipe->id]->name) : 'Unknown' ?>"
-                            >
+                            data-user="<?= isset($users[$recipe->id]) ? escape($users[$recipe->id]->name) : 'Unknown' ?>">
                             <div class="card h-100 shadow-sm">
 
                                 <div class="card-body d-flex flex-column">
@@ -103,10 +85,8 @@
                                             </small>
                                         </p>
 
-                                        <a
-                                            href="/recipe/<?php echo escape((string) $recipe->id) ?>"
-                                            class="btn btn-primary w-100"
-                                        >
+                                        <a href="/recipe/<?php echo escape((string) $recipe->id) ?>"
+                                            class="btn btn-primary w-100">
                                             View Recipe
                                         </a>
 
@@ -131,119 +111,76 @@
 </div>
 
 <script>
-const searchInput = document.getElementById('recipeSearch');
-const recipeList = document.getElementById('recipeList');
-const sortButtons = document.querySelectorAll('.sort-btn');
-const resetSort = document.getElementById('resetSort');
+    const recipeList = document.getElementById('recipeList');
+    const sortButtons = document.querySelectorAll('.sort-btn');
+    const resetSort = document.getElementById('resetSort');
 
+    sortButtons.forEach(function (button) {
 
-/*
- * SEARCH
- */
-searchInput.addEventListener('input', async function () {
-    const search = this.value.trim();
+        button.addEventListener('click', function () {
 
-    try {
-        window.URLSearchParams.set('search', search);
-        const response = await fetch(
-            '/recipes?search=' + encodeURIComponent(search),
-            {
-                credentials: 'same-origin',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
+            const sortType = this.dataset.sort;
+
+            const cards = Array.from(
+                recipeList.querySelectorAll('.recipe-card')
+            );
+
+            cards.sort(function (a, b) {
+
+                if (sortType === 'category') {
+
+                    const categoryA = a.dataset.category.toLowerCase();
+                    const categoryB = b.dataset.category.toLowerCase();
+
+                    return categoryA.localeCompare(categoryB);
                 }
-            }
-        );
 
-        if (!response.ok) {
-            throw new Error('HTTP ' + response.status);
-        }
+                if (sortType === 'user') {
 
-        recipeList.innerHTML = await response.text();
+                    const userA = a.dataset.user.toLowerCase();
+                    const userB = b.dataset.user.toLowerCase();
 
-    } catch (error) {
-        console.error('Search error:', error);
-    }
-});
+                    return userA.localeCompare(userB);
+                }
 
+                if (sortType === 'rating') {
 
-/*
- * SORT
- */
-sortButtons.forEach(function (button) {
+                    const ratingA = parseFloat(a.dataset.rating);
+                    const ratingB = parseFloat(b.dataset.rating);
 
-    button.addEventListener('click', function () {
+                    return ratingB - ratingA;
+                }
 
-        const sortType = this.dataset.sort;
+                return 0;
+            });
+
+            cards.forEach(function (card) {
+                recipeList.appendChild(card);
+            });
+        });
+    });
+
+    resetSort.addEventListener('click', function () {
 
         const cards = Array.from(
             recipeList.querySelectorAll('.recipe-card')
         );
 
         cards.sort(function (a, b) {
-
-            if (sortType === 'category') {
-
-                const categoryA = a.dataset.category.toLowerCase();
-                const categoryB = b.dataset.category.toLowerCase();
-
-                return categoryA.localeCompare(categoryB);
-            }
-
-            if (sortType === 'user') {
-
-                const userA = a.dataset.user.toLowerCase();
-                const userB = b.dataset.user.toLowerCase();
-
-                return userA.localeCompare(userB);
-            }
-
-            if (sortType === 'rating') {
-
-                const ratingA = parseFloat(a.dataset.rating);
-                const ratingB = parseFloat(b.dataset.rating);
-
-                return ratingB - ratingA;
-            }
-
-            return 0;
+            return (
+                Number(a.dataset.originalOrder) -
+                Number(b.dataset.originalOrder)
+            );
         });
 
         cards.forEach(function (card) {
             recipeList.appendChild(card);
         });
     });
-});
 
-
-/*
- * RESET SORT
- */
-resetSort.addEventListener('click', function () {
-
-    const cards = Array.from(
-        recipeList.querySelectorAll('.recipe-card')
-    );
-
-    cards.sort(function (a, b) {
-        return (
-            Number(a.dataset.originalOrder) -
-            Number(b.dataset.originalOrder)
-        );
-    });
-
-    cards.forEach(function (card) {
-        recipeList.appendChild(card);
-    });
-});
-
-
-/*
- * Remember original order
- */
-document
-    .querySelectorAll('.recipe-card')
-    .forEach(function (card, index) {
-        card.dataset.originalOrder = index;
-    });
+    document
+        .querySelectorAll('.recipe-card')
+        .forEach(function (card, index) {
+            card.dataset.originalOrder = index;
+        });
 </script>

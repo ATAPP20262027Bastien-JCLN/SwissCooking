@@ -59,9 +59,6 @@ class HomeController extends BaseController
 
         $search = trim($queryParams['search'] ?? '');
 
-        /*
-         * Category selected from the categories page
-         */
         if (!empty($bodyParams['category'])) {
             $_SESSION['category'] = trim($bodyParams['category']);
             $_SESSION['fromCategory'] = true;
@@ -69,9 +66,6 @@ class HomeController extends BaseController
             $search = $_SESSION['category'];
         }
 
-        /*
-         * If we are coming from a category page
-         */
         if (
             empty($search)
             && !empty($_SESSION['fromCategory'])

@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace BastienJcln\SwissCooking\Models;
 
@@ -69,18 +69,18 @@ class Recipe extends AbstractModel
         }
     }
 
-    public array $ingredients = []{
+    public array $ingredients = [] {
         set {
-            if (! is_array($value) || count($value) === 0) {
+            if (!is_array($value) || count($value) === 0) {
                 throw new \InvalidArgumentException(
-                    'Ingredients must be a non-empty array'
+                'Ingredients must be a non-empty array'
                 );
             }
 
             foreach ($value as $ingredient) {
-                if (! $ingredient instanceof Ingredient) {
+                if (!$ingredient instanceof Ingredient) {
                     throw new \InvalidArgumentException(
-                        'All ingredients must be instances of Ingredient'
+                    'All ingredients must be instances of Ingredient'
                     );
                 }
             }
@@ -91,9 +91,9 @@ class Recipe extends AbstractModel
 
     public ?float $averageRating = null {
         set {
-            if ($value !== null && (! is_float($value) || $value < 0 || $value > 5)) {
+            if ($value !== null && (!is_float($value) || $value < 0 || $value > 5)) {
                 throw new \InvalidArgumentException(
-                    'Average rating must be a float between 0 and 5 or null'
+                'Average rating must be a float between 0 and 5 or null'
                 );
             }
             $this->averageRating = $value;
@@ -102,20 +102,20 @@ class Recipe extends AbstractModel
 
     public ?string $category = null {
         set {
-            if ($value !== null && (! is_string($value) || strlen($value) === 0)) {
+            if ($value !== null && (!is_string($value) || strlen($value) === 0)) {
                 throw new \InvalidArgumentException(
-                    'Category must be a non-empty string or null'
+                'Category must be a non-empty string or null'
                 );
             }
             $this->category = $value;
         }
     }
 
-    public array $comments = []{
+    public array $comments = [] {
         set {
-            if (! is_array($value)) {
+            if (!is_array($value)) {
                 throw new \InvalidArgumentException(
-                    'Comments must be an array'
+                'Comments must be an array'
                 );
             }
             $this->comments = $value;
@@ -124,7 +124,7 @@ class Recipe extends AbstractModel
 
     public static function getAllRecipes(): array
     {
-        $pdo  = Database::connection();
+        $pdo = Database::connection();
         $stmt = $pdo->query("SELECT * FROM recipes");
 
         $ingredientsStmt = $pdo->prepare(
@@ -136,11 +136,11 @@ class Recipe extends AbstractModel
         $recipes = [];
         while ($recipe = $stmt->fetchObject(self::class)) {
             $ingredientsStmt->execute(['recipe_id' => $recipe->id]);
-            $recipe->category      = Category::getCategoryNameById($recipe->category_id);
-            $recipe->ingredients   = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingredient::class);
+            $recipe->category = Category::getCategoryNameById($recipe->category_id);
+            $recipe->ingredients = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingredient::class);
             $recipe->averageRating = Rating::getAverageRatingForRecipe($recipe->id);
-            $recipe->comments      = Comment::getCommentsForRecipe($recipe->id);
-            $recipes[]             = $recipe;
+            $recipe->comments = Comment::getCommentsForRecipe($recipe->id);
+            $recipes[] = $recipe;
         }
 
         return $recipes;
@@ -148,12 +148,12 @@ class Recipe extends AbstractModel
 
     public static function findById(int $id): ?self
     {
-        $pdo  = Database::connection();
+        $pdo = Database::connection();
         $stmt = $pdo->prepare("SELECT * FROM recipes WHERE id = :id");
         $stmt->execute(['id' => $id]);
         $recipe = $stmt->fetchObject(self::class);
 
-        if (! $recipe) {
+        if (!$recipe) {
             return null;
         }
 
@@ -165,10 +165,10 @@ class Recipe extends AbstractModel
 
         if ($recipe) {
             $ingredientsStmt->execute(['recipe_id' => $recipe->id]);
-            $recipe->category      = Category::getCategoryNameById($recipe->category_id);
-            $recipe->ingredients   = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingredient::class);
+            $recipe->category = Category::getCategoryNameById($recipe->category_id);
+            $recipe->ingredients = $ingredientsStmt->fetchAll(\PDO::FETCH_CLASS, Ingredient::class);
             $recipe->averageRating = Rating::getAverageRatingForRecipe($recipe->id);
-            $recipe->comments      = Comment::getCommentsForRecipe($recipe->id);
+            $recipe->comments = Comment::getCommentsForRecipe($recipe->id);
         }
 
         return $recipe;
@@ -179,21 +179,25 @@ class Recipe extends AbstractModel
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare("
-            SELECT *
+            SELECT recipes.*
             FROM recipes
-            WHERE name LIKE :name_search
-               OR description LIKE :description_search
-                OR category_id IN (
-                     SELECT id
-                     FROM categories
-                     WHERE name LIKE :category_search
-                )
+            JOIN users
+                ON recipes.user_id = users.id
+            WHERE recipes.name LIKE :name_search
+               OR recipes.category_id IN (
+                    SELECT id
+                    FROM categories
+                    WHERE name LIKE :category_search
+               )
+               OR users.name LIKE :user_search
         ");
 
+        $searchValue = '%' . $search . '%';
+
         $stmt->execute([
-            'name_search' => '%' . $search . '%',
-            'description_search' => '%' . $search . '%',
-            'category_search' => '%' . $search . '%'
+            'name_search' => $searchValue,
+            'category_search' => $searchValue,
+            'user_search' => $searchValue
         ]);
 
         $ingredientsStmt = $pdo->prepare(
