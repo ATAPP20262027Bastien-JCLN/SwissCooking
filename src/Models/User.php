@@ -9,19 +9,22 @@ use Override;
 
 class User extends AbstractModel
 {
-    /**
-     * @var string
-     */
     protected static ?string $primaryKey = 'id';
 
     public ?int $id = null;
 
     public ?string $name = null {
         set {
-            if (is_string($value) && strlen($value) > 0 && strlen($value) <= 100) {
+            if (
+            is_string($value) &&
+            strlen($value) > 0 &&
+            strlen($value) <= 100
+            ) {
                 $this->name = $value;
             } else {
-                throw new \InvalidArgumentException("Name must be a non-empty string with a maximum length of 100 characters");
+                throw new \InvalidArgumentException(
+                'Name must be a non-empty string with a maximum length of 100 characters'
+                );
             }
         }
     }
@@ -31,7 +34,9 @@ class User extends AbstractModel
             if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
                 $this->email = $value;
             } else {
-                throw new \InvalidArgumentException("Invalid email format");
+                throw new \InvalidArgumentException(
+                'Invalid email format'
+                );
             }
         }
     }
@@ -41,17 +46,25 @@ class User extends AbstractModel
             if (is_string($value) && strlen($value) > 0) {
                 $this->password_hash = $value;
             } else {
-                throw new \InvalidArgumentException("Password must be a non-empty string");
+                throw new \InvalidArgumentException(
+                'Password must be a non-empty string'
+                );
             }
         }
     }
 
     public ?int $id_role = null {
         set {
-            if (is_int($value) && $value > 0 && Role::findById($value) !== null) {
+            if (
+            is_int($value) &&
+            $value > 0 &&
+            Role::findById($value) !== null
+            ) {
                 $this->id_role = $value;
             } else {
-                throw new \InvalidArgumentException("Role ID must be a positive integer");
+                throw new \InvalidArgumentException(
+                'Role ID must be a positive integer'
+                );
             }
         }
     }
@@ -61,7 +74,24 @@ class User extends AbstractModel
             if (is_array($value)) {
                 $this->favorite_recipes = $value;
             } else {
-                throw new \InvalidArgumentException("Favorite recipes must be an array");
+                throw new \InvalidArgumentException(
+                'Favorite recipes must be an array'
+                );
+            }
+        }
+    }
+
+    public ?string $profile_picture = null {
+        set {
+            if (
+            $value === null ||
+            (is_string($value) && strlen($value) <= 2048)
+            ) {
+                $this->profile_picture = $value;
+            } else {
+                throw new \InvalidArgumentException(
+                'Invalid profile picture path or URL'
+                );
             }
         }
     }
@@ -69,42 +99,118 @@ class User extends AbstractModel
     public static function getAllUsers(): array
     {
         $pdo = Database::connection();
-        $stmt = $pdo->query("SELECT * FROM users");
+        $stmt = $pdo->query('SELECT * FROM users');
+
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::class);
     }
 
     public static function findById(int $id): ?self
     {
         $pdo = Database::connection();
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE id = :id");
+        $stmt = $pdo->prepare(
+            'SELECT * FROM users WHERE id = :id'
+        );
         $stmt->execute(['id' => $id]);
+
         $user = $stmt->fetchObject(self::class);
+
         return $user ?: null;
     }
 
     public static function findByEmail(string $email): ?self
     {
         $pdo = Database::connection();
-        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = :email");
+        $stmt = $pdo->prepare(
+            'SELECT * FROM users WHERE email = :email'
+        );
         $stmt->execute(['email' => $email]);
+
         $user = $stmt->fetchObject(self::class);
+
         return $user ?: null;
+    }
+
+    public function getProfilePicture(): string
+    {
+        if (
+            $this->profile_picture !== null &&
+            $this->profile_picture !== ''
+        ) {
+            if (
+                str_starts_with($this->profile_picture, 'https://') ||
+                str_starts_with($this->profile_picture, 'http://')
+            ) {
+                return $this->profile_picture;
+            }
+
+            $localPath = dirname(__DIR__, 2)
+                . '/public/'
+                . ltrim($this->profile_picture, '/');
+
+            if (is_file($localPath)) {
+                return '/' . ltrim(
+                    $this->profile_picture,
+                    '/'
+                );
+            }
+        }
+
+        $profileDirectory = dirname(__DIR__, 2)
+            . '/public/upload/profile_pic/';
+
+        $extensions = [
+            'png',
+            'jpg',
+            'jpeg',
+            'webp',
+            'ico',
+        ];
+
+        foreach ($extensions as $extension) {
+            $filename = $this->name . '_pfp.' . $extension;
+
+            if (is_file($profileDirectory . $filename)) {
+                return '/upload/profile_pic/' . $filename;
+            }
+        }
+
+        return 'https://ui-avatars.com/api/?name='
+            . urlencode($this->name ?? 'User')
+            . '&size=256';
     }
 
     #[Override]
     public function insert(): bool
     {
         $pdo = Database::connection();
-        $stmt = $pdo->prepare("INSERT INTO users (name, email, password_hash, id_role) VALUES (:name, :email, :password_hash, :id_role)");
+
+        $stmt = $pdo->prepare(
+            'INSERT INTO users (
+                name,
+                email,
+                password_hash,
+                id_role,
+                profile_picture
+            )
+            VALUES (
+                :name,
+                :email,
+                :password_hash,
+                :id_role,
+                :profile_picture
+            )'
+        );
+
         $result = $stmt->execute([
             'name' => $this->name,
             'email' => $this->email,
             'password_hash' => $this->password_hash,
             'id_role' => $this->id_role,
+            'profile_picture' => $this->profile_picture,
         ]);
 
         if ($result) {
-            $this->id = (int)$pdo->lastInsertId();
+            $this->id = (int) $pdo->lastInsertId();
         }
 
         return $result;
@@ -114,12 +220,24 @@ class User extends AbstractModel
     public function update(): bool
     {
         $pdo = Database::connection();
-        $stmt = $pdo->prepare("UPDATE users SET name = :name, email = :email, password_hash = :password_hash, id_role = :id_role WHERE id = :id");
+
+        $stmt = $pdo->prepare(
+            'UPDATE users
+            SET
+                name = :name,
+                email = :email,
+                password_hash = :password_hash,
+                id_role = :id_role,
+                profile_picture = :profile_picture
+            WHERE id = :id'
+        );
+
         return $stmt->execute([
             'name' => $this->name,
             'email' => $this->email,
             'password_hash' => $this->password_hash,
             'id_role' => $this->id_role,
+            'profile_picture' => $this->profile_picture,
             'id' => $this->id,
         ]);
     }

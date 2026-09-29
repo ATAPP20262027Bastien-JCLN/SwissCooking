@@ -28,12 +28,7 @@ class ErrorMiddleware
         );
 
         $errorMiddleware->setDefaultErrorHandler(
-            function (
-                ServerRequestInterface $request,
-                \Throwable $exception,
-                bool $displayErrorDetails
-            ): ResponseInterface {
-
+            function (ServerRequestInterface $request, \Throwable $exception, bool $displayErrorDetails): ResponseInterface {
                 $statusCode = match (true) {
                     $exception instanceof HttpBadRequestException => 400,
                     $exception instanceof HttpUnauthorizedException => 401,

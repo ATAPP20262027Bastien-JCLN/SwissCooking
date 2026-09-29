@@ -4,19 +4,24 @@ declare(strict_types=1);
 
 namespace BastienJcln\SwissCooking\Controllers;
 
+use BastienJcln\SwissCooking\Models\Category;
 use BastienJcln\SwissCooking\Models\Recipe;
 use BastienJcln\SwissCooking\Models\User;
-use BastienJcln\SwissCooking\Models\Category;
 use BastienJcln\SwissCooking\Services\ConnexionService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
 class HomeController extends BaseController
 {
-    public function index(Request $request, Response $response): Response
-    {
+    public function index(
+        Request $request,
+        Response $response
+    ): Response {
         if (!ConnexionService::connectedUser()) {
-            return ConnexionService::redirectIfNotConnected($request, $response);
+            return ConnexionService::redirectIfNotConnected(
+                $request,
+                $response
+            );
         }
 
         $recipes = Recipe::getAllRecipes();
@@ -35,12 +40,15 @@ class HomeController extends BaseController
 
         foreach ($recipes as $recipe) {
             $user = User::findById($recipe->user_id);
+
             if ($user) {
                 $users[$recipe->id] = $user;
             }
         }
 
-        $users[$_SESSION['user_id']] = User::findById($_SESSION['user_id'] ?? null);
+        $users[$_SESSION['user_id']] = User::findById(
+            $_SESSION['user_id'] ?? null
+        );
 
         return $this->view->render($response, 'home/index.php', [
             'recipes' => $recipes,
@@ -48,10 +56,15 @@ class HomeController extends BaseController
         ]);
     }
 
-    public function list(Request $request, Response $response): Response
-    {
+    public function list(
+        Request $request,
+        Response $response
+    ): Response {
         if (!ConnexionService::connectedUser()) {
-            return ConnexionService::redirectIfNotConnected($request, $response);
+            return ConnexionService::redirectIfNotConnected(
+                $request,
+                $response
+            );
         }
 
         $queryParams = $request->getQueryParams();
@@ -67,9 +80,9 @@ class HomeController extends BaseController
         }
 
         if (
-            empty($search)
-            && !empty($_SESSION['fromCategory'])
-            && !empty($_SESSION['category'])
+            empty($search) &&
+            !empty($_SESSION['fromCategory']) &&
+            !empty($_SESSION['category'])
         ) {
             $search = $_SESSION['category'];
         }
@@ -88,7 +101,10 @@ class HomeController extends BaseController
             $users[$recipe->id] = User::findById($recipe->user_id);
         }
 
-        if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
+        if (
+            $request->getHeaderLine('X-Requested-With') ===
+            'XMLHttpRequest'
+        ) {
             return $this->view->render($response, 'home/search.php', [
                 'withMenu' => false,
                 'recipes' => $recipes,
@@ -103,9 +119,10 @@ class HomeController extends BaseController
         ]);
     }
 
-    public function categories(Request $request, Response $response): Response
-    {
-
+    public function categories(
+        Request $request,
+        Response $response
+    ): Response {
         if (!ConnexionService::connectedUser()) {
             return ConnexionService::redirectIfNotConnected(
                 $request,
@@ -115,8 +132,12 @@ class HomeController extends BaseController
 
         $categories = Category::getAllCategories();
 
-        return $this->view->render($response, 'home/categories.php', [
-            'categories' => $categories,
-        ]);
+        return $this->view->render(
+            $response,
+            'home/categories.php',
+            [
+                'categories' => $categories,
+            ]
+        );
     }
 }

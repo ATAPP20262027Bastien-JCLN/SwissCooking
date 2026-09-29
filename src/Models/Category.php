@@ -9,9 +9,6 @@ use Override;
 
 class Category extends AbstractModel
 {
-    /**
-     * @var string
-     */
     protected static ?string $primaryKey = 'id';
 
     public ?int $id = null;
@@ -21,7 +18,9 @@ class Category extends AbstractModel
             if (is_string($value) && strlen($value) > 0) {
                 $this->name = $value;
             } else {
-                throw new \InvalidArgumentException("Name must be a non-empty string");
+                throw new \InvalidArgumentException(
+                    'Name must be a non-empty string'
+                );
             }
         }
     }
@@ -31,7 +30,9 @@ class Category extends AbstractModel
             if (is_string($value) && strlen($value) > 0) {
                 $this->description = $value;
             } else {
-                throw new \InvalidArgumentException("Description must be a non-empty string");
+                throw new \InvalidArgumentException(
+                    'Description must be a non-empty string'
+                );
             }
         }
     }
@@ -39,23 +40,37 @@ class Category extends AbstractModel
     public static function getAllCategories(): array
     {
         $pdo = Database::connection();
-        $stmt = $pdo->query("SELECT * FROM categories");
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::class);
+        $stmt = $pdo->query('SELECT * FROM categories');
+
+        return $stmt->fetchAll(
+            \PDO::FETCH_CLASS,
+            self::class
+        );
     }
 
     public static function findById(int $id): ?self
     {
         $pdo = Database::connection();
-        $stmt = $pdo->prepare("SELECT * FROM categories WHERE id = :id");
-        $stmt->execute(['id' => $id]);
+
+        $stmt = $pdo->prepare(
+            'SELECT * FROM categories WHERE id = :id'
+        );
+
+        $stmt->execute([
+            'id' => $id,
+        ]);
+
         $category = $stmt->fetchObject(self::class);
+
         return $category ?: null;
     }
 
-    public static function getCategoryNameById(int $id): ?string
-    {
+    public static function getCategoryNameById(
+        int $id
+    ): ?string {
         $category = self::findById($id);
-        return $category ? $category->name : null;
+
+        return $category?->name;
     }
 
     #[Override]

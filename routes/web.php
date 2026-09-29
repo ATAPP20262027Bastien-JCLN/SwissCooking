@@ -26,6 +26,10 @@ $app->post('/login', [LoginController::class, 'login']);
 $app->get('/register', [LoginController::class, 'showRegistration']);
 $app->post('/register', [LoginController::class, 'register']);
 
+$app->get('/profile', [UserController::class, 'profile']);
+$app->post('/profile/update', [UserController::class, 'updateProfile']);
+$app->post('/profile/picture', [UserController::class, 'updateProfilePicture']);
+$app->post('/profile/picture/delete', [UserController::class, 'deleteProfilePicture']);
 $app->get('/logout', [UserController::class, 'logout']);
 
 // $app->get('/', [Controller_Class::class, 'Func Name'])

@@ -85,7 +85,7 @@ class ErrorController extends BaseController
             405 => 'The request method is known by the server but is not supported by the target resource.',
             500 => 'The server has encountered a situation it does not know how to handle.',
         ];
-        
+
         $message = $customMessage !== ''
             ? $customMessage
             : $messages[$statusCode];
@@ -96,10 +96,10 @@ class ErrorController extends BaseController
             $response,
             'errors/display.php',
             [
-                'withMenu'   => false,
-                'title'      => $titles[$statusCode],
+                'withMenu' => false,
+                'title' => $titles[$statusCode],
                 'statusCode' => $statusCode,
-                'message'    => $message,
+                'message' => $message,
                 'description' => $description[$statusCode],
             ]
         );

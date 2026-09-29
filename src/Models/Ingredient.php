@@ -37,7 +37,7 @@ class Ingredient extends AbstractModel
             }
         }
     }
-    
+
     public ?float $quantity = null;
 
     public ?string $unit = null;
