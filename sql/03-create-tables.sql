@@ -10,7 +10,8 @@ CREATE TABLE users (
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    id_role INT NOT NULL DEFAULT 1
+    id_role INT NOT NULL DEFAULT 1,
+    profile_picture VARCHAR(2048) NULL
 );
 
 CREATE TABLE categories (
