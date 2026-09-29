@@ -82,9 +82,4 @@ class LoginController extends BaseController
             ]);
         }
     }
-
-    public function logout(Request $request, Response $response): Response
-    {
-        return ConnexionService::logout($request, $response);
-    }
 }

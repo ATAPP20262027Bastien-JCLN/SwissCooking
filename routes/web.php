@@ -4,6 +4,7 @@ use BastienJcln\SwissCooking\Controllers\HomeController;
 use BastienJcln\SwissCooking\Controllers\LoginController;
 use BastienJcln\SwissCooking\Controllers\RecipeController;
 use BastienJcln\SwissCooking\Controllers\ErrorController;
+use BastienJcln\SwissCooking\Controllers\UserController;
 
 $app->get('/400', [ErrorController::class, 'badRequest']);
 $app->get('/401', [ErrorController::class, 'unauthorized']);
@@ -24,7 +25,8 @@ $app->get('/login', [LoginController::class, 'showLogin']);
 $app->post('/login', [LoginController::class, 'login']);
 $app->get('/register', [LoginController::class, 'showRegistration']);
 $app->post('/register', [LoginController::class, 'register']);
-$app->get('/logout', [LoginController::class, 'logout']);
+
+$app->get('/logout', [UserController::class, 'logout']);
 
 // $app->get('/', [Controller_Class::class, 'Func Name'])
 // ->add(new Middleware_Class())
