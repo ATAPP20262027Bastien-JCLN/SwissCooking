@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace BastienJcln\SwissCooking\Controllers;
 
-use BastienJcln\SwissCooking\Models\User;
-use BastienJcln\SwissCooking\Services\ConnexionService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+
+use BastienJcln\SwissCooking\Services\ConnexionService;
+use BastienJcln\SwissCooking\Models\User;
 
 class LoginController extends BaseController
 {
