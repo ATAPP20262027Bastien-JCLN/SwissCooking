@@ -18,6 +18,10 @@ $app->get('/', [HomeController::class, 'index']);
 
 $app->get('/recipes', [RecipeController::class, 'list']);
 $app->post('/recipes', [RecipeController::class, 'list']);
+
+$app->get('/recipe/create', [RecipeController::class, 'create']);
+$app->post('/recipe/create', [RecipeController::class, 'store']);
+
 $app->get('/recipe/{id}', [RecipeController::class, 'show']);
 
 $app->get('/categories', [CategoryController::class, 'index']);
@@ -29,9 +33,15 @@ $app->post('/register', [LoginController::class, 'register']);
 
 $app->get('/profile', [UserController::class, 'profile']);
 $app->post('/profile/update', [UserController::class, 'updateProfile']);
-$app->post('/profile/picture', [UserController::class, 'updateProfilePicture']);
-$app->post('/profile/picture/delete', [UserController::class, 'deleteProfilePicture']);
+$app->post(
+    '/profile/picture',
+    [UserController::class, 'updateProfilePicture']
+);
+$app->post(
+    '/profile/picture/delete',
+    [UserController::class, 'deleteProfilePicture']
+);
 $app->get('/logout', [UserController::class, 'logout']);
 
 // $app->get('/', [Controller_Class::class, 'Func Name'])
-// ->add(new Middleware_Class())
+//     ->add(new Middleware_Class());

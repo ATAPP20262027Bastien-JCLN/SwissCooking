@@ -8,9 +8,9 @@
     <div class="row justify-content-center">
         <div class="col-12 col-xl-10 text-center">
             <h2 class="mb-2">Top Rated Recipes</h2>
-            <?php if (!empty($recipes)) : ?>
+            <?php if (!empty($recipes)): ?>
                 <div class="row justify-content-center g-4">
-                    <?php foreach ($recipes as $recipe) : ?>
+                    <?php foreach ($recipes as $recipe): ?>
                         <div class="col-12 col-md-6 col-lg-4">
                             <div class="card h-100 shadow-sm text-start">
                                 <a href="/recipe/<?= $recipe->id ?>" class="home-recipe-card">
@@ -45,7 +45,7 @@
                         </div>
                     <?php endforeach; ?>
                 </div>
-            <?php else : ?>
+            <?php else: ?>
                 <p>No recipes available.</p>
             <?php endif; ?>
         </div>

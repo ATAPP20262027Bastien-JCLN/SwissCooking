@@ -21,59 +21,13 @@ class MyApp
 
         $app->add(new SessionMiddleware());
 
-        ErrorMiddleware::register($app);
-
         $errorMiddleware = $app->addErrorMiddleware(
             true,
             true,
             true
         );
 
-        $errorMiddleware->setErrorHandler(
-            HttpNotFoundException::class,
-            function ($request, $exception, $displayErrorDetails) {
-                $response = new \Slim\Psr7\Response();
-
-                $view = new PhpRenderer(
-                    __DIR__ . '/../views'
-                );
-
-                $view->setLayout('layout.php');
-
-                return $view->render(
-                    $response->withStatus(404),
-                    'errors/404.php',
-                    [
-                        'withMenu' => false,
-                        'title' => 'Page non trouvée',
-                        'message' => $exception->getMessage(),
-                    ]
-                );
-            }
-        );
-
-        $errorMiddleware->setErrorHandler(
-            HttpInternalServerErrorException::class,
-            function ($request, $exception, $displayErrorDetails) {
-                $response = new \Slim\Psr7\Response();
-
-                $view = new PhpRenderer(
-                    __DIR__ . '/../views'
-                );
-
-                $view->setLayout('layout.php');
-
-                return $view->render(
-                    $response->withStatus(500),
-                    'errors/500.php',
-                    [
-                        'withMenu' => false,
-                        'title' => 'Erreur interne du serveur',
-                        'message' => $exception->getMessage(),
-                    ]
-                );
-            }
-        );
+        ErrorMiddleware::register($app);
 
         require __DIR__ . '/../routes/web.php';
 
