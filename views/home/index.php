@@ -9,44 +9,44 @@
         <div class="col-12 col-xl-10 text-center">
             <h2 class="mb-2">Top Rated Recipes</h2>
             <?php if (!empty($recipes)): ?>
-                <div class="row justify-content-center g-4">
-                    <?php foreach ($recipes as $recipe): ?>
-                        <div class="col-12 col-md-6 col-lg-4">
-                            <div class="card h-100 shadow-sm text-start">
-                                <a href="/recipe/<?= $recipe->id ?>" class="home-recipe-card">
-                                    <div class="card-body p-4">
-                                        <h5 class="card-title">
-                                            <?= escape($recipe->name) ?>
-                                        </h5>
-                                        <p class="card-text">
-                                            <strong>Category:</strong>
-                                            <?= escape($recipe->category) ?>
-                                        </p>
-                                        <p class="card-text">
-                                            <strong>Author:</strong>
-                                            <?= isset($users[$recipe->id])
+            <div class="row justify-content-center g-4">
+                <?php foreach ($recipes as $recipe): ?>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm text-start">
+                        <a href="/recipe/<?= $recipe->id ?>" class="home-recipe-card">
+                            <div class="card-body p-4">
+                                <h5 class="card-title">
+                                    <?= escape($recipe->name) ?>
+                                </h5>
+                                <p class="card-text">
+                                    <strong>Category:</strong>
+                                    <?= escape($recipe->category) ?>
+                                </p>
+                                <p class="card-text">
+                                    <strong>Author:</strong>
+                                    <?= isset($users[$recipe->id])
                                                 ? escape($users[$recipe->id]->name)
                                                 : 'Unknown' ?>
-                                        </p>
-                                        <p class="card-text">
-                                            <?= escape($recipe->description) ?>
-                                        </p>
-                                        <p class="card-text">
-                                            <small class="text-muted">
-                                                <strong>Average Rating:</strong>
-                                                <?= $recipe->averageRating !== null
+                                </p>
+                                <p class="card-text">
+                                    <?= escape($recipe->description) ?>
+                                </p>
+                                <p class="card-text">
+                                    <small class="text-muted">
+                                        <strong>Average Rating:</strong>
+                                        <?= $recipe->averageRating !== null
                                                     ? number_format($recipe->averageRating, 2)
                                                     : 'No ratings yet' ?>
-                                            </small>
-                                        </p>
-                                    </div>
-                                </a>
+                                    </small>
+                                </p>
                             </div>
-                        </div>
-                    <?php endforeach; ?>
+                        </a>
+                    </div>
                 </div>
+                <?php endforeach; ?>
+            </div>
             <?php else: ?>
-                <p>No recipes available.</p>
+            <p>No recipes available.</p>
             <?php endif; ?>
         </div>
     </div>

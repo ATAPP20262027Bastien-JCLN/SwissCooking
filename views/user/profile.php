@@ -1,42 +1,42 @@
 <div class="container py-5" style="padding-bottom: 3em!important;">
 
     <?php if (isset($_GET['success'])): ?>
-        <div class="row justify-content-center mb-4">
-            <div class="col-12 col-md-8 col-lg-6">
-                <div class="alert alert-success">
-                    <?php if ($_GET['success'] === 'picture_updated'): ?>
-                        Profile picture updated successfully.
-                    <?php elseif ($_GET['success'] === 'picture_deleted'): ?>
-                        Profile picture deleted successfully.
-                    <?php elseif ($_GET['success'] === 'profile_updated'): ?>
-                        Profile information updated successfully.
-                    <?php endif; ?>
-                </div>
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="alert alert-success">
+                <?php if ($_GET['success'] === 'picture_updated'): ?>
+                Profile picture updated successfully.
+                <?php elseif ($_GET['success'] === 'picture_deleted'): ?>
+                Profile picture deleted successfully.
+                <?php elseif ($_GET['success'] === 'profile_updated'): ?>
+                Profile information updated successfully.
+                <?php endif; ?>
             </div>
         </div>
+    </div>
     <?php endif; ?>
 
     <?php if (isset($_GET['error'])): ?>
-        <div class="row justify-content-center mb-4">
-            <div class="col-12 col-md-8 col-lg-6">
-                <div class="alert alert-danger">
-                    <?php if ($_GET['error'] === 'invalid_url'): ?>
-                        Please provide a valid image URL.
-                    <?php elseif ($_GET['error'] === 'invalid_file'): ?>
-                        Invalid image file. Please use PNG, JPG, JPEG,
-                        WEBP, or ICO.
-                    <?php elseif ($_GET['error'] === 'invalid_name'): ?>
-                        Please provide a valid name.
-                    <?php elseif ($_GET['error'] === 'invalid_email'): ?>
-                        Please provide a valid email address.
-                    <?php elseif ($_GET['error'] === 'email_taken'): ?>
-                        This email address is already being used.
-                    <?php elseif ($_GET['error'] === 'invalid_profile'): ?>
-                        The profile information is invalid.
-                    <?php endif; ?>
-                </div>
+    <div class="row justify-content-center mb-4">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="alert alert-danger">
+                <?php if ($_GET['error'] === 'invalid_url'): ?>
+                Please provide a valid image URL.
+                <?php elseif ($_GET['error'] === 'invalid_file'): ?>
+                Invalid image file. Please use PNG, JPG, JPEG,
+                WEBP, or ICO.
+                <?php elseif ($_GET['error'] === 'invalid_name'): ?>
+                Please provide a valid name.
+                <?php elseif ($_GET['error'] === 'invalid_email'): ?>
+                Please provide a valid email address.
+                <?php elseif ($_GET['error'] === 'email_taken'): ?>
+                This email address is already being used.
+                <?php elseif ($_GET['error'] === 'invalid_profile'): ?>
+                The profile information is invalid.
+                <?php endif; ?>
             </div>
         </div>
+    </div>
     <?php endif; ?>
 
     <div class="row justify-content-center">
@@ -194,15 +194,15 @@
                     </form>
 
                     <?php if ($user->profile_picture !== null): ?>
-                        <hr class="my-4">
+                    <hr class="my-4">
 
-                        <form action="/profile/picture/delete" method="POST">
-                            <button type="submit" class="btn btn-outline-danger" onclick="return confirm(
+                    <form action="/profile/picture/delete" method="POST">
+                        <button type="submit" class="btn btn-outline-danger" onclick="return confirm(
                                     'Are you sure you want to delete your profile picture?'
                                 );">
-                                Delete Profile Picture
-                            </button>
-                        </form>
+                            Delete Profile Picture
+                        </button>
+                    </form>
                     <?php endif; ?>
 
                 </div>
@@ -212,70 +212,70 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const fileRadio = document.getElementById('picture_type_file');
-        const urlRadio = document.getElementById('picture_type_url');
-        const fileContainer = document.getElementById('file-picture-input');
-        const urlContainer = document.getElementById('url-picture-input');
-        const fileInput = document.getElementById('profile_picture');
-        const urlInput = document.getElementById('profile_picture_url');
+document.addEventListener('DOMContentLoaded', function() {
+    const fileRadio = document.getElementById('picture_type_file');
+    const urlRadio = document.getElementById('picture_type_url');
+    const fileContainer = document.getElementById('file-picture-input');
+    const urlContainer = document.getElementById('url-picture-input');
+    const fileInput = document.getElementById('profile_picture');
+    const urlInput = document.getElementById('profile_picture_url');
 
-        function updatePictureInput() {
-            if (fileRadio.checked) {
-                fileContainer.style.display = 'block';
-                urlContainer.style.display = 'none';
-                fileInput.required = true;
-                urlInput.required = false;
-                urlInput.value = '';
-            } else {
-                fileContainer.style.display = 'none';
-                urlContainer.style.display = 'block';
-                fileInput.required = false;
-                urlInput.required = true;
-                fileInput.value = '';
-            }
+    function updatePictureInput() {
+        if (fileRadio.checked) {
+            fileContainer.style.display = 'block';
+            urlContainer.style.display = 'none';
+            fileInput.required = true;
+            urlInput.required = false;
+            urlInput.value = '';
+        } else {
+            fileContainer.style.display = 'none';
+            urlContainer.style.display = 'block';
+            fileInput.required = false;
+            urlInput.required = true;
+            fileInput.value = '';
         }
+    }
 
-        fileRadio.addEventListener('change', updatePictureInput);
-        urlRadio.addEventListener('change', updatePictureInput);
-        updatePictureInput();
+    fileRadio.addEventListener('change', updatePictureInput);
+    urlRadio.addEventListener('change', updatePictureInput);
+    updatePictureInput();
 
-        const profileInformation =
-            document.getElementById('profile-information');
+    const profileInformation =
+        document.getElementById('profile-information');
 
-        const editProfileForm =
-            document.getElementById('edit-profile-form');
+    const editProfileForm =
+        document.getElementById('edit-profile-form');
 
-        const editProfileButton =
-            document.getElementById('edit-profile-button');
+    const editProfileButton =
+        document.getElementById('edit-profile-button');
 
-        const cancelEditProfile =
-            document.getElementById('cancel-edit-profile');
+    const cancelEditProfile =
+        document.getElementById('cancel-edit-profile');
 
-        editProfileButton.addEventListener('click', function () {
-            profileInformation.style.display = 'none';
-            editProfileForm.style.display = 'block';
-        });
-
-        cancelEditProfile.addEventListener('click', function () {
-            editProfileForm.style.display = 'none';
-            profileInformation.style.display = 'block';
-        });
-
-        const successAlert =
-            document.querySelector('.alert-success');
-
-        if (successAlert) {
-            setTimeout(function () {
-                successAlert.style.transition = 'opacity 0.5s';
-                successAlert.style.opacity = '0';
-
-                setTimeout(function () {
-                    successAlert.remove();
-                }, 500);
-
-                window.location.href = '/profile';
-            }, 3000);
-        }
+    editProfileButton.addEventListener('click', function() {
+        profileInformation.style.display = 'none';
+        editProfileForm.style.display = 'block';
     });
+
+    cancelEditProfile.addEventListener('click', function() {
+        editProfileForm.style.display = 'none';
+        profileInformation.style.display = 'block';
+    });
+
+    const successAlert =
+        document.querySelector('.alert-success');
+
+    if (successAlert) {
+        setTimeout(function() {
+            successAlert.style.transition = 'opacity 0.5s';
+            successAlert.style.opacity = '0';
+
+            setTimeout(function() {
+                successAlert.remove();
+            }, 500);
+
+            window.location.href = '/profile';
+        }, 3000);
+    }
+});
 </script>
