@@ -108,10 +108,23 @@
                     <?php if (!empty($recipe->comments)): ?>
                         <div class="comments-list">
                             <?php foreach ($recipe->comments as $comment): ?>
-                                <div class="card mb-3 border-0 bg-light">
+                                <div class="card mb-3 border-0">
                                     <div class="card-body">
                                         <div class="d-flex justify-content-between align-items-start">
-                                            <div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                <img
+                                                    src="<?= escape(
+                                                        "/" . $comment->user_profile_picture === "/"
+                                                        ? 'https://ui-avatars.com/api/?name='
+                                                        . urlencode($comment->user_name ?? 'Anonymous')
+                                                        . '&size=256' : "/" . $comment->user_profile_picture
+                                                    ) ?>"
+                                                    alt=""
+                                                    class="rounded-circle"
+                                                    width="40"
+                                                    height="40"
+                                                >
+
                                                 <strong>
                                                     <?= escape($comment->user_name ?? 'Anonymous') ?>
                                                 </strong>

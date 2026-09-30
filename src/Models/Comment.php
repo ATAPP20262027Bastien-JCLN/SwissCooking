@@ -93,6 +93,36 @@ class Comment extends AbstractModel
         }
     }
 
+    public ?string $user_name = null {
+        set {
+            if (
+                $value === null ||
+                (is_string($value) && strlen($value) <= 100)
+            ) {
+                $this->user_name = $value;
+            } else {
+                throw new \InvalidArgumentException(
+                    'Invalid user name'
+                );
+            }
+        }
+    }
+
+    public ?string $user_profile_picture = null {
+        set {
+            if (
+                $value === null ||
+                (is_string($value) && strlen($value) <= 2048)
+            ) {
+                $this->user_profile_picture = $value;
+            } else {
+                throw new \InvalidArgumentException(
+                    'Invalid user profile picture path or URL'
+                );
+            }
+        }
+    }
+
     protected array $casts = [
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
@@ -122,7 +152,8 @@ class Comment extends AbstractModel
                 c.content,
                 c.created_at,
                 c.updated_at,
-                u.name AS user_name
+                u.name AS user_name,
+                u.profile_picture AS user_profile_picture
              FROM comments c
              INNER JOIN users u
                  ON u.id = c.user_id
