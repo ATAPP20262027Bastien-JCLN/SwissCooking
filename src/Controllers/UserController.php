@@ -6,6 +6,7 @@ namespace BastienJcln\SwissCooking\Controllers;
 
 use BastienJcln\SwissCooking\Models\Recipe;
 use BastienJcln\SwissCooking\Models\User;
+use BastienJcln\SwissCooking\Models\Role;
 use BastienJcln\SwissCooking\Services\ConnexionService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -36,8 +37,11 @@ class UserController extends BaseController
             $recipes = Recipe::getRecipesByUserId($user->id);
         }
 
+        $roles = Role::getAllRoles();
+
         return $this->view->render($response, 'user/profile.php', [
             'user'    => $user,
+            'roles'   => $roles,
             'recipes' => $recipes,
         ]);
     }

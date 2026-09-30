@@ -30,7 +30,18 @@ class Role extends AbstractModel
         $pdo = Database::connection();
         $stmt = $pdo->query('SELECT * FROM roles');
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::class);
+        $roles_db = $stmt->fetchAll(
+            \PDO::FETCH_CLASS,
+            self::class
+        );
+
+        $roles = [];
+        
+        foreach ($roles_db as $role) {
+            $roles[$role->id] = $role;
+        }
+
+        return $roles;
     }
 
     public static function findById(int $id): ?self
