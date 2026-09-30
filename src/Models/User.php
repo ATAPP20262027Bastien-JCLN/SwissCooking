@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Models;
 
@@ -16,14 +16,14 @@ class User extends AbstractModel
     public ?string $name = null {
         set {
             if (
-            is_string($value) &&
-            strlen($value) > 0 &&
-            strlen($value) <= 100
+                is_string($value) &&
+                strlen($value) > 0 &&
+                strlen($value) <= 100
             ) {
                 $this->name = $value;
             } else {
                 throw new \InvalidArgumentException(
-                'Name must be a non-empty string with a maximum length of 100 characters'
+                    'Name must be a non-empty string with a maximum length of 100 characters'
                 );
             }
         }
@@ -35,7 +35,7 @@ class User extends AbstractModel
                 $this->email = $value;
             } else {
                 throw new \InvalidArgumentException(
-                'Invalid email format'
+                    'Invalid email format'
                 );
             }
         }
@@ -47,7 +47,7 @@ class User extends AbstractModel
                 $this->password_hash = $value;
             } else {
                 throw new \InvalidArgumentException(
-                'Password must be a non-empty string'
+                    'Password must be a non-empty string'
                 );
             }
         }
@@ -56,26 +56,26 @@ class User extends AbstractModel
     public ?int $id_role = null {
         set {
             if (
-            is_int($value) &&
-            $value > 0 &&
-            Role::findById($value) !== null
+                is_int($value) &&
+                $value > 0 &&
+                Role::findById($value) !== null
             ) {
                 $this->id_role = $value;
             } else {
                 throw new \InvalidArgumentException(
-                'Role ID must be a positive integer'
+                    'Role ID must be a positive integer'
                 );
             }
         }
     }
 
-    public array $favorite_recipes = [] {
+    public array $favorite_recipes = []{
         set {
             if (is_array($value)) {
                 $this->favorite_recipes = $value;
             } else {
                 throw new \InvalidArgumentException(
-                'Favorite recipes must be an array'
+                    'Favorite recipes must be an array'
                 );
             }
         }
@@ -84,13 +84,13 @@ class User extends AbstractModel
     public ?string $profile_picture = null {
         set {
             if (
-            $value === null ||
-            (is_string($value) && strlen($value) <= 2048)
+                $value === null ||
+                (is_string($value) && strlen($value) <= 2048)
             ) {
                 $this->profile_picture = $value;
             } else {
                 throw new \InvalidArgumentException(
-                'Invalid profile picture path or URL'
+                    'Invalid profile picture path or URL'
                 );
             }
         }
@@ -98,7 +98,7 @@ class User extends AbstractModel
 
     public static function getAllUsers(): array
     {
-        $pdo = Database::connection();
+        $pdo  = Database::connection();
         $stmt = $pdo->query('SELECT * FROM users');
 
         return $stmt->fetchAll(\PDO::FETCH_CLASS, self::class);
@@ -106,7 +106,7 @@ class User extends AbstractModel
 
     public static function findById(int $id): ?self
     {
-        $pdo = Database::connection();
+        $pdo  = Database::connection();
         $stmt = $pdo->prepare(
             'SELECT * FROM users WHERE id = :id'
         );
@@ -119,7 +119,7 @@ class User extends AbstractModel
 
     public static function findByEmail(string $email): ?self
     {
-        $pdo = Database::connection();
+        $pdo  = Database::connection();
         $stmt = $pdo->prepare(
             'SELECT * FROM users WHERE email = :email'
         );
@@ -144,8 +144,8 @@ class User extends AbstractModel
             }
 
             $localPath = dirname(__DIR__, 2)
-                . '/public/'
-                . ltrim($this->profile_picture, '/');
+            . '/public/'
+            . ltrim($this->profile_picture, '/');
 
             if (is_file($localPath)) {
                 return '/' . ltrim(
@@ -175,7 +175,7 @@ class User extends AbstractModel
         }
 
         return 'https://ui-avatars.com/api/?name='
-            . urlencode($this->name ?? 'User')
+        . urlencode($this->name ?? 'User')
             . '&size=256';
     }
 
@@ -202,10 +202,10 @@ class User extends AbstractModel
         );
 
         $result = $stmt->execute([
-            'name' => $this->name,
-            'email' => $this->email,
-            'password_hash' => $this->password_hash,
-            'id_role' => $this->id_role,
+            'name'            => $this->name,
+            'email'           => $this->email,
+            'password_hash'   => $this->password_hash,
+            'id_role'         => $this->id_role,
             'profile_picture' => $this->profile_picture,
         ]);
 
@@ -233,12 +233,12 @@ class User extends AbstractModel
         );
 
         return $stmt->execute([
-            'name' => $this->name,
-            'email' => $this->email,
-            'password_hash' => $this->password_hash,
-            'id_role' => $this->id_role,
+            'name'            => $this->name,
+            'email'           => $this->email,
+            'password_hash'   => $this->password_hash,
+            'id_role'         => $this->id_role,
             'profile_picture' => $this->profile_picture,
-            'id' => $this->id,
+            'id'              => $this->id,
         ]);
     }
 }

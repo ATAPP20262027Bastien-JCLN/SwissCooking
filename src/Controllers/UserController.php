@@ -1,14 +1,14 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Controllers;
 
+use BastienJcln\SwissCooking\Models\Recipe;
+use BastienJcln\SwissCooking\Models\User;
+use BastienJcln\SwissCooking\Services\ConnexionService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-
-use BastienJcln\SwissCooking\Services\ConnexionService;
-use BastienJcln\SwissCooking\Models\User;
 
 class UserController extends BaseController
 {
@@ -30,8 +30,15 @@ class UserController extends BaseController
                 ->withStatus(302);
         }
 
+        $recipes = [];
+
+        if ($user->id !== null) {
+            $recipes = Recipe::getRecipesByUserId($user->id);
+        }
+
         return $this->view->render($response, 'user/profile.php', [
-            'user' => $user,
+            'user'    => $user,
+            'recipes' => $recipes,
         ]);
     }
 
@@ -49,7 +56,7 @@ class UserController extends BaseController
 
         $data = $request->getParsedBody() ?? [];
 
-        $name = trim((string) ($data['name'] ?? ''));
+        $name  = trim((string) ($data['name'] ?? ''));
         $email = trim((string) ($data['email'] ?? ''));
 
         if ($name === '' || strlen($name) > 100) {
@@ -58,7 +65,7 @@ class UserController extends BaseController
                 ->withStatus(302);
         }
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return $response
                 ->withHeader('Location', '/profile?error=invalid_email')
                 ->withStatus(302);
@@ -76,7 +83,7 @@ class UserController extends BaseController
         }
 
         try {
-            $user->name = $name;
+            $user->name  = $name;
             $user->email = $email;
             $user->update();
         } catch (\InvalidArgumentException $e) {
@@ -102,7 +109,7 @@ class UserController extends BaseController
                 ->withStatus(302);
         }
 
-        $data = $request->getParsedBody() ?? [];
+        $data        = $request->getParsedBody() ?? [];
         $pictureType = $data['picture_type'] ?? null;
 
         if ($pictureType === 'url') {
@@ -139,7 +146,7 @@ class UserController extends BaseController
 
         if ($pictureType === 'file') {
             $uploadedFiles = $request->getUploadedFiles();
-            $file = $uploadedFiles['profile_picture'] ?? null;
+            $file          = $uploadedFiles['profile_picture'] ?? null;
 
             if (
                 $file === null ||
@@ -168,7 +175,7 @@ class UserController extends BaseController
                 )
             );
 
-            if (!in_array($extension, $allowedExtensions, true)) {
+            if (! in_array($extension, $allowedExtensions, true)) {
                 return $response
                     ->withHeader(
                         'Location',
@@ -177,7 +184,7 @@ class UserController extends BaseController
                     ->withStatus(302);
             }
 
-            $tmpPath = $file->getStream()->getMetadata('uri');
+            $tmpPath  = $file->getStream()->getMetadata('uri');
             $mimeType = mime_content_type($tmpPath);
 
             $allowedMimeTypes = [
@@ -188,7 +195,7 @@ class UserController extends BaseController
                 'image/vnd.microsoft.icon',
             ];
 
-            if (!in_array($mimeType, $allowedMimeTypes, true)) {
+            if (! in_array($mimeType, $allowedMimeTypes, true)) {
                 return $response
                     ->withHeader(
                         'Location',
@@ -200,10 +207,10 @@ class UserController extends BaseController
             $uploadDirectory = dirname(__DIR__, 2)
                 . '/public/upload/profile_pic/';
 
-            if (!is_dir($uploadDirectory)) {
+            if (! is_dir($uploadDirectory)) {
                 if (
-                    !mkdir($uploadDirectory, 0775, true) &&
-                    !is_dir($uploadDirectory)
+                    ! mkdir($uploadDirectory, 0775, true) &&
+                    ! is_dir($uploadDirectory)
                 ) {
                     throw new \RuntimeException(
                         'Could not create profile picture directory'
@@ -211,7 +218,7 @@ class UserController extends BaseController
                 }
             }
 
-            if (!is_writable($uploadDirectory)) {
+            if (! is_writable($uploadDirectory)) {
                 throw new \RuntimeException(
                     'Upload directory is not writable: '
                     . $uploadDirectory
@@ -268,15 +275,15 @@ class UserController extends BaseController
         string $url,
         string $username
     ): ?string {
-        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+        if (! filter_var($url, FILTER_VALIDATE_URL)) {
             return null;
         }
 
         $parts = parse_url($url);
 
         if (
-            !isset($parts['scheme']) ||
-            !in_array(
+            ! isset($parts['scheme']) ||
+            ! in_array(
                 strtolower($parts['scheme']),
                 ['http', 'https'],
                 true
@@ -285,7 +292,7 @@ class UserController extends BaseController
             return null;
         }
 
-        if (!function_exists('curl_init')) {
+        if (! function_exists('curl_init')) {
             return null;
         }
 
@@ -314,20 +321,20 @@ class UserController extends BaseController
         }
 
         curl_setopt_array($curl, [
-            CURLOPT_FILE => $handle,
+            CURLOPT_FILE           => $handle,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_MAXREDIRS => 5,
+            CURLOPT_MAXREDIRS      => 5,
             CURLOPT_CONNECTTIMEOUT => 10,
-            CURLOPT_TIMEOUT => 30,
-            CURLOPT_USERAGENT =>
-                'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36',
+            CURLOPT_TIMEOUT        => 30,
+            CURLOPT_USERAGENT      =>
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/140 Safari/537.36',
             CURLOPT_SSL_VERIFYPEER => true,
             CURLOPT_SSL_VERIFYHOST => 2,
-            CURLOPT_FAILONERROR => false,
-            CURLOPT_HEADER => false,
+            CURLOPT_FAILONERROR    => false,
+            CURLOPT_HEADER         => false,
         ]);
 
-        $success = curl_exec($curl);
+        $success  = curl_exec($curl);
         $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
         curl_close($curl);
@@ -343,7 +350,7 @@ class UserController extends BaseController
             return null;
         }
 
-        if (!is_file($temporaryFile)) {
+        if (! is_file($temporaryFile)) {
             return null;
         }
 
@@ -354,19 +361,19 @@ class UserController extends BaseController
             return null;
         }
 
-        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $finfo    = new \finfo(FILEINFO_MIME_TYPE);
         $mimeType = $finfo->file($temporaryFile);
 
         $mimeToExtension = [
-            'image/png' => 'png',
-            'image/jpeg' => 'jpg',
-            'image/webp' => 'webp',
-            'image/gif' => 'gif',
-            'image/x-icon' => 'ico',
+            'image/png'                => 'png',
+            'image/jpeg'               => 'jpg',
+            'image/webp'               => 'webp',
+            'image/gif'                => 'gif',
+            'image/x-icon'             => 'ico',
             'image/vnd.microsoft.icon' => 'ico',
         ];
 
-        if (!isset($mimeToExtension[$mimeType])) {
+        if (! isset($mimeToExtension[$mimeType])) {
             unlink($temporaryFile);
             return null;
         }
@@ -376,17 +383,17 @@ class UserController extends BaseController
         $uploadDirectory = dirname(__DIR__, 2)
             . '/public/upload/profile_pic/';
 
-        if (!is_dir($uploadDirectory)) {
+        if (! is_dir($uploadDirectory)) {
             if (
-                !mkdir($uploadDirectory, 0775, true) &&
-                !is_dir($uploadDirectory)
+                ! mkdir($uploadDirectory, 0775, true) &&
+                ! is_dir($uploadDirectory)
             ) {
                 unlink($temporaryFile);
                 return null;
             }
         }
 
-        if (!is_writable($uploadDirectory)) {
+        if (! is_writable($uploadDirectory)) {
             unlink($temporaryFile);
             return null;
         }
@@ -397,7 +404,7 @@ class UserController extends BaseController
             $username
         );
 
-        $filename = $safeUsername . '_pfp.' . $extension;
+        $filename    = $safeUsername . '_pfp.' . $extension;
         $destination = $uploadDirectory . $filename;
 
         foreach ([
@@ -418,7 +425,7 @@ class UserController extends BaseController
             }
         }
 
-        if (!rename($temporaryFile, $destination)) {
+        if (! rename($temporaryFile, $destination)) {
             unlink($temporaryFile);
             return null;
         }
@@ -449,8 +456,8 @@ class UserController extends BaseController
         }
 
         $path = dirname(__DIR__, 2)
-            . '/public/'
-            . ltrim($user->profile_picture, '/');
+        . '/public/'
+        . ltrim($user->profile_picture, '/');
 
         $realPath = realpath($path);
 

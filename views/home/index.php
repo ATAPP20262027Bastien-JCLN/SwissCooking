@@ -1,4 +1,4 @@
-<div class="container py-5" style="padding-bottom: 3em!important;">
+<div class="container py-5" style="padding-bottom: 3em !important">
     <div class="row justify-content-center mb-5">
         <div class="col-12 col-md-8 text-center">
             <h1 class="mt-0">Welcome to Swiss Cooking</h1>
@@ -8,35 +8,30 @@
     <div class="row justify-content-center">
         <div class="col-12 col-xl-10 text-center">
             <h2 class="mb-2">Top Rated Recipes</h2>
-            <?php if (!empty($recipes)): ?>
+            <?php if (! empty($recipes)): ?>
             <div class="row justify-content-center g-4">
                 <?php foreach ($recipes as $recipe): ?>
                 <div class="col-12 col-md-6 col-lg-4">
                     <div class="card h-100 shadow-sm text-start">
-                        <a href="/recipe/<?= $recipe->id ?>" class="home-recipe-card">
+                        <a href="/recipe/<?php echo $recipe->id ?>" class="home-recipe-card">
                             <div class="card-body p-4">
-                                <h5 class="card-title">
-                                    <?= escape($recipe->name) ?>
-                                </h5>
+                                <h5 class="card-title"><?php echo escape($recipe->name) ?></h5>
                                 <p class="card-text">
                                     <strong>Category:</strong>
-                                    <?= escape($recipe->category) ?>
+                                    <?php echo escape($recipe->category) ?>
                                 </p>
                                 <p class="card-text">
                                     <strong>Author:</strong>
-                                    <?= isset($users[$recipe->id])
-                                                ? escape($users[$recipe->id]->name)
-                                                : 'Unknown' ?>
+                                    <?php echo isset($users[$recipe->id]) ?
+                                    escape($users[$recipe->id]->name) : 'Unknown' ?>
                                 </p>
-                                <p class="card-text">
-                                    <?= escape($recipe->description) ?>
-                                </p>
+                                <p class="card-text"><?php echo escape($recipe->description) ?></p>
                                 <p class="card-text">
                                     <small class="text-muted">
                                         <strong>Average Rating:</strong>
-                                        <?= $recipe->averageRating !== null
-                                                    ? number_format($recipe->averageRating, 2)
-                                                    : 'No ratings yet' ?>
+                                        <?php echo $recipe->averageRating !== null ?
+                                            number_format($recipe->averageRating, 2) : 'No ratings yet';
+                                        ?>
                                     </small>
                                 </p>
                             </div>

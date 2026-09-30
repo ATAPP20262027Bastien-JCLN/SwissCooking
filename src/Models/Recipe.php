@@ -298,6 +298,58 @@ class Recipe extends AbstractModel
         return $recipes;
     }
 
+    public static function getRecipesByUserId(
+        int $userId
+    ): array {
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare(
+            'SELECT *
+         FROM recipes
+         WHERE user_id = :user_id
+         ORDER BY id DESC'
+        );
+
+        $stmt->execute([
+            'user_id' => $userId,
+        ]);
+
+        $recipes = [];
+
+        while ($recipe = $stmt->fetchObject(self::class)) {
+            $recipe->category =
+            Category::getCategoryNameById($recipe->category_id);
+
+            $ingredientsStmt = $pdo->prepare(
+                'SELECT i.*, ri.quantity, ri.unit
+             FROM ingredients i
+             JOIN recipe_ingredients ri
+                 ON i.id = ri.ingredient_id
+             WHERE ri.recipe_id = :recipe_id'
+            );
+
+            $ingredientsStmt->execute([
+                'recipe_id' => $recipe->id,
+            ]);
+
+            $recipe->ingredients =
+            $ingredientsStmt->fetchAll(
+                \PDO::FETCH_CLASS,
+                Ingredient::class
+            );
+
+            $recipe->averageRating =
+            Rating::getAverageRatingForRecipe($recipe->id);
+
+            $recipe->comments =
+            Comment::getCommentsForRecipe($recipe->id);
+
+            $recipes[] = $recipe;
+        }
+
+        return $recipes;
+    }
+
     #[Override]
     public function insert(): bool
     {
