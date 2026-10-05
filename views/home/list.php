@@ -1,7 +1,7 @@
 <div class="container py-5">
     <div class="row">
         <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
                 <div class="d-flex flex-row align-items-center gap-2 mb-2 mb-md-0">
                     <h2 class="mb-0">All Recipes</h2>
                     <?php if (! empty($fromCategory) && $fromCategory === true): ?>
@@ -31,7 +31,7 @@
                 </button>
             </div>
             <?php if (! empty($recipes)): ?>
-            <div class="row g-4 main-content" id="recipeList">
+            <div class="row g-4 main-content recipe-panel" id="recipeList">
                 <?php foreach ($recipes as $recipe): ?>
                 <div class="col-12 col-md-6 col-lg-4 col-xl-3 recipe-card"
                     data-category="<?php echo escape($recipe->category) ?>"

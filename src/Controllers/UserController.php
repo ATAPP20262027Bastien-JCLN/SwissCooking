@@ -5,8 +5,9 @@ declare (strict_types = 1);
 namespace BastienJcln\SwissCooking\Controllers;
 
 use BastienJcln\SwissCooking\Models\Recipe;
-use BastienJcln\SwissCooking\Models\User;
 use BastienJcln\SwissCooking\Models\Role;
+use BastienJcln\SwissCooking\Models\User;
+use BastienJcln\SwissCooking\Models\Category;
 use BastienJcln\SwissCooking\Services\ConnexionService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -534,6 +535,98 @@ class UserController extends BaseController
                 '/profile?success=picture_deleted'
             )
             ->withStatus(302);
+    }
+
+    public function toggleFavorite(
+        Request $request,
+        Response $response,
+        array $args
+    ): Response {
+        $user = ConnexionService::connectedUser();
+
+        if ($user === null) {
+            return $response
+                ->withHeader('Location', '/login')
+                ->withStatus(302);
+        }
+
+        $recipeId = (int) ($args['id'] ?? 0);
+
+        if ($recipeId <= 0) {
+            return $response
+                ->withHeader('Location', '/404')
+                ->withStatus(302);
+        }
+
+        $recipe = Recipe::findById($recipeId);
+        $isFavorite  = false;
+
+        if ($user !== null) {
+            $isFavorite = $user->isFavorite(
+                (int) $recipe->id
+            );
+        }
+        if ($recipe === null) {
+            return $response
+                ->withHeader('Location', '/404')
+                ->withStatus(302);
+        }
+
+        try {
+            if ($user->isFavorite($recipeId)) {
+                $user->removeFavorite($recipeId);
+            } else {
+                $user->addFavorite($recipeId);
+            }
+        } catch (\Throwable $e) {
+            return $response
+                ->withHeader('Location', '/500')
+                ->withStatus(302);
+        }
+
+        return $response
+            ->withHeader(
+                'Location',
+                '/recipe/' . $recipeId
+            )
+            ->withStatus(302);
+    }
+
+    public function favorites(
+        Request $request,
+        Response $response
+    ): Response {
+        $user = ConnexionService::connectedUser();
+
+        if ($user === null) {
+            return $response
+                ->withHeader('Location', '/login')
+                ->withStatus(302);
+        }
+
+        $recipes = $user->getFavoriteRecipes();
+
+        $users = [];
+
+        foreach ($recipes as $recipe) {
+            if ($recipe->user_id !== null) {
+                $users[$recipe->id] = User::findById(
+                    (int) $recipe->user_id
+                );
+            }
+        }
+
+        $categories = Category::getAllCategories();
+
+        return $this->view->render(
+            $response,
+            'user/favorites.php',
+            [
+                'categories' => $categories,
+                'recipes' => $recipes,
+                'users'   => $users,
+            ]
+        );
     }
 
     public function logout(

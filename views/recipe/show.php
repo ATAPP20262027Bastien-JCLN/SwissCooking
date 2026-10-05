@@ -7,7 +7,27 @@
             <div class="card shadow-sm">
                 <div class="card-body p-4 p-md-5 position-relative">
                     <div class="position-absolute top-0 end-0 mt-3 me-3 d-flex gap-2">
-                        <?php if ($_SESSION['user_role'] === 1 || $recipe->user_id === $_SESSION['user_id']): ?>
+                        <?php if ($user !== null): ?>
+                        
+                        <form action="/recipe/<?php echo escape($recipe->id) ?>/favorite" method="POST"
+                            class="d-inline">
+                            <button type="submit" class="btn btn-sm <?php echo $isFavorite
+                                                                        ? 'btn-danger'
+                                                                        : 'btn-outline-danger'; ?>">
+                                <?php echo $isFavorite
+                                        ? '♥ Favorited'
+                                    : '♡ Favorite'; ?>
+                            </button>
+                        </form>
+
+                        <?php endif; ?>
+
+                        <?php if (
+                                (int) ($_SESSION['user_role'] ?? 0) === 1 ||
+                                (int) $recipe->user_id ===
+                                (int) ($_SESSION['user_id'] ?? 0)
+                        ): ?>
+
                         <a href="/recipe/<?php echo escape($recipe->id) ?>/edit" class="btn btn-sm btn-outline-primary">
                             Edit
                         </a>
@@ -18,7 +38,9 @@
                                 Delete
                             </button>
                         </form>
+
                         <?php endif; ?>
+
                     </div>
                     <div class="mb-4">
                         <span class="badge bg-secondary">
@@ -31,7 +53,8 @@
                     <?php if ($user): ?>
                     <p class="text-muted">
                         Recipe by
-                        <a href="/user/<?php echo escape($user->id ?? 0) ?>" style="text-decoration: none; color: inherit;">
+                        <a href="/user/<?php echo escape($user->id ?? 0) ?>"
+                            style="text-decoration: none; color: inherit;">
                             <span class="visually-hidden">View profile of </span>
                             <?php echo escape($user->name ?? 'Unknown') ?>
                         </a>
@@ -117,11 +140,12 @@
                                                           . urlencode($comment->user_name ?? 'Anonymous')
                                                       . '&size=256' : "/" . $comment->user_profile_picture
                                                   ) ?>" alt="" class="rounded-circle" width="40" height="40">
-                                        <a href="/user/<?php echo escape($comment->user_id ?? 0) ?>" style="text-decoration: none; color: inherit;">
+                                        <a href="/user/<?php echo escape($comment->user_id ?? 0) ?>"
+                                            style="text-decoration: none; color: inherit;">
                                             <span class="visually-hidden">View profile of </span>
-                                        <strong>
-                                            <?php echo escape($comment->user_name ?? 'Anonymous') ?>
-                                        </strong>
+                                            <strong>
+                                                <?php echo escape($comment->user_name ?? 'Anonymous') ?>
+                                            </strong>
                                         </a>
                                     </div>
                                     <?php if (! empty($comment->created_at)): ?>

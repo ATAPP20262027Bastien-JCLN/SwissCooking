@@ -24,6 +24,9 @@ $app->get('/recipe/{id}', [RecipeController::class, 'show']);
 $app->post('/recipe/{id}/delete', [RecipeController::class, 'delete']);
 $app->get('/recipe/{id}/edit', [RecipeController::class, 'editForm']);
 $app->post('/recipe/{id}/edit', [RecipeController::class, 'update']);
+$app->post('/recipe/{id}/favorite', [UserController::class, 'toggleFavorite']);
+
+$app->get('/favorites', [UserController::class, 'favorites']);
 
 $app->get('/categories', [CategoryController::class, 'index']);
 
@@ -35,8 +38,8 @@ $app->post('/register', [LoginController::class, 'register']);
 $app->get('/profile', [UserController::class, 'profile']);
 $app->get('/user/{id}', [UserController::class, 'publicProfile']);
 $app->post('/profile/update', [UserController::class, 'updateProfile']);
-$app->post('/profile/picture',[UserController::class, 'updateProfilePicture']);
-$app->get('/profile/picture/delete',[UserController::class, 'deleteProfilePicture']);
+$app->post('/profile/picture', [UserController::class, 'updateProfilePicture']);
+$app->get('/profile/picture/delete', [UserController::class, 'deleteProfilePicture']);
 $app->get('/logout', [UserController::class, 'logout']);
 
 // $app->get('/', [Controller_Class::class, 'Func Name'])

@@ -179,6 +179,103 @@ class User extends AbstractModel
             . '&size=256';
     }
 
+    public function isFavorite(int $recipeId): bool
+    {
+        if ($this->id === null) {
+            return false;
+        }
+
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare(
+            'SELECT id
+            FROM favorites
+            WHERE user_id = :user_id
+            AND recipe_id = :recipe_id
+            LIMIT 1'
+        );
+
+        $stmt->execute([
+            'user_id'   => $this->id,
+            'recipe_id' => $recipeId,
+        ]);
+
+        return $stmt->fetchColumn() !== false;
+    }
+
+    public function addFavorite(int $recipeId): bool
+    {
+        if ($this->id === null) {
+            return false;
+        }
+
+        if ($this->isFavorite($recipeId)) {
+            return true;
+        }
+
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare(
+            'INSERT INTO favorites (
+                user_id,
+                recipe_id
+            )
+            VALUES (
+                :user_id,
+                :recipe_id
+            )'
+        );
+
+        return $stmt->execute([
+            'user_id'   => $this->id,
+            'recipe_id' => $recipeId,
+        ]);
+    }
+
+    public function removeFavorite(int $recipeId): bool
+    {
+        if ($this->id === null) {
+            return false;
+        }
+
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare(
+            'DELETE FROM favorites
+            WHERE user_id = :user_id
+            AND recipe_id = :recipe_id'
+        );
+
+        return $stmt->execute([
+            'user_id'   => $this->id,
+            'recipe_id' => $recipeId,
+        ]);
+    }
+
+    public function getFavoriteRecipes(): array
+    {
+        if ($this->id === null) {
+            return [];
+        }
+
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare(
+            'SELECT r.*
+            FROM recipes r
+            INNER JOIN favorites f
+                ON f.recipe_id = r.id
+            WHERE f.user_id = :user_id
+            ORDER BY f.id DESC'
+        );
+
+        $stmt->execute([
+            'user_id' => $this->id,
+        ]);
+
+        return $stmt->fetchAll(\PDO::FETCH_CLASS, Recipe::class);
+    }
+
     #[Override]
     public function insert(): bool
     {

@@ -46,6 +46,11 @@ class RecipeController extends BaseController
             $response,
             'recipe/show.php',
             [
+                'isFavorite' => ConnexionService::connectedUser() !== null
+                    ? ConnexionService::connectedUser()->isFavorite(
+                        (int) $recipe->id
+                    )
+                    : false,
                 'recipe' => $recipe,
                 'user'   => $user,
             ]

@@ -47,16 +47,23 @@
             const currentTheme =
                 document.documentElement.getAttribute('data-bs-theme');
 
-            const button = document.getElementById('darkModeToggle');
+            const buttonDesktop = document.getElementById('darkModeToggleDesktop');
+            const buttonMobile = document.getElementById('darkModeToggleMobile');
 
-            if (!button) {
+            if (!buttonDesktop) {
                 return;
             }
 
             if (currentTheme === 'dark') {
-                button.textContent = '☀️ Light mode';
+                buttonDesktop.textContent = '☀️ Light mode';
+                if (buttonMobile) {
+                    buttonMobile.textContent = '☀️';
+                }
             } else {
-                button.textContent = '🌙 Dark mode';
+                buttonDesktop.textContent = '🌙 Dark mode';
+                if (buttonMobile) {
+                    buttonMobile.textContent = '🌙';
+                }
             }
         }
 
@@ -81,10 +88,15 @@
 
         document.addEventListener('DOMContentLoaded', function () {
 
-            const button = document.getElementById('darkModeToggle');
+            const buttonDesktop = document.getElementById('darkModeToggleDesktop');
+            const buttonMobile = document.getElementById('darkModeToggleMobile');
 
-            if (button) {
-                button.addEventListener('click', toggleDarkMode);
+            if (buttonDesktop) {
+                buttonDesktop.addEventListener('click', toggleDarkMode);
+            }
+
+            if (buttonMobile) {
+                buttonMobile.addEventListener('click', toggleDarkMode);
             }
 
             updateThemeButton();
