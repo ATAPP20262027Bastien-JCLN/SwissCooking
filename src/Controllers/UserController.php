@@ -46,6 +46,38 @@ class UserController extends BaseController
         ]);
     }
 
+    public function publicProfile(
+        Request $request,
+        Response $response,
+        array $args
+    ): Response {
+        $userId = (int) ($args['id'] ?? 0);
+
+        if ($userId <= 0) {
+            return $response
+                ->withHeader('Location', '/404')
+                ->withStatus(302);
+        }
+
+        $user = User::findById($userId);
+
+        if ($user === null) {
+            return $response
+                ->withHeader('Location', '/404')
+                ->withStatus(302);
+        }
+
+        $recipes = Recipe::getRecipesByUserId($user->id);
+
+        $roles = Role::getAllRoles();
+
+        return $this->view->render($response, 'user/profile.php', [
+            'user'    => $user,
+            'roles'   => $roles,
+            'recipes' => $recipes,
+        ]);
+    }
+
     public function updateProfile(
         Request $request,
         Response $response

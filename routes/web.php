@@ -33,6 +33,7 @@ $app->get('/register', [LoginController::class, 'showRegistration']);
 $app->post('/register', [LoginController::class, 'register']);
 
 $app->get('/profile', [UserController::class, 'profile']);
+$app->get('/user/{id}', [UserController::class, 'publicProfile']);
 $app->post('/profile/update', [UserController::class, 'updateProfile']);
 $app->post('/profile/picture',[UserController::class, 'updateProfilePicture']);
 $app->get('/profile/picture/delete',[UserController::class, 'deleteProfilePicture']);

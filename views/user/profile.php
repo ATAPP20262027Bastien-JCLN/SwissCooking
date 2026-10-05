@@ -117,11 +117,11 @@
 
                         </div>
 
-
+                        <?php if ($_SESSION['user_id'] === $user->id): ?>
                         <button type="button" id="edit-profile-button" class="btn btn-outline-primary">
                             Edit Profile
                         </button>
-
+                        <?php endif; ?>
                     </div>
 
 
@@ -190,11 +190,11 @@
                     </div>
 
 
-                    <hr class="my-4">
-
-
                     <!-- PROFILE PICTURE -->
 
+                    <?php if ($_SESSION['user_id'] === $user->id): ?>
+
+                    <hr class="my-4">
                     <h2 class="h4 mb-4">
                         Profile Picture
                     </h2>
@@ -289,6 +289,7 @@
                         <?php endif; ?>
 
                     </form>
+                    <?php endif; ?>
                 </div>
 
             </div>
@@ -309,13 +310,14 @@
                     <div class="d-flex justify-content-between align-items-center mb-4">
 
                         <h2 class="h4 mb-0">
-                            My Recipes
+                            <?= escape($user->name) ?>'s Recipes
                         </h2>
 
-
+                        <?php if ($_SESSION['user_id'] === $user->id): ?>
                         <a href="/recipe/create" class="btn btn-primary btn-sm">
                             + Add Recipe
                         </a>
+                        <?php endif; ?>
 
                     </div>
 

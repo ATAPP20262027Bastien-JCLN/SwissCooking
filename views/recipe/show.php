@@ -8,8 +8,7 @@
                 <div class="card-body p-4 p-md-5 position-relative">
                     <div class="position-absolute top-0 end-0 mt-3 me-3 d-flex gap-2">
                         <?php if ($_SESSION['user_role'] === 1 || $recipe->user_id === $_SESSION['user_id']): ?>
-                        <a href="/recipe/<?php echo escape($recipe->id) ?>/edit"
-                            class="btn btn-sm btn-outline-primary">
+                        <a href="/recipe/<?php echo escape($recipe->id) ?>/edit" class="btn btn-sm btn-outline-primary">
                             Edit
                         </a>
 
@@ -32,9 +31,10 @@
                     <?php if ($user): ?>
                     <p class="text-muted">
                         Recipe by
-                        <strong>
-                            <?php echo escape($user->name) ?>
-                        </strong>
+                        <a href="/user/<?php echo escape($user->id ?? 0) ?>" style="text-decoration: none; color: inherit;">
+                            <span class="visually-hidden">View profile of </span>
+                            <?php echo escape($user->name ?? 'Unknown') ?>
+                        </a>
                     </p>
                     <?php endif; ?>
                     <hr>
@@ -117,9 +117,12 @@
                                                           . urlencode($comment->user_name ?? 'Anonymous')
                                                       . '&size=256' : "/" . $comment->user_profile_picture
                                                   ) ?>" alt="" class="rounded-circle" width="40" height="40">
+                                        <a href="/user/<?php echo escape($comment->user_id ?? 0) ?>" style="text-decoration: none; color: inherit;">
+                                            <span class="visually-hidden">View profile of </span>
                                         <strong>
                                             <?php echo escape($comment->user_name ?? 'Anonymous') ?>
                                         </strong>
+                                        </a>
                                     </div>
                                     <?php if (! empty($comment->created_at)): ?>
                                     <small class="text-muted">
