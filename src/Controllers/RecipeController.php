@@ -383,7 +383,7 @@ class RecipeController extends BaseController
             $recipe->user_id     = $user->id;
             $recipe->category_id = $categoryId;
 
-            if (! $recipe->insert()) {
+            if (! $recipe->save()) {
                 throw new \RuntimeException(
                     'Could not create recipe'
                 );
@@ -431,5 +431,447 @@ class RecipeController extends BaseController
                 'data'        => $data,
             ]
         );
+    }
+
+    public function editForm(
+        Request $request,
+        Response $response,
+        array $args
+    ): Response {
+        if (! ConnexionService::connectedUser()) {
+            return ConnexionService::redirectIfNotConnected(
+                $request,
+                $response
+            );
+        }
+
+        $id     = (int) ($args['id'] ?? 0);
+        $recipe = Recipe::findById($id);
+
+        if (! $recipe) {
+            return $response
+                ->withHeader('Location', '/404')
+                ->withStatus(302);
+        }
+
+        if ($recipe->user_id !== ConnexionService::connectedUser()->id && ConnexionService::connectedUser()->id_role !== 1) {
+            return $response
+                ->withHeader('Location', '/403')
+                ->withStatus(302);
+        }
+
+        return $this->view->render(
+            $response,
+            'recipe/update.php',
+            [
+                'recipe'      => $recipe,
+                'categories'  => Category::getAllCategories(),
+                'ingredients' => Ingredient::getAllIngredients(),
+            ]
+        );
+    }
+
+    public function update(
+        Request $request,
+        Response $response,
+        array $args
+    ): Response {
+        $user = ConnexionService::connectedUser();
+
+        if ($user === null) {
+            return ConnexionService::redirectIfNotConnected(
+                $request,
+                $response
+            );
+        }
+
+        $id     = (int) ($args['id'] ?? 0);
+        $recipe = Recipe::findById($id);
+
+        if (! $recipe) {
+            return $response
+                ->withHeader('Location', '/404')
+                ->withStatus(302);
+        }
+
+        if ((int) $recipe->user_id !== (int) $user->id && (int) $user->id_role !== 1) {
+            return $response
+                ->withHeader('Location', '/403')
+                ->withStatus(302);
+        }
+
+        $data = (array) $request->getParsedBody();
+
+        $categories  = Category::getAllCategories();
+        $ingredients = Ingredient::getAllIngredients();
+
+        /*
+     * Recipe information
+     */
+
+        $name = trim(
+            (string) ($data['name'] ?? '')
+        );
+
+        $description = trim(
+            (string) ($data['description'] ?? '')
+        );
+
+        $categoryId = (int) ($data['category_id'] ?? 0);
+
+        /*
+     * Validate name
+     */
+
+        if ($name === '') {
+            return $this->renderUpdateForm(
+                $response,
+                $recipe,
+                $categories,
+                $ingredients,
+                'Recipe name is required.',
+                $data
+            );
+        }
+
+        if (strlen($name) > 255) {
+            return $this->renderUpdateForm(
+                $response,
+                $recipe,
+                $categories,
+                $ingredients,
+                'Recipe name cannot exceed 255 characters.',
+                $data
+            );
+        }
+
+        /*
+     * Validate description
+     */
+
+        if ($description === '') {
+            return $this->renderUpdateForm(
+                $response,
+                $recipe,
+                $categories,
+                $ingredients,
+                'Recipe description is required.',
+                $data
+            );
+        }
+
+        /*
+     * Validate category
+     */
+
+        if (Category::findById($categoryId) === null) {
+            return $this->renderUpdateForm(
+                $response,
+                $recipe,
+                $categories,
+                $ingredients,
+                'Please select a valid category.',
+                $data
+            );
+        }
+
+        /*
+     * Validate steps
+     */
+
+        $steps = $data['steps'] ?? [];
+
+        if (! is_array($steps)) {
+            return $this->renderUpdateForm(
+                $response,
+                $recipe,
+                $categories,
+                $ingredients,
+                'Invalid instruction data.',
+                $data
+            );
+        }
+
+        $cleanSteps = [];
+
+        foreach ($steps as $step) {
+            $step = trim((string) $step);
+
+            if ($step !== '') {
+                $cleanSteps[] = $step;
+            }
+        }
+
+        if (count($cleanSteps) === 0) {
+            return $this->renderUpdateForm(
+                $response,
+                $recipe,
+                $categories,
+                $ingredients,
+                'Please add at least one cooking step.',
+                $data
+            );
+        }
+
+        $steps = implode('|', $cleanSteps);
+
+        /*
+     * Validate ingredients
+     */
+
+        $ingredientIds = $data['ingredient_id'] ?? [];
+        $quantities    = $data['quantity'] ?? [];
+        $units         = $data['unit'] ?? [];
+
+        if (
+            ! is_array($ingredientIds) ||
+            ! is_array($quantities) ||
+            ! is_array($units)
+        ) {
+            return $this->renderUpdateForm(
+                $response,
+                $recipe,
+                $categories,
+                $ingredients,
+                'Invalid ingredient data.',
+                $data
+            );
+        }
+
+        if (count($ingredientIds) === 0) {
+            return $this->renderUpdateForm(
+                $response,
+                $recipe,
+                $categories,
+                $ingredients,
+                'Please add at least one ingredient.',
+                $data
+            );
+        }
+
+        $recipeIngredients = [];
+        $usedIngredients   = [];
+
+        foreach ($ingredientIds as $index => $ingredientId) {
+
+            $ingredientId = (int) $ingredientId;
+
+            if ($ingredientId <= 0) {
+                return $this->renderUpdateForm(
+                    $response,
+                    $recipe,
+                    $categories,
+                    $ingredients,
+                    'Please select a valid ingredient.',
+                    $data
+                );
+            }
+
+            /*
+         * Prevent duplicate ingredients
+         */
+
+            if (isset($usedIngredients[$ingredientId])) {
+                return $this->renderUpdateForm(
+                    $response,
+                    $recipe,
+                    $categories,
+                    $ingredients,
+                    'The same ingredient cannot be added twice.',
+                    $data
+                );
+            }
+
+            /*
+         * Make sure ingredient exists
+         */
+
+            if (Ingredient::findById($ingredientId) === null) {
+                return $this->renderUpdateForm(
+                    $response,
+                    $recipe,
+                    $categories,
+                    $ingredients,
+                    'One of the selected ingredients does not exist.',
+                    $data
+                );
+            }
+
+            /*
+         * Quantity
+         */
+
+            $quantity = trim(
+                (string) ($quantities[$index] ?? '')
+            );
+
+            if ($quantity === '') {
+                return $this->renderUpdateForm(
+                    $response,
+                    $recipe,
+                    $categories,
+                    $ingredients,
+                    'Every ingredient must have a quantity.',
+                    $data
+                );
+            }
+
+            if (
+                ! is_numeric($quantity) ||
+                (float) $quantity <= 0
+            ) {
+                return $this->renderUpdateForm(
+                    $response,
+                    $recipe,
+                    $categories,
+                    $ingredients,
+                    'Ingredient quantities must be positive numbers.',
+                    $data
+                );
+            }
+
+            /*
+         * Unit
+         */
+
+            $unit = trim(
+                (string) ($units[$index] ?? '')
+            );
+
+            if ($unit === '') {
+                return $this->renderUpdateForm(
+                    $response,
+                    $recipe,
+                    $categories,
+                    $ingredients,
+                    'Every ingredient must have a unit.',
+                    $data
+                );
+            }
+
+            if (strlen($unit) > 100) {
+                return $this->renderUpdateForm(
+                    $response,
+                    $recipe,
+                    $categories,
+                    $ingredients,
+                    'Ingredient units cannot exceed 100 characters.',
+                    $data
+                );
+            }
+
+            $usedIngredients[$ingredientId] = true;
+
+            $recipeIngredients[] = [
+                'ingredient_id' => $ingredientId,
+                'quantity'      => (float) $quantity,
+                'unit'          => $unit,
+            ];
+        }
+
+        $pdo = Database::connection();
+
+        try {
+
+            $pdo->beginTransaction();
+
+            $recipe->name        = $name;
+            $recipe->description = $description;
+            $recipe->steps       = $steps;
+            $recipe->category_id = $categoryId;
+
+            if (! $recipe->save()) {
+                throw new \RuntimeException(
+                    'Could not update recipe'
+                );
+            }
+
+            $recipe->deleteIngredients();
+
+            $recipe->addIngredients($recipeIngredients);
+
+            $pdo->commit();
+
+            return $response
+                ->withHeader(
+                    'Location',
+                    '/recipe/' . $recipe->id
+                )
+                ->withStatus(302);
+
+        } catch (\Throwable $e) {
+
+            if ($pdo->inTransaction()) {
+                $pdo->rollBack();
+            }
+
+            return $this->renderUpdateForm(
+                $response,
+                $recipe,
+                $categories,
+                $ingredients,
+                'An error occurred while updating the recipe.',
+                $data
+            );
+        }
+    }
+
+    private function renderUpdateForm(
+        Response $response,
+        Recipe $recipe,
+        array $categories,
+        array $ingredients,
+        string $error,
+        array $data = []
+    ): Response {
+        return $this->view->render(
+            $response,
+            'recipe/update.php',
+            [
+                'recipe'      => $recipe,
+                'categories'  => $categories,
+                'ingredients' => $ingredients,
+                'error'       => $error,
+                'data'        => $data,
+            ]
+        );
+    }
+
+    public function delete(
+        Request $request,
+        Response $response,
+        array $args
+    ): Response {
+        if (! ConnexionService::connectedUser()) {
+            return ConnexionService::redirectIfNotConnected(
+                $request,
+                $response
+            );
+        }
+
+        $id     = (int) ($args['id'] ?? 0);
+        $recipe = Recipe::findById($id);
+
+        if (! $recipe) {
+            return $response
+                ->withHeader('Location', '/404')
+                ->withStatus(302);
+        }
+
+        if ($recipe->user_id !== ConnexionService::connectedUser()->id) {
+            return $response
+                ->withHeader('Location', '/403')
+                ->withStatus(302);
+        }
+
+        if (! $recipe->delete()) {
+            return $response
+                ->withHeader('Location', '/500')
+                ->withStatus(302);
+        }
+
+        return $response
+            ->withHeader('Location', '/recipes')
+            ->withStatus(302);
     }
 }

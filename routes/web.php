@@ -18,11 +18,12 @@ $app->get('/', [HomeController::class, 'index']);
 
 $app->get('/recipes', [RecipeController::class, 'list']);
 $app->post('/recipes', [RecipeController::class, 'list']);
-
 $app->get('/recipe/create', [RecipeController::class, 'create']);
 $app->post('/recipe/create', [RecipeController::class, 'store']);
-
 $app->get('/recipe/{id}', [RecipeController::class, 'show']);
+$app->post('/recipe/{id}/delete', [RecipeController::class, 'delete']);
+$app->get('/recipe/{id}/edit', [RecipeController::class, 'editForm']);
+$app->post('/recipe/{id}/edit', [RecipeController::class, 'update']);
 
 $app->get('/categories', [CategoryController::class, 'index']);
 

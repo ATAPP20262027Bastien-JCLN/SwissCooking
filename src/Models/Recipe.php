@@ -350,41 +350,21 @@ class Recipe extends AbstractModel
         return $recipes;
     }
 
-    #[Override]
-    public function insert(): bool
+    public function delete(): bool
     {
+        if ($this->id === null) {
+            throw new \LogicException(
+                'Cannot delete a recipe without an ID'
+            );
+        }
+
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare(
-            'INSERT INTO recipes (
-                name,
-                description,
-                steps,
-                user_id,
-                category_id
-            )
-            VALUES (
-                :name,
-                :description,
-                :steps,
-                :user_id,
-                :category_id
-            )'
+            'DELETE FROM recipes WHERE id = :id'
         );
 
-        $success = $stmt->execute([
-            'name'        => $this->name,
-            'description' => $this->description,
-            'steps'       => $this->steps,
-            'user_id'     => $this->user_id,
-            'category_id' => $this->category_id,
-        ]);
-
-        if ($success) {
-            $this->id = (int) $pdo->lastInsertId();
-        }
-
-        return $success;
+        return $stmt->execute(['id' => $this->id]);
     }
 
     public function addIngredients(
@@ -425,9 +405,87 @@ class Recipe extends AbstractModel
         return true;
     }
 
+    public function deleteIngredients(): bool
+    {
+        $pdo = Database::connection();
+
+        $sql = '
+            DELETE FROM recipe_ingredients
+            WHERE recipe_id = :recipe_id
+        ';
+
+        $statement = $pdo->prepare($sql);
+
+        return $statement->execute([
+            'recipe_id' => $this->id,
+        ]);
+    }
+
+    #[Override]
+    public function insert(): bool
+    {
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare(
+            'INSERT INTO recipes (
+                name,
+                description,
+                steps,
+                user_id,
+                category_id
+            )
+            VALUES (
+                :name,
+                :description,
+                :steps,
+                :user_id,
+                :category_id
+            )'
+        );
+
+        $success = $stmt->execute([
+            'name'        => $this->name,
+            'description' => $this->description,
+            'steps'       => $this->steps,
+            'user_id'     => $this->user_id,
+            'category_id' => $this->category_id,
+        ]);
+
+        if ($success) {
+            $this->id = (int) $pdo->lastInsertId();
+        }
+
+        return $success;
+    }
+
     #[Override]
     public function update(): bool
     {
-        throw new \Exception('Not implemented');
+        if ($this->id === null) {
+            throw new \LogicException(
+                'Cannot update a recipe without an ID'
+            );
+        }
+
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare(
+            'UPDATE recipes
+             SET name = :name,
+                 description = :description,
+                 steps = :steps,
+                 user_id = :user_id,
+                 category_id = :category_id
+             WHERE id = :id'
+        );
+
+        return $stmt->execute([
+            'name'        => $this->name,
+            'description' => $this->description,
+            'steps'       => $this->steps,
+            'user_id'     => $this->user_id,
+            'category_id' => $this->category_id,
+            'id'          => $this->id,
+        ]);
     }
 }

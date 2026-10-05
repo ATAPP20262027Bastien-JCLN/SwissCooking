@@ -5,7 +5,22 @@
                 ← Back to recipes
             </a>
             <div class="card shadow-sm">
-                <div class="card-body p-4 p-md-5">
+                <div class="card-body p-4 p-md-5 position-relative">
+                    <div class="position-absolute top-0 end-0 mt-3 me-3 d-flex gap-2">
+                        <?php if ($_SESSION['user_role'] === 1 || $recipe->user_id === $_SESSION['user_id']): ?>
+                        <a href="/recipe/<?php echo escape($recipe->id) ?>/edit"
+                            class="btn btn-sm btn-outline-primary">
+                            Edit
+                        </a>
+
+                        <form action="/recipe/<?php echo escape($recipe->id) ?>/delete" method="POST" class="d-inline"
+                            onsubmit="return confirm('Are you sure you want to delete this recipe?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                Delete
+                            </button>
+                        </form>
+                        <?php endif; ?>
+                    </div>
                     <div class="mb-4">
                         <span class="badge bg-secondary">
                             <?php echo escape($recipe->category) ?>
@@ -66,8 +81,8 @@
                         <p class="text-muted">
                             <?php $steps = explode('|', $recipe->steps); ?>
 
-                            <?php foreach ($steps as $step): ?>
-                            <?php echo escape(trim($step)) ?><br>
+                            <?php foreach ($steps as $index => $step): ?>
+                            <?php echo $index + 1 ?>. <?php echo escape(trim($step)) ?><br>
                             <?php endforeach; ?>
                         </p>
                         <?php else: ?>

@@ -19,6 +19,8 @@ class MyApp
     {
         $app = AppFactory::create();
 
+        ErrorMiddleware::register($app);
+
         $app->add(new SessionMiddleware());
 
         $errorMiddleware = $app->addErrorMiddleware(
@@ -26,8 +28,6 @@ class MyApp
             true,
             true
         );
-
-        ErrorMiddleware::register($app);
 
         require __DIR__ . '/../routes/web.php';
 

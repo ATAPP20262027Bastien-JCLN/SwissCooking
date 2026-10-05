@@ -278,7 +278,7 @@
                         <button type="submit" class="btn btn-primary">
                             Save Profile Picture
                         </button>
-                    <?php if ($user->profile_picture !== null): ?>
+                        <?php if ($user->profile_picture !== null): ?>
                         <button type="button" class="btn btn-outline-danger" onclick="if (confirm(
                                     'Are you sure you want to delete your profile picture?'
                                 )) {
@@ -286,7 +286,7 @@
                                 }">
                             Delete Profile Picture
                         </button>
-                    <?php endif; ?>
+                        <?php endif; ?>
 
                     </form>
                 </div>

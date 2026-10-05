@@ -45,6 +45,12 @@ class ConnexionService
         return $response;
     }
 
+    public static function loginUser(User $user): void
+    {
+        $_SESSION['user_id'] = $user->id;
+        $_SESSION['user_role'] = $user->id_role;
+    }
+
     public static function logout(
         Request $request,
         Response $response

@@ -45,7 +45,7 @@ class LoginController extends BaseController
             $user &&
             password_verify($password, $user->password_hash)
         ) {
-            $_SESSION['user_id'] = $user->id;
+            ConnexionService::loginUser($user);
             $_SESSION['error'] = null;
 
             return $response

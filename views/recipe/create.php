@@ -45,7 +45,8 @@
                                             Description
                                         </label>
 
-                                        <textarea class="form-control" id="description" name="description" rows="6" style="resize: none;"
+                                        <textarea class="form-control" id="description" name="description" rows="6"
+                                            style="resize: none;"
                                             required><?php echo escape($data['description'] ?? '') ?></textarea>
                                     </div>
                                 </div>
