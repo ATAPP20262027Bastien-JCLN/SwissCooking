@@ -23,11 +23,7 @@ class MyApp
 
         $app->add(new SessionMiddleware());
 
-        $errorMiddleware = $app->addErrorMiddleware(
-            true,
-            true,
-            true
-        );
+        $errorMiddleware = $app->addErrorMiddleware(true,true,true);
 
         require __DIR__ . '/../routes/web.php';
 
