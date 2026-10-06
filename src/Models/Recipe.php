@@ -18,9 +18,7 @@ class Recipe extends AbstractModel
             if (is_string($value) && strlen($value) > 0) {
                 $this->name = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Name must be a non-empty string'
-                );
+                throw new \InvalidArgumentException('Name must be a non-empty string');
             }
         }
     }
@@ -30,9 +28,7 @@ class Recipe extends AbstractModel
             if (is_string($value) && strlen($value) > 0) {
                 $this->description = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Description must be a non-empty string'
-                );
+                throw new \InvalidArgumentException('Description must be a non-empty string');
             }
         }
     }
@@ -42,41 +38,27 @@ class Recipe extends AbstractModel
             if (is_string($value) && strlen($value) > 0) {
                 $this->steps = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Steps must be a non-empty string'
-                );
+                throw new \InvalidArgumentException('Steps must be a non-empty string');
             }
         }
     }
 
     public ?int $user_id = null {
         set {
-            if (
-                is_int($value) &&
-                $value > 0 &&
-                User::findById($value) !== null
-            ) {
+            if (is_int($value) && $value > 0 && User::findById($value) !== null) {
                 $this->user_id = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'User ID must be a positive integer'
-                );
+                throw new \InvalidArgumentException('User ID must be a positive integer');
             }
         }
     }
 
     public ?int $category_id = null {
         set {
-            if (
-                is_int($value) &&
-                $value > 0 &&
-                Category::findById($value) !== null
-            ) {
+            if (is_int($value) && $value > 0 && Category::findById($value) !== null) {
                 $this->category_id = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Category ID must be a positive integer'
-                );
+                throw new \InvalidArgumentException('Category ID must be a positive integer');
             }
         }
     }
@@ -84,17 +66,11 @@ class Recipe extends AbstractModel
     public array $ingredients = []{
         set {
             if (! is_array($value) || count($value) === 0) {
-                throw new \InvalidArgumentException(
-                    'Ingredients must be a non-empty array'
-                );
+                throw new \InvalidArgumentException('Ingredients must be a non-empty array');
             }
 
             foreach ($value as $ingredient) {
-                if (! $ingredient instanceof Ingredient) {
-                    throw new \InvalidArgumentException(
-                        'All ingredients must be instances of Ingredient'
-                    );
-                }
+                if (! $ingredient instanceof Ingredient) {throw new \InvalidArgumentException('All ingredients must be instances of Ingredient');}
             }
 
             $this->ingredients = $value;
@@ -103,37 +79,18 @@ class Recipe extends AbstractModel
 
     public ?float $averageRating = null {
         set {
-            if (
-                $value !== null &&
-                (
-                    ! is_float($value) ||
-                    $value < 0 ||
-                    $value > 5
-                )
-            ) {
-                throw new \InvalidArgumentException(
-                    'Average rating must be a float between 0 and 5 or null'
-                );
+            if ($value !== null && (! is_float($value) || $value < 0 || $value > 5)) {
+                throw new \InvalidArgumentException('Average rating must be a float between 0 and 5 or null');
             }
-
             $this->averageRating = $value;
         }
     }
 
     public ?string $category = null {
         set {
-            if (
-                $value !== null &&
-                (
-                    ! is_string($value) ||
-                    strlen($value) === 0
-                )
-            ) {
-                throw new \InvalidArgumentException(
-                    'Category must be a non-empty string or null'
-                );
+            if ($value !== null && (! is_string($value) || strlen($value) === 0)) {
+                throw new \InvalidArgumentException('Category must be a non-empty string or null');
             }
-
             $this->category = $value;
         }
     }
@@ -141,11 +98,8 @@ class Recipe extends AbstractModel
     public array $comments = []{
         set {
             if (! is_array($value)) {
-                throw new \InvalidArgumentException(
-                    'Comments must be an array'
-                );
+                throw new \InvalidArgumentException('Comments must be an array');
             }
-
             $this->comments = $value;
         }
     }
@@ -170,20 +124,15 @@ class Recipe extends AbstractModel
                 'recipe_id' => $recipe->id,
             ]);
 
-            $recipe->category =
-            Category::getCategoryNameById($recipe->category_id);
+            $recipe->category = Category::getCategoryNameById($recipe->category_id);
 
-            $recipe->ingredients =
-            $ingredientsStmt->fetchAll(
+            $recipe->ingredients = $ingredientsStmt->fetchAll(
                 \PDO::FETCH_CLASS,
                 Ingredient::class
             );
 
-            $recipe->averageRating =
-            Rating::getAverageRatingForRecipe($recipe->id);
-
-            $recipe->comments =
-            Comment::getCommentsForRecipe($recipe->id);
+            $recipe->averageRating = Rating::getAverageRatingForRecipe($recipe->id);
+            $recipe->comments      = Comment::getCommentsForRecipe($recipe->id);
 
             $recipes[] = $recipe;
         }
@@ -218,20 +167,15 @@ class Recipe extends AbstractModel
             'recipe_id' => $recipe->id,
         ]);
 
-        $recipe->category =
-        Category::getCategoryNameById($recipe->category_id);
+        $recipe->category = Category::getCategoryNameById($recipe->category_id);
 
-        $recipe->ingredients =
-        $ingredientsStmt->fetchAll(
+        $recipe->ingredients = $ingredientsStmt->fetchAll(
             \PDO::FETCH_CLASS,
             Ingredient::class
         );
 
-        $recipe->averageRating =
-        Rating::getAverageRatingForRecipe($recipe->id);
-
-        $recipe->comments =
-        Comment::getCommentsForRecipe($recipe->id);
+        $recipe->averageRating = Rating::getAverageRatingForRecipe($recipe->id);
+        $recipe->comments      = Comment::getCommentsForRecipe($recipe->id);
 
         return $recipe;
     }
@@ -277,20 +221,15 @@ class Recipe extends AbstractModel
                 'recipe_id' => $recipe->id,
             ]);
 
-            $recipe->category =
-            Category::getCategoryNameById($recipe->category_id);
+            $recipe->category = Category::getCategoryNameById($recipe->category_id);
 
-            $recipe->ingredients =
-            $ingredientsStmt->fetchAll(
+            $recipe->ingredients = $ingredientsStmt->fetchAll(
                 \PDO::FETCH_CLASS,
                 Ingredient::class
             );
 
-            $recipe->averageRating =
-            Rating::getAverageRatingForRecipe($recipe->id);
-
-            $recipe->comments =
-            Comment::getCommentsForRecipe($recipe->id);
+            $recipe->averageRating = Rating::getAverageRatingForRecipe($recipe->id);
+            $recipe->comments      = Comment::getCommentsForRecipe($recipe->id);
 
             $recipes[] = $recipe;
         }
@@ -298,9 +237,8 @@ class Recipe extends AbstractModel
         return $recipes;
     }
 
-    public static function getRecipesByUserId(
-        int $userId
-    ): array {
+    public static function getRecipesByUserId(int $userId): array
+    {
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare(
@@ -317,32 +255,27 @@ class Recipe extends AbstractModel
         $recipes = [];
 
         while ($recipe = $stmt->fetchObject(self::class)) {
-            $recipe->category =
-            Category::getCategoryNameById($recipe->category_id);
+            $recipe->category = Category::getCategoryNameById($recipe->category_id);
 
             $ingredientsStmt = $pdo->prepare(
                 'SELECT i.*, ri.quantity, ri.unit
-             FROM ingredients i
-             JOIN recipe_ingredients ri
-                 ON i.id = ri.ingredient_id
-             WHERE ri.recipe_id = :recipe_id'
+                 FROM ingredients i
+                 JOIN recipe_ingredients ri
+                     ON i.id = ri.ingredient_id
+                 WHERE ri.recipe_id = :recipe_id'
             );
 
             $ingredientsStmt->execute([
                 'recipe_id' => $recipe->id,
             ]);
 
-            $recipe->ingredients =
-            $ingredientsStmt->fetchAll(
+            $recipe->ingredients = $ingredientsStmt->fetchAll(
                 \PDO::FETCH_CLASS,
                 Ingredient::class
             );
 
-            $recipe->averageRating =
-            Rating::getAverageRatingForRecipe($recipe->id);
-
-            $recipe->comments =
-            Comment::getCommentsForRecipe($recipe->id);
+            $recipe->averageRating = Rating::getAverageRatingForRecipe($recipe->id);
+            $recipe->comments      = Comment::getCommentsForRecipe($recipe->id);
 
             $recipes[] = $recipe;
         }
@@ -353,9 +286,7 @@ class Recipe extends AbstractModel
     public function delete(): bool
     {
         if ($this->id === null) {
-            throw new \LogicException(
-                'Cannot delete a recipe without an ID'
-            );
+            throw new \LogicException('Cannot delete a recipe without an ID');
         }
 
         $pdo = Database::connection();
@@ -367,30 +298,17 @@ class Recipe extends AbstractModel
         return $stmt->execute(['id' => $this->id]);
     }
 
-    public function addIngredients(
-        array $ingredients
-    ): bool {
+    public function addIngredients(array $ingredients): bool
+    {
         if ($this->id === null) {
-            throw new \LogicException(
-                'Cannot add ingredients to a recipe without an ID'
-            );
+            throw new \LogicException('Cannot add ingredients to a recipe without an ID');
         }
 
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare(
-            'INSERT INTO recipe_ingredients (
-                recipe_id,
-                ingredient_id,
-                quantity,
-                unit
-            )
-            VALUES (
-                :recipe_id,
-                :ingredient_id,
-                :quantity,
-                :unit
-            )'
+            'INSERT INTO recipe_ingredients (recipe_id, ingredient_id, quantity, unit)
+            VALUES (:recipe_id, :ingredient_id, :quantity, :unit)'
         );
 
         foreach ($ingredients as $ingredient) {
@@ -409,10 +327,7 @@ class Recipe extends AbstractModel
     {
         $pdo = Database::connection();
 
-        $sql = '
-            DELETE FROM recipe_ingredients
-            WHERE recipe_id = :recipe_id
-        ';
+        $sql = 'DELETE FROM recipe_ingredients WHERE recipe_id = :recipe_id ';
 
         $statement = $pdo->prepare($sql);
 
@@ -427,20 +342,8 @@ class Recipe extends AbstractModel
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare(
-            'INSERT INTO recipes (
-                name,
-                description,
-                steps,
-                user_id,
-                category_id
-            )
-            VALUES (
-                :name,
-                :description,
-                :steps,
-                :user_id,
-                :category_id
-            )'
+            'INSERT INTO recipes (name, description, steps, user_id, category_id )
+            VALUES (:name, :description, :steps, :user_id, :category_id)'
         );
 
         $success = $stmt->execute([
@@ -462,9 +365,7 @@ class Recipe extends AbstractModel
     public function update(): bool
     {
         if ($this->id === null) {
-            throw new \LogicException(
-                'Cannot update a recipe without an ID'
-            );
+            throw new \LogicException('Cannot update a recipe without an ID');
         }
 
         $pdo = Database::connection();

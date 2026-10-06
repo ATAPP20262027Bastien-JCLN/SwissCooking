@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Models;
 
@@ -18,9 +18,7 @@ class Category extends AbstractModel
             if (is_string($value) && strlen($value) > 0) {
                 $this->name = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Name must be a non-empty string'
-                );
+                throw new \InvalidArgumentException('Name must be a non-empty string');
             }
         }
     }
@@ -30,16 +28,14 @@ class Category extends AbstractModel
             if (is_string($value) && strlen($value) > 0) {
                 $this->description = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Description must be a non-empty string'
-                );
+                throw new \InvalidArgumentException('Description must be a non-empty string');
             }
         }
     }
 
     public static function getAllCategories(): array
     {
-        $pdo = Database::connection();
+        $pdo  = Database::connection();
         $stmt = $pdo->query('SELECT * FROM categories');
 
         return $stmt->fetchAll(
@@ -52,10 +48,7 @@ class Category extends AbstractModel
     {
         $pdo = Database::connection();
 
-        $stmt = $pdo->prepare(
-            'SELECT * FROM categories WHERE id = :id'
-        );
-
+        $stmt = $pdo->prepare('SELECT * FROM categories WHERE id = :id');
         $stmt->execute([
             'id' => $id,
         ]);
@@ -65,11 +58,9 @@ class Category extends AbstractModel
         return $category ?: null;
     }
 
-    public static function getCategoryNameById(
-        int $id
-    ): ?string {
+    public static function getCategoryNameById(int $id): ?string
+    {
         $category = self::findById($id);
-
         return $category?->name;
     }
 

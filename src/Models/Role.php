@@ -18,9 +18,7 @@ class Role extends AbstractModel
             if (is_string($value) && strlen($value) > 0) {
                 $this->name = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Name must be a non-empty string'
-                );
+                throw new \InvalidArgumentException('Name must be a non-empty string');
             }
         }
     }
@@ -47,9 +45,7 @@ class Role extends AbstractModel
     public static function findById(int $id): ?self
     {
         $pdo = Database::connection();
-        $stmt = $pdo->prepare(
-            'SELECT * FROM roles WHERE id = :id'
-        );
+        $stmt = $pdo->prepare('SELECT * FROM roles WHERE id = :id');
         $stmt->execute(['id' => $id]);
 
         $role = $stmt->fetchObject(self::class);

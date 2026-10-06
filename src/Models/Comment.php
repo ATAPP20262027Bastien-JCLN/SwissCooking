@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Models;
 
@@ -18,9 +18,7 @@ class Comment extends AbstractModel
             if (is_int($value) && $value > 0) {
                 $this->user_id = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'User ID must be a positive integer'
-                );
+                throw new \InvalidArgumentException('User ID must be a positive integer');
             }
         }
     }
@@ -30,9 +28,7 @@ class Comment extends AbstractModel
             if (is_int($value) && $value > 0) {
                 $this->recipe_id = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Recipe ID must be a positive integer'
-                );
+                throw new \InvalidArgumentException('Recipe ID must be a positive integer');
             }
         }
     }
@@ -42,68 +38,48 @@ class Comment extends AbstractModel
             if (is_string($value) && strlen($value) > 0) {
                 $this->content = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Content must be a non-empty string'
-                );
+                throw new \InvalidArgumentException('Content must be a non-empty string');
             }
         }
     }
 
     public \DateTime|string|null $created_at = null {
         get {
-            return $this->created_at instanceof \DateTime
-                ? $this->created_at->format('Y-m-d H:i:s')
-                : $this->created_at;
+            return $this->created_at instanceof \DateTime  ? $this->created_at->format('Y-m-d H:i:s') : $this->created_at;
         }
         set {
             if (is_string($value)) {
                 $this->created_at = new \DateTime($value);
-            } elseif (
-                $value instanceof \DateTime ||
-                $value === null
-            ) {
+            } elseif ($value instanceof \DateTime  || $value === null) {
                 $this->created_at = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Invalid created_at value'
-                );
+                throw new \InvalidArgumentException('Invalid created_at value');
             }
         }
     }
 
     public \DateTime|string|null $updated_at = null {
         get {
-            return $this->updated_at instanceof \DateTime
-                ? $this->updated_at->format('Y-m-d H:i:s')
+            return $this->updated_at instanceof \DateTime  ? $this->updated_at->format('Y-m-d H:i:s')
                 : $this->updated_at;
         }
         set {
             if (is_string($value)) {
                 $this->updated_at = new \DateTime($value);
-            } elseif (
-                $value instanceof \DateTime ||
-                $value === null
-            ) {
+            } elseif ($value instanceof \DateTime  || $value === null) {
                 $this->updated_at = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Invalid updated_at value'
-                );
+                throw new \InvalidArgumentException('Invalid updated_at value');
             }
         }
     }
 
     public ?string $user_name = null {
         set {
-            if (
-                $value === null ||
-                (is_string($value) && strlen($value) <= 100)
-            ) {
+            if ($value === null || (is_string($value) && strlen($value) <= 100)) {
                 $this->user_name = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Invalid user name'
-                );
+                throw new \InvalidArgumentException('Invalid user name');
             }
         }
     }
@@ -116,9 +92,7 @@ class Comment extends AbstractModel
             ) {
                 $this->user_profile_picture = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Invalid user profile picture path or URL'
-                );
+                throw new \InvalidArgumentException('Invalid user profile picture path or URL');
             }
         }
     }
@@ -130,7 +104,7 @@ class Comment extends AbstractModel
 
     public static function getAllComments(): array
     {
-        $pdo = Database::connection();
+        $pdo  = Database::connection();
         $stmt = $pdo->query('SELECT * FROM comments');
 
         return $stmt->fetchAll(
@@ -139,32 +113,20 @@ class Comment extends AbstractModel
         );
     }
 
-    public static function getCommentsForRecipe(
-        int $recipeId
-    ): array {
+    public static function getCommentsForRecipe(int $recipeId): array {
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare(
-            'SELECT
-                c.id,
-                c.user_id,
-                c.recipe_id,
-                c.content,
-                c.created_at,
-                c.updated_at,
-                u.name AS user_name,
-                u.profile_picture AS user_profile_picture
+            'SELECT c.id, c.user_id, c.recipe_id, c.content, c.created_at, c.updated_at, u.name AS user_name, u.profile_picture AS user_profile_picture
              FROM comments c
-             INNER JOIN users u
-                 ON u.id = c.user_id
+             INNER JOIN users u ON u.id = c.user_id
              WHERE c.recipe_id = :recipe_id
              ORDER BY c.created_at DESC'
         );
-
         $stmt->execute([
             'recipe_id' => $recipeId,
         ]);
-
+        
         return $stmt->fetchAll(
             \PDO::FETCH_CLASS,
             self::class

@@ -15,16 +15,10 @@ class User extends AbstractModel
 
     public ?string $name = null {
         set {
-            if (
-                is_string($value) &&
-                strlen($value) > 0 &&
-                strlen($value) <= 100
-            ) {
+            if (is_string($value) && strlen($value) > 0 && strlen($value) <= 100) {
                 $this->name = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Name must be a non-empty string with a maximum length of 100 characters'
-                );
+                throw new \InvalidArgumentException('Name must be a non-empty string with a maximum length of 100 characters');
             }
         }
     }
@@ -34,9 +28,7 @@ class User extends AbstractModel
             if (filter_var($value, FILTER_VALIDATE_EMAIL)) {
                 $this->email = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Invalid email format'
-                );
+                throw new \InvalidArgumentException('Invalid email format');
             }
         }
     }
@@ -46,25 +38,17 @@ class User extends AbstractModel
             if (is_string($value) && strlen($value) > 0) {
                 $this->password_hash = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Password must be a non-empty string'
-                );
+                throw new \InvalidArgumentException('Password must be a non-empty string');
             }
         }
     }
 
     public ?int $id_role = null {
         set {
-            if (
-                is_int($value) &&
-                $value > 0 &&
-                Role::findById($value) !== null
-            ) {
+            if (is_int($value) && $value > 0 && Role::findById($value) !== null) {
                 $this->id_role = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Role ID must be a positive integer'
-                );
+                throw new \InvalidArgumentException('Role ID must be a positive integer');
             }
         }
     }
@@ -74,24 +58,17 @@ class User extends AbstractModel
             if (is_array($value)) {
                 $this->favorite_recipes = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Favorite recipes must be an array'
-                );
+                throw new \InvalidArgumentException('Favorite recipes must be an array');
             }
         }
     }
 
     public ?string $profile_picture = null {
         set {
-            if (
-                $value === null ||
-                (is_string($value) && strlen($value) <= 2048)
-            ) {
+            if ($value === null || (is_string($value) && strlen($value) <= 2048)) {
                 $this->profile_picture = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Invalid profile picture path or URL'
-                );
+                throw new \InvalidArgumentException('Invalid profile picture path or URL');
             }
         }
     }
@@ -107,9 +84,7 @@ class User extends AbstractModel
     public static function findById(int $id): ?self
     {
         $pdo  = Database::connection();
-        $stmt = $pdo->prepare(
-            'SELECT * FROM users WHERE id = :id'
-        );
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE id = :id');
         $stmt->execute(['id' => $id]);
 
         $user = $stmt->fetchObject(self::class);
@@ -120,9 +95,7 @@ class User extends AbstractModel
     public static function findByEmail(string $email): ?self
     {
         $pdo  = Database::connection();
-        $stmt = $pdo->prepare(
-            'SELECT * FROM users WHERE email = :email'
-        );
+        $stmt = $pdo->prepare('SELECT * FROM users WHERE email = :email');
         $stmt->execute(['email' => $email]);
 
         $user = $stmt->fetchObject(self::class);
@@ -132,20 +105,12 @@ class User extends AbstractModel
 
     public function getProfilePicture(): string
     {
-        if (
-            $this->profile_picture !== null &&
-            $this->profile_picture !== ''
-        ) {
-            if (
-                str_starts_with($this->profile_picture, 'https://') ||
-                str_starts_with($this->profile_picture, 'http://')
-            ) {
+        if ($this->profile_picture !== null && $this->profile_picture !== '') {
+            if (str_starts_with($this->profile_picture, 'https://') || str_starts_with($this->profile_picture, 'http://')) {
                 return $this->profile_picture;
             }
 
-            $localPath = dirname(__DIR__, 2)
-            . '/public/'
-            . ltrim($this->profile_picture, '/');
+            $localPath = dirname(__DIR__, 2) . '/public/' . ltrim($this->profile_picture, '/');
 
             if (is_file($localPath)) {
                 return '/' . ltrim(
@@ -155,8 +120,7 @@ class User extends AbstractModel
             }
         }
 
-        $profileDirectory = dirname(__DIR__, 2)
-            . '/public/upload/profile_pic/';
+        $profileDirectory = dirname(__DIR__, 2). '/public/upload/profile_pic/';
 
         $extensions = [
             'png',
@@ -174,9 +138,7 @@ class User extends AbstractModel
             }
         }
 
-        return 'https://ui-avatars.com/api/?name='
-        . urlencode($this->name ?? 'User')
-            . '&size=256';
+        return 'https://ui-avatars.com/api/?name='. urlencode($this->name ?? 'User'). '&size=256';
     }
 
     public function isFavorite(int $recipeId): bool
@@ -216,14 +178,8 @@ class User extends AbstractModel
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare(
-            'INSERT INTO favorites (
-                user_id,
-                recipe_id
-            )
-            VALUES (
-                :user_id,
-                :recipe_id
-            )'
+            'INSERT INTO favorites (user_id, recipe_id)
+            VALUES (:user_id, :recipe_id)'
         );
 
         return $stmt->execute([
@@ -282,20 +238,8 @@ class User extends AbstractModel
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare(
-            'INSERT INTO users (
-                name,
-                email,
-                password_hash,
-                id_role,
-                profile_picture
-            )
-            VALUES (
-                :name,
-                :email,
-                :password_hash,
-                :id_role,
-                :profile_picture
-            )'
+            'INSERT INTO users (name, email, password_hash, id_role, profile_picture)
+            VALUES (:name, :email, :password_hash, :id_role, :profile_picture)'
         );
 
         $result = $stmt->execute([

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Models;
 
@@ -22,41 +22,27 @@ class Rating extends AbstractModel
             ) {
                 $this->user_id = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'User ID must be a positive integer'
-                );
+                throw new \InvalidArgumentException('User ID must be a positive integer');
             }
         }
     }
 
     public ?int $recipe_id = null {
         set {
-            if (
-                is_int($value) &&
-                $value > 0 &&
-                Recipe::findById($value) !== null
-            ) {
+            if (is_int($value) && $value > 0 && Recipe::findById($value) !== null) {
                 $this->recipe_id = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Recipe ID must be a positive integer'
-                );
+                throw new \InvalidArgumentException('Recipe ID must be a positive integer');
             }
         }
     }
 
     public ?int $score = null {
         set {
-            if (
-                is_int($value) &&
-                $value >= 1 &&
-                $value <= 5
-            ) {
+            if (is_int($value) && $value >= 1 && $value <= 5) {
                 $this->score = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Rating must be an integer between 1 and 5'
-                );
+                throw new \InvalidArgumentException('Rating must be an integer between 1 and 5');
             }
         }
     }
@@ -65,9 +51,7 @@ class Rating extends AbstractModel
     {
         $pdo = Database::connection();
 
-        $stmt = $pdo->query(
-            'SELECT * FROM ratings'
-        );
+        $stmt = $pdo->query('SELECT * FROM ratings');
 
         return $stmt->fetchAll(
             \PDO::FETCH_CLASS,
@@ -75,9 +59,8 @@ class Rating extends AbstractModel
         );
     }
 
-    public static function getAverageRatingForRecipe(
-        int $recipeId
-    ): ?float {
+    public static function getAverageRatingForRecipe(int $recipeId): ?float
+    {
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare(
@@ -92,9 +75,7 @@ class Rating extends AbstractModel
 
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        return $result && $result['average_rating'] !== null
-            ? (float) $result['average_rating']
-            : null;
+        return $result && $result['average_rating'] !== null ? (float) $result['average_rating'] : null;
     }
 
     /**

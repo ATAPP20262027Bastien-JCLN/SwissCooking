@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Models;
 
@@ -19,9 +19,7 @@ class Ingredient extends AbstractModel
             if ($value !== null && trim($value) !== '') {
                 $this->name = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Name must be a non-empty string'
-                );
+                throw new \InvalidArgumentException('Name must be a non-empty string');
             }
         }
     }
@@ -31,9 +29,7 @@ class Ingredient extends AbstractModel
             if ($value !== null && trim($value) !== '') {
                 $this->description = $value;
             } else {
-                throw new \InvalidArgumentException(
-                    'Description must be a non-empty string'
-                );
+                throw new \InvalidArgumentException('Description must be a non-empty string');
             }
         }
     }
@@ -46,9 +42,7 @@ class Ingredient extends AbstractModel
     {
         $pdo = Database::connection();
 
-        $stmt = $pdo->query(
-            'SELECT * FROM ingredients'
-        );
+        $stmt = $pdo->query('SELECT * FROM ingredients');
 
         return $stmt->fetchAll(
             PDO::FETCH_CLASS,
@@ -65,7 +59,6 @@ class Ingredient extends AbstractModel
              FROM ingredients
              WHERE id = :id'
         );
-
         $stmt->execute([
             'id' => $id,
         ]);
@@ -81,14 +74,12 @@ class Ingredient extends AbstractModel
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare(
-            'INSERT INTO ingredients
-                (name, description)
-             VALUES
-                (:name, :description)'
+            'INSERT INTO ingredients (name, description)
+             VALUES (:name, :description)'
         );
 
         $success = $stmt->execute([
-            'name' => $this->name,
+            'name'        => $this->name,
             'description' => $this->description,
         ]);
 
@@ -103,9 +94,7 @@ class Ingredient extends AbstractModel
     public function update(): bool
     {
         if ($this->id === null) {
-            throw new \LogicException(
-                'Cannot update an ingredient without an ID'
-            );
+            throw new \LogicException('Cannot update an ingredient without an ID');
         }
 
         $pdo = Database::connection();
@@ -119,8 +108,8 @@ class Ingredient extends AbstractModel
         );
 
         return $stmt->execute([
-            'id' => $this->id,
-            'name' => $this->name,
+            'id'          => $this->id,
+            'name'        => $this->name,
             'description' => $this->description,
         ]);
     }
