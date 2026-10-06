@@ -78,9 +78,6 @@ class Rating extends AbstractModel
         return $result && $result['average_rating'] !== null ? (float) $result['average_rating'] : null;
     }
 
-    /**
-     * Get the rating given by one user to one recipe.
-     */
     public static function getUserRating(
         int $userId,
         int $recipeId
@@ -144,9 +141,6 @@ class Rating extends AbstractModel
         ]);
     }
 
-    /**
-     * Delete a user's rating.
-     */
     public static function deleteRating(
         int $userId,
         int $recipeId
@@ -155,8 +149,8 @@ class Rating extends AbstractModel
 
         $stmt = $pdo->prepare(
             'DELETE FROM ratings
-             WHERE user_id = :user_id
-               AND recipe_id = :recipe_id'
+         WHERE user_id = :user_id
+         AND recipe_id = :recipe_id'
         );
 
         return $stmt->execute([

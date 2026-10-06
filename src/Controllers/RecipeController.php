@@ -4,29 +4,20 @@ declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Controllers;
 
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-
-use BastienJcln\SwissCooking\Services\ConnexionService;
-
 use BastienJcln\SwissCooking\Core\Database;
 use BastienJcln\SwissCooking\Models\Category;
 use BastienJcln\SwissCooking\Models\Ingredient;
 use BastienJcln\SwissCooking\Models\Rating;
 use BastienJcln\SwissCooking\Models\Recipe;
 use BastienJcln\SwissCooking\Models\User;
+use BastienJcln\SwissCooking\Services\ConnexionService;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class RecipeController extends BaseController
 {
     public function show(Request $request, Response $response, array $args): Response
     {
-        // if (! ConnexionService::connectedUser()) {
-        //     return ConnexionService::redirectIfNotConnected(
-        //         $request,
-        //         $response
-        //     );
-        // }
-
         $id = (int) ($args['id'] ?? 0);
 
         $recipe = Recipe::findById($id);
@@ -79,6 +70,12 @@ class RecipeController extends BaseController
 
         $score = filter_var($data['score'] ?? null, FILTER_VALIDATE_INT);
 
+        if ($score === 0) {
+            Rating::deleteRating((int) $user->id, $recipeId);
+
+            return $response->withHeader('Location', '/recipe/' . $recipeId)->withStatus(302);
+        }
+
         if ($score === false || $score < 1 || $score > 5) {
             return $response->withHeader('Location', '/recipe/' . $recipeId . '?rating=invalid')->withStatus(302);
         }
@@ -88,17 +85,8 @@ class RecipeController extends BaseController
         return $response->withHeader('Location', '/recipe/' . $recipeId)->withStatus(302);
     }
 
-    public function list(
-        Request $request,
-        Response $response
-    ): Response {
-        // if (! ConnexionService::connectedUser()) {
-        //     return ConnexionService::redirectIfNotConnected(
-        //         $request,
-        //         $response
-        //     );
-        // }
-
+    public function list(Request $request, Response $response): Response
+    {
         $queryParams = $request->getQueryParams();
         $bodyParams  = $request->getParsedBody();
 

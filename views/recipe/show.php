@@ -163,6 +163,10 @@
 
                             <?php endfor; ?>
 
+                            <button type="submit" name="score" value="0" class="btn btn-sm btn-outline-secondary ms-2">
+                                Clear Rating
+                            </button>
+
                         </div>
 
                     </form>
