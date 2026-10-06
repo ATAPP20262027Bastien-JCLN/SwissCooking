@@ -4,23 +4,22 @@ declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Controllers;
 
-use BastienJcln\SwissCooking\Core\Database;
-use BastienJcln\SwissCooking\Models\Category;
-use BastienJcln\SwissCooking\Models\Ingredient;
-use BastienJcln\SwissCooking\Models\Recipe;
-use BastienJcln\SwissCooking\Models\User;
-use BastienJcln\SwissCooking\Models\Rating;
-use BastienJcln\SwissCooking\Services\ConnexionService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
+use BastienJcln\SwissCooking\Services\ConnexionService;
+
+use BastienJcln\SwissCooking\Core\Database;
+use BastienJcln\SwissCooking\Models\Category;
+use BastienJcln\SwissCooking\Models\Ingredient;
+use BastienJcln\SwissCooking\Models\Rating;
+use BastienJcln\SwissCooking\Models\Recipe;
+use BastienJcln\SwissCooking\Models\User;
+
 class RecipeController extends BaseController
 {
-    public function show(
-        Request $request,
-        Response $response,
-        array $args
-    ): Response {
+    public function show(Request $request, Response $response, array $args): Response
+    {
         // if (! ConnexionService::connectedUser()) {
         //     return ConnexionService::redirectIfNotConnected(
         //         $request,
@@ -33,9 +32,7 @@ class RecipeController extends BaseController
         $recipe = Recipe::findById($id);
 
         if (! $recipe) {
-            return $response
-                ->withHeader('Location', '/404')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/404')->withStatus(302);
         }
 
         $user = null;
@@ -45,42 +42,29 @@ class RecipeController extends BaseController
         }
 
         $connectedUser = ConnexionService::connectedUser();
-        $isFavorite = false;
+        $isFavorite    = false;
 
         if ($connectedUser === null) {
             $userRating = null;
         } else {
-            $userRating = Rating::getUserRating(
-                (int) $connectedUser->id,
-                $id
-            );
+            $userRating = Rating::getUserRating((int) $connectedUser->id, $id);
             $isFavorite = $connectedUser->isFavorite((int) $recipe->id);
         }
 
-        return $this->view->render(
-            $response,
-            'recipe/show.php',
-            [
-                'isFavorite' => $isFavorite,
-                'recipe' => $recipe,
-                'user' => $user,
-                'userRating' => $userRating,
-            ]
-        );
+        return $this->view->render($response, 'recipe/show.php', [
+            'isFavorite' => $isFavorite,
+            'recipe'     => $recipe,
+            'user'       => $user,
+            'userRating' => $userRating,
+        ]);
     }
 
-    public function rate(
-        Request $request,
-        Response $response,
-        array $args
-    ): Response {
+    public function rate(Request $request, Response $response, array $args): Response
+    {
         $user = ConnexionService::connectedUser();
 
         if ($user === null) {
-            return ConnexionService::redirectIfNotConnected(
-                $request,
-                $response
-            );
+            return ConnexionService::redirectIfNotConnected($request, $response);
         }
 
         $recipeId = (int) ($args['id'] ?? 0);
@@ -88,43 +72,20 @@ class RecipeController extends BaseController
         $recipe = Recipe::findById($recipeId);
 
         if ($recipe === null) {
-            return $response
-                ->withHeader('Location', '/404')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/404')->withStatus(302);
         }
 
         $data = (array) $request->getParsedBody();
 
-        $score = filter_var(
-            $data['score'] ?? null,
-            FILTER_VALIDATE_INT
-        );
+        $score = filter_var($data['score'] ?? null, FILTER_VALIDATE_INT);
 
-        if (
-            $score === false ||
-            $score < 1 ||
-            $score > 5
-        ) {
-            return $response
-                ->withHeader(
-                    'Location',
-                    '/recipe/' . $recipeId . '?rating=invalid'
-                )
-                ->withStatus(302);
+        if ($score === false || $score < 1 || $score > 5) {
+            return $response->withHeader('Location', '/recipe/' . $recipeId . '?rating=invalid')->withStatus(302);
         }
 
-        Rating::saveRating(
-            (int) $user->id,
-            $recipeId,
-            $score
-        );
+        Rating::saveRating((int) $user->id, $recipeId, $score);
 
-        return $response
-            ->withHeader(
-                'Location',
-                '/recipe/' . $recipeId
-            )
-            ->withStatus(302);
+        return $response->withHeader('Location', '/recipe/' . $recipeId)->withStatus(302);
     }
 
     public function list(

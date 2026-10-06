@@ -4,29 +4,19 @@ declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Controllers;
 
+use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Message\ResponseInterface as Response;
+
 use BastienJcln\SwissCooking\Models\Recipe;
 use BastienJcln\SwissCooking\Models\User;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
 
 class HomeController extends BaseController
 {
-    public function index(
-        Request $request,
-        Response $response
-    ): Response {
-        // if (!ConnexionService::connectedUser()) {
-        //     return ConnexionService::redirectIfNotConnected(
-        //         $request,
-        //         $response
-        //     );
-        // }
-
+    public function index(Request $request, Response $response): Response
+    {
         $recipes = Recipe::getAllRecipes();
 
-        $sorted = usort($recipes, function ($a, $b) {
-            return $b->averageRating <=> $a->averageRating;
-        });
+        $sorted = usort($recipes, function ($a, $b) {return $b->averageRating <=> $a->averageRating;});
 
         if ($sorted) {
             $recipes = array_slice($recipes, 0, 5);

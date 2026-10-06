@@ -3,33 +3,28 @@
 declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Controllers;
-
-use BastienJcln\SwissCooking\Models\Recipe;
-use BastienJcln\SwissCooking\Models\Role;
-use BastienJcln\SwissCooking\Models\User;
-use BastienJcln\SwissCooking\Models\Category;
-use BastienJcln\SwissCooking\Services\ConnexionService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
+use BastienJcln\SwissCooking\Services\ConnexionService;
+
+use BastienJcln\SwissCooking\Models\Category;
+use BastienJcln\SwissCooking\Models\Recipe;
+use BastienJcln\SwissCooking\Models\Role;
+use BastienJcln\SwissCooking\Models\User;
+
 class UserController extends BaseController
 {
-    public function profile(
-        Request $request,
-        Response $response
-    ): Response {
+    public function profile(Request $request, Response $response): Response
+    {
         $user = ConnexionService::connectedUser();
 
         if ($user === null) {
-            return $response
-                ->withHeader('Location', '/login')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/login')->withStatus(302);
         }
 
         if ($user->id !== (int) ($_SESSION['user_id'] ?? 0)) {
-            return $response
-                ->withHeader('Location', '/login')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/login')->withStatus(302);
         }
 
         $recipes = [];
@@ -47,25 +42,18 @@ class UserController extends BaseController
         ]);
     }
 
-    public function publicProfile(
-        Request $request,
-        Response $response,
-        array $args
-    ): Response {
+    public function publicProfile(Request $request, Response $response, array $args): Response
+    {
         $userId = (int) ($args['id'] ?? 0);
 
         if ($userId <= 0) {
-            return $response
-                ->withHeader('Location', '/404')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/404')->withStatus(302);
         }
 
         $user = User::findById($userId);
 
         if ($user === null) {
-            return $response
-                ->withHeader('Location', '/404')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/404')->withStatus(302);
         }
 
         $recipes = Recipe::getRecipesByUserId($user->id);
@@ -79,16 +67,12 @@ class UserController extends BaseController
         ]);
     }
 
-    public function updateProfile(
-        Request $request,
-        Response $response
-    ): Response {
+    public function updateProfile(Request $request, Response $response): Response
+    {
         $user = ConnexionService::connectedUser();
 
         if ($user === null) {
-            return $response
-                ->withHeader('Location', '/login')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/login')->withStatus(302);
         }
 
         $data = $request->getParsedBody() ?? [];
@@ -97,26 +81,17 @@ class UserController extends BaseController
         $email = trim((string) ($data['email'] ?? ''));
 
         if ($name === '' || strlen($name) > 100) {
-            return $response
-                ->withHeader('Location', '/profile?error=invalid_name')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/profile?error=invalid_name')->withStatus(302);
         }
 
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return $response
-                ->withHeader('Location', '/profile?error=invalid_email')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/profile?error=invalid_email')->withStatus(302);
         }
 
         $existingUser = User::findByEmail($email);
 
-        if (
-            $existingUser !== null &&
-            $existingUser->id !== $user->id
-        ) {
-            return $response
-                ->withHeader('Location', '/profile?error=email_taken')
-                ->withStatus(302);
+        if ($existingUser !== null && $existingUser->id !== $user->id) {
+            return $response->withHeader('Location', '/profile?error=email_taken')->withStatus(302);
         }
 
         try {
@@ -124,48 +99,30 @@ class UserController extends BaseController
             $user->email = $email;
             $user->update();
         } catch (\InvalidArgumentException $e) {
-            return $response
-                ->withHeader('Location', '/profile?error=invalid_profile')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/profile?error=invalid_profile')->withStatus(302);
         }
 
-        return $response
-            ->withHeader('Location', '/profile?success=profile_updated')
-            ->withStatus(302);
+        return $response->withHeader('Location', '/profile?success=profile_updated')->withStatus(302);
     }
 
-    public function updateProfilePicture(
-        Request $request,
-        Response $response
-    ): Response {
+    public function updateProfilePicture(Request $request, Response $response): Response
+    {
         $user = ConnexionService::connectedUser();
 
         if ($user === null) {
-            return $response
-                ->withHeader('Location', '/login')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/login')->withStatus(302);
         }
 
         $data        = $request->getParsedBody() ?? [];
         $pictureType = $data['picture_type'] ?? null;
 
         if ($pictureType === 'url') {
-            $url = trim(
-                (string) ($data['profile_picture_url'] ?? '')
-            );
+            $url = trim((string) ($data['profile_picture_url'] ?? ''));
 
-            $result = $this->downloadProfilePictureFromUrl(
-                $url,
-                $user->name
-            );
+            $result = $this->downloadProfilePictureFromUrl($url, $user->name);
 
             if ($result === null) {
-                return $response
-                    ->withHeader(
-                        'Location',
-                        '/profile?error=invalid_url'
-                    )
-                    ->withStatus(302);
+                return $response->withHeader('Location', '/profile?error=invalid_url')->withStatus(302);
             }
 
             $this->deleteLocalProfilePicture($user);
@@ -173,28 +130,15 @@ class UserController extends BaseController
             $user->profile_picture = $result;
             $user->update();
 
-            return $response
-                ->withHeader(
-                    'Location',
-                    '/profile?success=picture_updated'
-                )
-                ->withStatus(302);
+            return $response->withHeader('Location', '/profile?success=picture_updated')->withStatus(302);
         }
 
         if ($pictureType === 'file') {
             $uploadedFiles = $request->getUploadedFiles();
             $file          = $uploadedFiles['profile_picture'] ?? null;
 
-            if (
-                $file === null ||
-                $file->getError() !== UPLOAD_ERR_OK
-            ) {
-                return $response
-                    ->withHeader(
-                        'Location',
-                        '/profile?error=invalid_file'
-                    )
-                    ->withStatus(302);
+            if ($file === null || $file->getError() !== UPLOAD_ERR_OK) {
+                return $response->withHeader('Location', '/profile?error=invalid_file')->withStatus(302);
             }
 
             $allowedExtensions = [
@@ -205,20 +149,10 @@ class UserController extends BaseController
                 'ico',
             ];
 
-            $extension = strtolower(
-                pathinfo(
-                    $file->getClientFilename(),
-                    PATHINFO_EXTENSION
-                )
-            );
+            $extension = strtolower(pathinfo($file->getClientFilename(), PATHINFO_EXTENSION));
 
             if (! in_array($extension, $allowedExtensions, true)) {
-                return $response
-                    ->withHeader(
-                        'Location',
-                        '/profile?error=invalid_file'
-                    )
-                    ->withStatus(302);
+                return $response->withHeader('Location', '/profile?error=invalid_file')->withStatus(302);
             }
 
             $tmpPath  = $file->getStream()->getMetadata('uri');
@@ -233,50 +167,29 @@ class UserController extends BaseController
             ];
 
             if (! in_array($mimeType, $allowedMimeTypes, true)) {
-                return $response
-                    ->withHeader(
-                        'Location',
-                        '/profile?error=invalid_file'
-                    )
-                    ->withStatus(302);
+                return $response->withHeader('Location', '/profile?error=invalid_file')->withStatus(302);
             }
 
-            $uploadDirectory = dirname(__DIR__, 2)
-                . '/public/upload/profile_pic/';
+            $uploadDirectory = dirname(__DIR__, 2) . '/public/upload/profile_pic/';
 
             if (! is_dir($uploadDirectory)) {
-                if (
-                    ! mkdir($uploadDirectory, 0775, true) &&
-                    ! is_dir($uploadDirectory)
-                ) {
-                    throw new \RuntimeException(
-                        'Could not create profile picture directory'
-                    );
+                if (! mkdir($uploadDirectory, 0775, true) && ! is_dir($uploadDirectory)) {
+                    throw new \RuntimeException('Could not create profile picture directory');
                 }
             }
 
             if (! is_writable($uploadDirectory)) {
-                throw new \RuntimeException(
-                    'Upload directory is not writable: '
-                    . $uploadDirectory
-                );
+                throw new \RuntimeException('Upload directory is not writable: ' . $uploadDirectory);
             }
 
-            $safeUsername = preg_replace(
-                '/[^a-zA-Z0-9_-]/',
-                '_',
-                $user->name
-            );
+            $safeUsername = preg_replace('/[^a-zA-Z0-9_-]/', '_', $user->name);
 
             $filename = $safeUsername . '_pfp.' . $extension;
 
             $this->deleteLocalProfilePicture($user);
 
             foreach ($allowedExtensions as $oldExtension) {
-                $oldFile = $uploadDirectory
-                    . $safeUsername
-                    . '_pfp.'
-                    . $oldExtension;
+                $oldFile = $uploadDirectory . $safeUsername . '_pfp.' . $oldExtension;
 
                 if (is_file($oldFile)) {
                     unlink($oldFile);
@@ -287,45 +200,25 @@ class UserController extends BaseController
 
             $file->moveTo($targetPath);
 
-            $user->profile_picture =
-                'upload/profile_pic/' . $filename;
+            $user->profile_picture = 'upload/profile_pic/' . $filename;
 
             $user->update();
 
-            return $response
-                ->withHeader(
-                    'Location',
-                    '/profile?success=picture_updated'
-                )
-                ->withStatus(302);
+            return $response->withHeader('Location', '/profile?success=picture_updated')->withStatus(302);
         }
 
-        return $response
-            ->withHeader(
-                'Location',
-                '/profile?error=invalid_type'
-            )
-            ->withStatus(302);
+        return $response->withHeader('Location', '/profile?error=invalid_type')->withStatus(302);
     }
 
-    private function downloadProfilePictureFromUrl(
-        string $url,
-        string $username
-    ): ?string {
+    private function downloadProfilePictureFromUrl(string $url, string $username): ?string
+    {
         if (! filter_var($url, FILTER_VALIDATE_URL)) {
             return null;
         }
 
         $parts = parse_url($url);
 
-        if (
-            ! isset($parts['scheme']) ||
-            ! in_array(
-                strtolower($parts['scheme']),
-                ['http', 'https'],
-                true
-            )
-        ) {
+        if (! isset($parts['scheme']) || ! in_array(strtolower($parts['scheme']), ['http', 'https'], true)) {
             return null;
         }
 
@@ -333,10 +226,7 @@ class UserController extends BaseController
             return null;
         }
 
-        $temporaryFile = tempnam(
-            sys_get_temp_dir(),
-            'swisscooking_pfp_'
-        );
+        $temporaryFile = tempnam(sys_get_temp_dir(), 'swisscooking_pfp_');
 
         if ($temporaryFile === false) {
             return null;
@@ -417,14 +307,10 @@ class UserController extends BaseController
 
         $extension = $mimeToExtension[$mimeType];
 
-        $uploadDirectory = dirname(__DIR__, 2)
-            . '/public/upload/profile_pic/';
+        $uploadDirectory = dirname(__DIR__, 2) . '/public/upload/profile_pic/';
 
         if (! is_dir($uploadDirectory)) {
-            if (
-                ! mkdir($uploadDirectory, 0775, true) &&
-                ! is_dir($uploadDirectory)
-            ) {
+            if (! mkdir($uploadDirectory, 0775, true) && ! is_dir($uploadDirectory)) {
                 unlink($temporaryFile);
                 return null;
             }
@@ -435,27 +321,13 @@ class UserController extends BaseController
             return null;
         }
 
-        $safeUsername = preg_replace(
-            '/[^a-zA-Z0-9_-]/',
-            '_',
-            $username
-        );
+        $safeUsername = preg_replace('/[^a-zA-Z0-9_-]/', '_', $username);
 
         $filename    = $safeUsername . '_pfp.' . $extension;
         $destination = $uploadDirectory . $filename;
 
-        foreach ([
-            'png',
-            'jpg',
-            'jpeg',
-            'webp',
-            'gif',
-            'ico',
-        ] as $oldExtension) {
-            $oldFile = $uploadDirectory
-                . $safeUsername
-                . '_pfp.'
-                . $oldExtension;
+        foreach (['png', 'jpg', 'jpeg', 'webp', 'gif', 'ico'] as $oldExtension) {
+            $oldFile = $uploadDirectory . $safeUsername . '_pfp.' . $oldExtension;
 
             if (is_file($oldFile)) {
                 unlink($oldFile);
@@ -476,50 +348,31 @@ class UserController extends BaseController
             return;
         }
 
-        if (
-            str_starts_with($user->profile_picture, 'http://') ||
-            str_starts_with($user->profile_picture, 'https://')
-        ) {
+        if (str_starts_with($user->profile_picture, 'http://') || str_starts_with($user->profile_picture, 'https://')) {
             return;
         }
 
-        $profileDirectory = realpath(
-            dirname(__DIR__, 2)
-            . '/public/upload/profile_pic/'
-        );
+        $profileDirectory = realpath(dirname(__DIR__, 2) . '/public/upload/profile_pic/');
 
         if ($profileDirectory === false) {
             return;
         }
 
-        $path = dirname(__DIR__, 2)
-        . '/public/'
-        . ltrim($user->profile_picture, '/');
+        $path = dirname(__DIR__, 2) . '/public/' . ltrim($user->profile_picture, '/');
 
         $realPath = realpath($path);
 
-        if (
-            $realPath !== false &&
-            str_starts_with(
-                $realPath,
-                $profileDirectory . DIRECTORY_SEPARATOR
-            ) &&
-            is_file($realPath)
-        ) {
+        if ($realPath !== false && str_starts_with($realPath, $profileDirectory . DIRECTORY_SEPARATOR) && is_file($realPath)) {
             unlink($realPath);
         }
     }
 
-    public function deleteProfilePicture(
-        Request $request,
-        Response $response
-    ): Response {
+    public function deleteProfilePicture(Request $request, Response $response): Response
+    {
         $user = ConnexionService::connectedUser();
 
         if ($user === null) {
-            return $response
-                ->withHeader('Location', '/login')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/login')->withStatus(302);
         }
 
         if ($user->profile_picture !== null) {
@@ -529,47 +382,31 @@ class UserController extends BaseController
             $user->update();
         }
 
-        return $response
-            ->withHeader(
-                'Location',
-                '/profile?success=picture_deleted'
-            )
-            ->withStatus(302);
+        return $response->withHeader('Location', '/profile?success=picture_deleted')->withStatus(302);
     }
 
-    public function toggleFavorite(
-        Request $request,
-        Response $response,
-        array $args
-    ): Response {
+    public function toggleFavorite(Request $request, Response $response, array $args): Response
+    {
         $user = ConnexionService::connectedUser();
 
         if ($user === null) {
-            return $response
-                ->withHeader('Location', '/login')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/login')->withStatus(302);
         }
 
         $recipeId = (int) ($args['id'] ?? 0);
 
         if ($recipeId <= 0) {
-            return $response
-                ->withHeader('Location', '/404')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/404')->withStatus(302);
         }
 
-        $recipe = Recipe::findById($recipeId);
-        $isFavorite  = false;
+        $recipe     = Recipe::findById($recipeId);
+        $isFavorite = false;
 
         if ($user !== null) {
-            $isFavorite = $user->isFavorite(
-                (int) $recipe->id
-            );
+            $isFavorite = $user->isFavorite((int) $recipe->id);
         }
         if ($recipe === null) {
-            return $response
-                ->withHeader('Location', '/404')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/404')->withStatus(302);
         }
 
         try {
@@ -579,29 +416,18 @@ class UserController extends BaseController
                 $user->addFavorite($recipeId);
             }
         } catch (\Throwable $e) {
-            return $response
-                ->withHeader('Location', '/500')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/500')->withStatus(302);
         }
 
-        return $response
-            ->withHeader(
-                'Location',
-                '/recipe/' . $recipeId
-            )
-            ->withStatus(302);
+        return $response->withHeader('Location', '/recipe/' . $recipeId)->withStatus(302);
     }
 
-    public function favorites(
-        Request $request,
-        Response $response
-    ): Response {
+    public function favorites(Request $request, Response $response): Response
+    {
         $user = ConnexionService::connectedUser();
 
         if ($user === null) {
-            return $response
-                ->withHeader('Location', '/login')
-                ->withStatus(302);
+            return $response->withHeader('Location', '/login')->withStatus(302);
         }
 
         $recipes = $user->getFavoriteRecipes();
@@ -610,29 +436,21 @@ class UserController extends BaseController
 
         foreach ($recipes as $recipe) {
             if ($recipe->user_id !== null) {
-                $users[$recipe->id] = User::findById(
-                    (int) $recipe->user_id
-                );
+                $users[$recipe->id] = User::findById((int) $recipe->user_id);
             }
         }
 
         $categories = Category::getAllCategories();
 
-        return $this->view->render(
-            $response,
-            'user/favorites.php',
-            [
-                'categories' => $categories,
-                'recipes' => $recipes,
-                'users'   => $users,
-            ]
-        );
+        return $this->view->render($response, 'user/favorites.php', [
+            'categories' => $categories,
+            'recipes'    => $recipes,
+            'users'      => $users,
+        ]);
     }
 
-    public function logout(
-        Request $request,
-        Response $response
-    ): Response {
+    public function logout(Request $request, Response $response): Response
+    {
         return ConnexionService::logout($request, $response);
     }
 }

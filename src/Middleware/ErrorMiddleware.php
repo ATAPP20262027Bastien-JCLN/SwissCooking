@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Middleware;
 
@@ -21,31 +21,24 @@ class ErrorMiddleware
 {
     public static function register(App $app): SlimErrorMiddleware
     {
-        $errorMiddleware = $app->addErrorMiddleware(
-            true,
-            true,
-            true
-        );
+        $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 
         $errorMiddleware->setDefaultErrorHandler(
             function (ServerRequestInterface $request, \Throwable $exception, bool $displayErrorDetails): ResponseInterface {
                 $statusCode = match (true) {
-                    $exception instanceof HttpBadRequestException => 400,
-                    $exception instanceof HttpUnauthorizedException => 401,
-                    $exception instanceof HttpForbiddenException => 403,
-                    $exception instanceof HttpNotFoundException => 404,
-                    $exception instanceof HttpMethodNotAllowedException => 405,
+                    $exception instanceof HttpBadRequestException          => 400,
+                    $exception instanceof HttpUnauthorizedException        => 401,
+                    $exception instanceof HttpForbiddenException           => 403,
+                    $exception instanceof HttpNotFoundException            => 404,
+                    $exception instanceof HttpMethodNotAllowedException    => 405,
                     $exception instanceof HttpInternalServerErrorException => 500,
-                    $exception instanceof HttpException => 500,
-                    default => 500,
+                    $exception instanceof HttpException                    => 500,
+                    default                                                => 500,
                 };
 
                 $controller = new ErrorController();
 
-                return $controller->redirectToErrorPage(
-                    $request,
-                    $statusCode
-                );
+                return $controller->redirectToErrorPage($request, $statusCode);
             }
         );
 

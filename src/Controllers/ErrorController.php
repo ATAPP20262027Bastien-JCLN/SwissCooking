@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Controllers;
 
@@ -10,19 +10,15 @@ use Slim\Psr7\Response;
 
 class ErrorController extends BaseController
 {
-    public function redirectToErrorPage(
-        ServerRequestInterface $request,
-        int $statusCode
-    ): ResponseInterface {
+    public function redirectToErrorPage(ServerRequestInterface $request, int $statusCode): ResponseInterface
+    {
         $allowedCodes = [400, 401, 403, 404, 405, 500];
 
-        if (!in_array($statusCode, $allowedCodes, true)) {
+        if (! in_array($statusCode, $allowedCodes, true)) {
             $statusCode = 500;
         }
 
-        return (new Response())
-            ->withStatus(302)
-            ->withHeader('Location', '/' . $statusCode);
+        return (new Response())->withStatus(302)->withHeader('Location', '/' . $statusCode);
     }
 
     public function badRequest(): ResponseInterface
@@ -55,10 +51,8 @@ class ErrorController extends BaseController
         return $this->renderError(500);
     }
 
-    private function renderError(
-        int $statusCode,
-        string $customMessage = ''
-    ): ResponseInterface {
+    private function renderError(int $statusCode, string $customMessage = ''): ResponseInterface
+    {
         $titles = [
             400 => 'Bad Request',
             401 => 'Unauthorized',
@@ -86,22 +80,16 @@ class ErrorController extends BaseController
             500 => 'The server has encountered a situation it does not know how to handle.',
         ];
 
-        $message = $customMessage !== ''
-            ? $customMessage
-            : $messages[$statusCode];
+        $message = $customMessage !== '' ? $customMessage : $messages[$statusCode];
 
         $response = new Response($statusCode);
 
-        return $this->view->render(
-            $response,
-            'errors/display.php',
-            [
-                'withMenu' => false,
-                'title' => $titles[$statusCode],
-                'statusCode' => $statusCode,
-                'message' => $message,
-                'description' => $description[$statusCode],
-            ]
-        );
+        return $this->view->render($response, 'errors/display.php', [
+            'withMenu'    => false,
+            'title'       => $titles[$statusCode],
+            'statusCode'  => $statusCode,
+            'message'     => $message,
+            'description' => $description[$statusCode],
+        ]);
     }
 }
