@@ -121,7 +121,7 @@ body {
 
 .rating-stars {
   display: flex;
-  gap: 4px;
+  /* gap: 4px; */
 }
 
 .rating-star {
@@ -131,13 +131,15 @@ body {
   color: #ccc;
   cursor: pointer;
   padding: 0;
+  margin: 0;
 }
 
 .rating-star.selected {
   color: #ffc107;
 }
 
-.rating-star:hover {
+.rating-star:hover,
+.hovered {
   color: #ffc107;
 }
 

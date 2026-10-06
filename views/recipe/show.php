@@ -152,7 +152,7 @@
 
                             <?php for ($i = 1; $i <= 5; $i++): ?>
 
-                            <button type="submit" name="score" value="<?php echo $i; ?>" class="rating-star <?php
+                            <button id="<?= $i ?>" type="submit" name="score" value="<?php echo $i; ?>" class="rating-star <?php
                          echo $userRating !== null &&
                          $i <= $userRating
                              ? 'selected'
@@ -212,3 +212,43 @@
         </div>
     </div>
 </div>
+
+<script>
+    const stars = document.querySelectorAll('.rating-star');
+    let selectedRating = <?php echo $userRating !== null ? (int) $userRating : 0; ?>;
+    stars.forEach((star, index) => {
+        star.addEventListener('mouseover', () => {
+            stars.forEach((s, i) => {
+                s.classList.remove('selected');
+                if (i <= index) {
+                    s.classList.add('hovered');
+                } else {
+                    s.classList.remove('hovered');
+                }
+            });
+        });
+        star.addEventListener('mouseout', () => {
+            stars.forEach((s) => {
+                s.classList.remove('hovered');
+            });
+            stars.forEach((s, i) => {
+                if (i < selectedRating) {
+                    s.classList.add('selected');
+                } else {
+                    s.classList.remove('selected');
+                }
+            });
+        });
+        star.addEventListener('click', () => {
+            selectedRating = index + 1;
+            stars.forEach((s, i) => {
+                s.classList.remove('hovered');
+                if (i < selectedRating) {
+                    s.classList.add('selected');
+                } else {
+                    s.classList.remove('selected');
+                }
+            });
+        });
+    });
+</script>
