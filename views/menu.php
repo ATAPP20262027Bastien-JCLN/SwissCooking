@@ -23,21 +23,22 @@
 
             <ul class="navbar-nav me-auto">
 
-                <?php if (! empty($_SESSION['user_id'])): ?>
-
                 <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
                 <li class="nav-item desktop-link-separator">
                     <div class="nav-link">|</div>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="/recipes">Recipes</a></li>
-                <li class="nav-item desktop-link-separator">
-                    <div class="nav-link">|</div>
-                </li>
-                <li class="nav-item"><a class="nav-link" href="/favorites">Favorites</a></li>
+
                 <li class="nav-item desktop-link-separator">
                     <div class="nav-link">|</div>
                 </li>
                 <li class="nav-item"><a class="nav-link" href="/categories">Categories</a></li>
+                <li class="nav-item desktop-link-separator">
+                    <div class="nav-link">|</div>
+                </li>
+
+                <?php if (! empty($_SESSION['user_id'])): ?>
+                <li class="nav-item"><a class="nav-link" href="/favorites">Favorites</a></li>
                 <li class="nav-item desktop-link-separator">
                     <div class="nav-link">|</div>
                 </li>

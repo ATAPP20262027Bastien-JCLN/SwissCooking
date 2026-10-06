@@ -1,6 +1,6 @@
 <?php
 
-declare (strict_types = 1);
+declare(strict_types=1);
 
 namespace BastienJcln\SwissCooking\Models;
 
@@ -63,10 +63,16 @@ class Rating extends AbstractModel
 
     public static function getAllRatings(): array
     {
-        $pdo  = Database::connection();
-        $stmt = $pdo->query('SELECT * FROM ratings');
+        $pdo = Database::connection();
 
-        return $stmt->fetchAll(\PDO::FETCH_CLASS, self::class);
+        $stmt = $pdo->query(
+            'SELECT * FROM ratings'
+        );
+
+        return $stmt->fetchAll(
+            \PDO::FETCH_CLASS,
+            self::class
+        );
     }
 
     public static function getAverageRatingForRecipe(
@@ -91,15 +97,130 @@ class Rating extends AbstractModel
             : null;
     }
 
+    /**
+     * Get the rating given by one user to one recipe.
+     */
+    public static function getUserRating(
+        int $userId,
+        int $recipeId
+    ): ?int {
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare(
+            'SELECT score
+             FROM ratings
+             WHERE user_id = :user_id
+               AND recipe_id = :recipe_id'
+        );
+
+        $stmt->execute([
+            'user_id'   => $userId,
+            'recipe_id' => $recipeId,
+        ]);
+
+        $result = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        return $result !== false
+            ? (int) $result['score']
+            : null;
+    }
+
+    /**
+     * Create or update a user's rating.
+     */
+    public static function saveRating(
+        int $userId,
+        int $recipeId,
+        int $score
+    ): bool {
+        if ($score < 1 || $score > 5) {
+            throw new \InvalidArgumentException(
+                'Rating must be between 1 and 5.'
+            );
+        }
+
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare(
+            'INSERT INTO ratings (
+                user_id,
+                recipe_id,
+                score
+            )
+            VALUES (
+                :user_id,
+                :recipe_id,
+                :score
+            )
+            ON DUPLICATE KEY UPDATE
+                score = VALUES(score)'
+        );
+
+        return $stmt->execute([
+            'user_id'   => $userId,
+            'recipe_id' => $recipeId,
+            'score'     => $score,
+        ]);
+    }
+
+    /**
+     * Delete a user's rating.
+     */
+    public static function deleteRating(
+        int $userId,
+        int $recipeId
+    ): bool {
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare(
+            'DELETE FROM ratings
+             WHERE user_id = :user_id
+               AND recipe_id = :recipe_id'
+        );
+
+        return $stmt->execute([
+            'user_id'   => $userId,
+            'recipe_id' => $recipeId,
+        ]);
+    }
+
     #[Override]
     public function insert(): bool
     {
-        throw new \Exception('Not implemented');
+        if (
+            $this->user_id === null ||
+            $this->recipe_id === null ||
+            $this->score === null
+        ) {
+            throw new \LogicException(
+                'User, recipe and score are required.'
+            );
+        }
+
+        return self::saveRating(
+            $this->user_id,
+            $this->recipe_id,
+            $this->score
+        );
     }
 
     #[Override]
     public function update(): bool
     {
-        throw new \Exception('Not implemented');
+        if (
+            $this->user_id === null ||
+            $this->recipe_id === null ||
+            $this->score === null
+        ) {
+            throw new \LogicException(
+                'User, recipe and score are required.'
+            );
+        }
+
+        return self::saveRating(
+            $this->user_id,
+            $this->recipe_id,
+            $this->score
+        );
     }
 }

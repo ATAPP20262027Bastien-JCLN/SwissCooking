@@ -1,16 +1,13 @@
 <?php
 
-declare(strict_types=1);
+declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Controllers;
 
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-
-use BastienJcln\SwissCooking\Services\ConnexionService;
-use BastienJcln\SwissCooking\Models\Category;
 use BastienJcln\SwissCooking\Models\Recipe;
 use BastienJcln\SwissCooking\Models\User;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class HomeController extends BaseController
 {
@@ -18,12 +15,12 @@ class HomeController extends BaseController
         Request $request,
         Response $response
     ): Response {
-        if (!ConnexionService::connectedUser()) {
-            return ConnexionService::redirectIfNotConnected(
-                $request,
-                $response
-            );
-        }
+        // if (!ConnexionService::connectedUser()) {
+        //     return ConnexionService::redirectIfNotConnected(
+        //         $request,
+        //         $response
+        //     );
+        // }
 
         $recipes = Recipe::getAllRecipes();
 
@@ -47,13 +44,15 @@ class HomeController extends BaseController
             }
         }
 
-        $users[$_SESSION['user_id']] = User::findById(
-            $_SESSION['user_id'] ?? null
-        );
+        if (isset($_SESSION['user_id'])) {
+            $users[$_SESSION['user_id']] = User::findById(
+                $_SESSION['user_id'] ?? null
+            );
+        }
 
         return $this->view->render($response, 'home/index.php', [
             'recipes' => $recipes,
-            'users' => $users,
+            'users'   => $users,
         ]);
     }
 }

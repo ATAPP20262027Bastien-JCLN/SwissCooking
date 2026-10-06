@@ -8,7 +8,8 @@
                 <div class="card-body p-4 p-md-5 position-relative">
                     <div class="position-absolute top-0 end-0 mt-3 me-3 d-flex gap-2">
                         <?php if ($user !== null): ?>
-                        
+
+                        <?php if (isset($_SESSION['user_id'])): ?>
                         <form action="/recipe/<?php echo escape($recipe->id) ?>/favorite" method="POST"
                             class="d-inline">
                             <button type="submit" class="btn btn-sm <?php echo $isFavorite
@@ -19,6 +20,7 @@
                                     : '♡ Favorite'; ?>
                             </button>
                         </form>
+                        <?php endif; ?>
 
                         <?php endif; ?>
 
@@ -115,17 +117,56 @@
                         <?php endif; ?>
                     </div>
                     <h3 class="mt-5">Rating</h3>
-                    <p>
+
+                    <div class="mb-3">
+
                         <?php if ($recipe->averageRating !== null): ?>
+
                         <span class="fs-4">
-                            <?php echo number_format($recipe->averageRating, 2) ?>/5
+                            <?php echo number_format($recipe->averageRating, 2); ?>/5
                         </span>
+
                         <?php else: ?>
+
                         <span class="text-muted">
                             No ratings yet.
                         </span>
+
                         <?php endif; ?>
-                    </p>
+
+                    </div>
+                        <?php if (isset($_SESSION['user_id'])): ?>
+
+                    <form action="/recipe/<?php echo escape($recipe->id); ?>/rate" method="POST">
+
+                        <p class="mb-2">
+                            <?php if ($userRating !== null): ?>
+                            Your rating:
+                            <strong><?php echo escape($userRating); ?>/5</strong>
+                            <?php else: ?>
+                            Rate this recipe:
+                            <?php endif; ?>
+                        </p>
+
+                        <div class="rating-stars">
+
+                            <?php for ($i = 1; $i <= 5; $i++): ?>
+
+                            <button type="submit" name="score" value="<?php echo $i; ?>" class="rating-star <?php
+                         echo $userRating !== null &&
+                         $i <= $userRating
+                             ? 'selected'
+                         : '';
+                     ?>" aria-label="Rate <?php echo $i; ?> out of 5">
+                                ★
+                            </button>
+
+                            <?php endfor; ?>
+
+                        </div>
+
+                    </form>
+                    <?php endif; ?>
                     <h3 class="mt-5">Comments</h3>
                     <?php if (! empty($recipe->comments)): ?>
                     <div class="comments-list">

@@ -9,6 +9,7 @@ use BastienJcln\SwissCooking\Models\Category;
 use BastienJcln\SwissCooking\Models\Ingredient;
 use BastienJcln\SwissCooking\Models\Recipe;
 use BastienJcln\SwissCooking\Models\User;
+use BastienJcln\SwissCooking\Models\Rating;
 use BastienJcln\SwissCooking\Services\ConnexionService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -20,14 +21,15 @@ class RecipeController extends BaseController
         Response $response,
         array $args
     ): Response {
-        if (! ConnexionService::connectedUser()) {
-            return ConnexionService::redirectIfNotConnected(
-                $request,
-                $response
-            );
-        }
+        // if (! ConnexionService::connectedUser()) {
+        //     return ConnexionService::redirectIfNotConnected(
+        //         $request,
+        //         $response
+        //     );
+        // }
 
-        $id     = (int) ($args['id'] ?? 0);
+        $id = (int) ($args['id'] ?? 0);
+
         $recipe = Recipe::findById($id);
 
         if (! $recipe) {
@@ -38,35 +40,103 @@ class RecipeController extends BaseController
 
         $user = null;
 
-        if (isset($recipe->user_id)) {
+        if ($recipe->user_id !== null) {
             $user = User::findById($recipe->user_id);
+        }
+
+        $connectedUser = ConnexionService::connectedUser();
+        $isFavorite = false;
+
+        if ($connectedUser === null) {
+            $userRating = null;
+        } else {
+            $userRating = Rating::getUserRating(
+                (int) $connectedUser->id,
+                $id
+            );
+            $isFavorite = $connectedUser->isFavorite((int) $recipe->id);
         }
 
         return $this->view->render(
             $response,
             'recipe/show.php',
             [
-                'isFavorite' => ConnexionService::connectedUser() !== null
-                    ? ConnexionService::connectedUser()->isFavorite(
-                        (int) $recipe->id
-                    )
-                    : false,
+                'isFavorite' => $isFavorite,
                 'recipe' => $recipe,
-                'user'   => $user,
+                'user' => $user,
+                'userRating' => $userRating,
             ]
         );
+    }
+
+    public function rate(
+        Request $request,
+        Response $response,
+        array $args
+    ): Response {
+        $user = ConnexionService::connectedUser();
+
+        if ($user === null) {
+            return ConnexionService::redirectIfNotConnected(
+                $request,
+                $response
+            );
+        }
+
+        $recipeId = (int) ($args['id'] ?? 0);
+
+        $recipe = Recipe::findById($recipeId);
+
+        if ($recipe === null) {
+            return $response
+                ->withHeader('Location', '/404')
+                ->withStatus(302);
+        }
+
+        $data = (array) $request->getParsedBody();
+
+        $score = filter_var(
+            $data['score'] ?? null,
+            FILTER_VALIDATE_INT
+        );
+
+        if (
+            $score === false ||
+            $score < 1 ||
+            $score > 5
+        ) {
+            return $response
+                ->withHeader(
+                    'Location',
+                    '/recipe/' . $recipeId . '?rating=invalid'
+                )
+                ->withStatus(302);
+        }
+
+        Rating::saveRating(
+            (int) $user->id,
+            $recipeId,
+            $score
+        );
+
+        return $response
+            ->withHeader(
+                'Location',
+                '/recipe/' . $recipeId
+            )
+            ->withStatus(302);
     }
 
     public function list(
         Request $request,
         Response $response
     ): Response {
-        if (! ConnexionService::connectedUser()) {
-            return ConnexionService::redirectIfNotConnected(
-                $request,
-                $response
-            );
-        }
+        // if (! ConnexionService::connectedUser()) {
+        //     return ConnexionService::redirectIfNotConnected(
+        //         $request,
+        //         $response
+        //     );
+        // }
 
         $queryParams = $request->getQueryParams();
         $bodyParams  = $request->getParsedBody();

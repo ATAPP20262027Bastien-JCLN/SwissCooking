@@ -16,12 +16,12 @@ class CategoryController extends BaseController
         Request $request,
         Response $response
     ): Response {
-        if (!ConnexionService::connectedUser()) {
-            return ConnexionService::redirectIfNotConnected(
-                $request,
-                $response
-            );
-        }
+        // if (!ConnexionService::connectedUser()) {
+        //     return ConnexionService::redirectIfNotConnected(
+        //         $request,
+        //         $response
+        //     );
+        // }
 
         $categories = Category::getAllCategories();
 
