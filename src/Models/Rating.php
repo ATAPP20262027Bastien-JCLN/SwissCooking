@@ -78,10 +78,8 @@ class Rating extends AbstractModel
         return $result && $result['average_rating'] !== null ? (float) $result['average_rating'] : null;
     }
 
-    public static function getUserRating(
-        int $userId,
-        int $recipeId
-    ): ?int {
+    public static function getUserRating(int $userId, int $recipeId): ?int
+    {
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare(
@@ -90,7 +88,6 @@ class Rating extends AbstractModel
              WHERE user_id = :user_id
                AND recipe_id = :recipe_id'
         );
-
         $stmt->execute([
             'user_id'   => $userId,
             'recipe_id' => $recipeId,
@@ -98,40 +95,21 @@ class Rating extends AbstractModel
 
         $result = $stmt->fetch(\PDO::FETCH_ASSOC);
 
-        return $result !== false
-            ? (int) $result['score']
-            : null;
+        return $result !== false ? (int) $result['score'] : null;
     }
 
-    /**
-     * Create or update a user's rating.
-     */
-    public static function saveRating(
-        int $userId,
-        int $recipeId,
-        int $score
-    ): bool {
+    public static function saveRating(int $userId, int $recipeId, int $score): bool
+    {
         if ($score < 1 || $score > 5) {
-            throw new \InvalidArgumentException(
-                'Rating must be between 1 and 5.'
-            );
+            throw new \InvalidArgumentException('Rating must be between 1 and 5.');
         }
 
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare(
-            'INSERT INTO ratings (
-                user_id,
-                recipe_id,
-                score
-            )
-            VALUES (
-                :user_id,
-                :recipe_id,
-                :score
-            )
-            ON DUPLICATE KEY UPDATE
-                score = VALUES(score)'
+            'INSERT INTO ratings (user_id, recipe_id, score)
+            VALUES (:user_id, :recipe_id, :score)
+            ON DUPLICATE KEY UPDATE score = VALUES(score)'
         );
 
         return $stmt->execute([
@@ -141,16 +119,14 @@ class Rating extends AbstractModel
         ]);
     }
 
-    public static function deleteRating(
-        int $userId,
-        int $recipeId
-    ): bool {
+    public static function deleteRating(int $userId, int $recipeId): bool
+    {
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare(
             'DELETE FROM ratings
-         WHERE user_id = :user_id
-         AND recipe_id = :recipe_id'
+            WHERE user_id = :user_id
+            AND recipe_id = :recipe_id'
         );
 
         return $stmt->execute([
@@ -162,40 +138,20 @@ class Rating extends AbstractModel
     #[Override]
     public function insert(): bool
     {
-        if (
-            $this->user_id === null ||
-            $this->recipe_id === null ||
-            $this->score === null
-        ) {
-            throw new \LogicException(
-                'User, recipe and score are required.'
-            );
+        if ($this->user_id === null || $this->recipe_id === null || $this->score === null) {
+            throw new \LogicException('User, recipe and score are required.');
         }
 
-        return self::saveRating(
-            $this->user_id,
-            $this->recipe_id,
-            $this->score
-        );
+        return self::saveRating($this->user_id, $this->recipe_id, $this->score);
     }
 
     #[Override]
     public function update(): bool
     {
-        if (
-            $this->user_id === null ||
-            $this->recipe_id === null ||
-            $this->score === null
-        ) {
-            throw new \LogicException(
-                'User, recipe and score are required.'
-            );
+        if ($this->user_id === null || $this->recipe_id === null || $this->score === null) {
+            throw new \LogicException('User, recipe and score are required.');
         }
 
-        return self::saveRating(
-            $this->user_id,
-            $this->recipe_id,
-            $this->score
-        );
+        return self::saveRating($this->user_id, $this->recipe_id, $this->score);
     }
 }

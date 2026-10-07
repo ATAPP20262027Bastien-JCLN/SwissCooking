@@ -9,7 +9,8 @@
                     <div class="alert alert-danger" role="alert">
                         <?php echo escape($_SESSION['error']) ?>
                     </div>
-                    <?php endif; ?> <?php if (! empty($_SESSION['errors'])): ?>
+                    <?php endif; ?>
+                    <?php if (! empty($_SESSION['errors'])): ?>
                     <div class="alert alert-danger" role="alert">
                         <ul class="mb-0">
                             <?php foreach ($_SESSION['errors'] as $error): ?>

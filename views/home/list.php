@@ -41,13 +41,11 @@
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title"><?php echo escape($recipe->name) ?></h5>
                             <p class="card-text mb-2">
-                                <strong>Category:</strong> <?php echo escape($recipe->category)
-                                                           ?>
+                                <strong>Category:</strong> <?php echo escape($recipe->category) ?>
                             </p>
                             <p class="card-text mb-2">
                                 <strong>Author:</strong>
-                                <?php echo isset($users[$recipe->id]) ?
-                                escape($users[$recipe->id]->name) : 'Unknown' ?>
+                                <?php echo isset($users[$recipe->id]) ? escape($users[$recipe->id]->name) : 'Unknown' ?>
                             </p>
                             <p class="card-text">
                                 <?php echo escape($recipe->description) ?>
@@ -55,10 +53,11 @@
                             <div class="mt-auto">
                                 <p class="card-text mb-3">
                                     <small class="text-muted">
-                                        <strong>Average Rating:</strong> <?php if
-                                                                         ($recipe->averageRating !== null): ?> <?php echo
- number_format($recipe->averageRating, 2) ?>/5 <?php else: ?>
-                                        No ratings yet <?php endif; ?>
+                                        <strong>Average Rating:</strong> <?php if ($recipe->averageRating !== null): ?>
+                                        <?php echo number_format($recipe->averageRating, 2) ?>/5
+                                        <?php else: ?>
+                                        No ratings yet
+                                        <?php endif; ?>
                                     </small>
                                 </p>
                                 <a href="/recipe/<?php echo escape((string) $recipe->id) ?>"
@@ -79,6 +78,7 @@
         </div>
     </div>
 </div>
+
 <script>
 const recipeList = document.getElementById("recipeList");
 const sortButtons = document.querySelectorAll(".sort-btn");

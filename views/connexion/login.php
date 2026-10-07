@@ -11,7 +11,8 @@
                     <div class="alert alert-danger" role="alert">
                         <?php echo escape($_SESSION['error']) ?>
                     </div>
-                    <?php endif; ?> <?php if (! empty($_SESSION['errors'])): ?>
+                    <?php endif; ?>
+                    <?php if (! empty($_SESSION['errors'])): ?>
                     <div class="alert alert-danger" role="alert">
                         <ul class="mb-0">
                             <?php foreach ($_SESSION['errors'] as $error): ?>
@@ -32,23 +33,6 @@
                             <input type="password" class="form-control" id="password" name="password"
                                 placeholder="Enter your password" required />
                         </div>
-                        <!-- Remember me -->
-                        <!-- <div class="d-flex justify-content-between align-items-center mb-4">
-                            <div class="form-check">
-                                <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    id="remember"
-                                    name="remember"
-                                >
-                                <label class="form-check-label" for="remember">
-                                    Remember me
-                                </label>
-                            </div>
-                            <a href="/forgot-password">
-                                Forgot password?
-                            </a>
-                        </div> -->
                         <button type="submit" class="btn btn-success w-100">Log In</button>
                     </form>
                     <div class="text-center mt-4">

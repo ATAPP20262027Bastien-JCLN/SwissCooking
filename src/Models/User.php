@@ -113,14 +113,11 @@ class User extends AbstractModel
             $localPath = dirname(__DIR__, 2) . '/public/' . ltrim($this->profile_picture, '/');
 
             if (is_file($localPath)) {
-                return '/' . ltrim(
-                    $this->profile_picture,
-                    '/'
-                );
+                return '/' . ltrim($this->profile_picture, '/');
             }
         }
 
-        $profileDirectory = dirname(__DIR__, 2). '/public/upload/profile_pic/';
+        $profileDirectory = dirname(__DIR__, 2) . '/public/upload/profile_pic/';
 
         $extensions = [
             'png',
@@ -138,7 +135,7 @@ class User extends AbstractModel
             }
         }
 
-        return 'https://ui-avatars.com/api/?name='. urlencode($this->name ?? 'User'). '&size=256';
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name ?? 'User') . '&size=256';
     }
 
     public function isFavorite(int $recipeId): bool

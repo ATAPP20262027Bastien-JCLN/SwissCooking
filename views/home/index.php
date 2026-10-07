@@ -22,16 +22,13 @@
                                 </p>
                                 <p class="card-text">
                                     <strong>Author:</strong>
-                                    <?php echo isset($users[$recipe->id]) ?
-                                    escape($users[$recipe->id]->name) : 'Unknown' ?>
+                                    <?php echo isset($users[$recipe->id]) ? escape($users[$recipe->id]->name) : 'Unknown' ?>
                                 </p>
                                 <p class="card-text"><?php echo escape($recipe->description) ?></p>
                                 <p class="card-text">
                                     <small class="text-muted">
                                         <strong>Average Rating:</strong>
-                                        <?php echo $recipe->averageRating !== null ?
-                                            number_format($recipe->averageRating, 2) : 'No ratings yet';
-                                        ?>
+                                        <?php echo $recipe->averageRating !== null ? number_format($recipe->averageRating, 2) : 'No ratings yet'; ?>
                                     </small>
                                 </p>
                             </div>

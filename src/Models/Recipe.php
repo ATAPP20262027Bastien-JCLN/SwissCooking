@@ -70,7 +70,9 @@ class Recipe extends AbstractModel
             }
 
             foreach ($value as $ingredient) {
-                if (! $ingredient instanceof Ingredient) {throw new \InvalidArgumentException('All ingredients must be instances of Ingredient');}
+                if (! $ingredient instanceof Ingredient) {
+                    throw new \InvalidArgumentException('All ingredients must be instances of Ingredient');
+                }
             }
 
             $this->ingredients = $value;
