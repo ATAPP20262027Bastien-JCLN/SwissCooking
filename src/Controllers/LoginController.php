@@ -75,9 +75,7 @@ class LoginController extends BaseController
         $user->id_role       = 1;
 
         if ($user->save()) {
-            $_SESSION['user_id'] = $user->id;
-            $_SESSION['error']   = null;
-
+            ConnexionService::loginUser($user);
             return $response->withHeader('Location', '/')->withStatus(302);
         }
 

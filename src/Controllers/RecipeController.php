@@ -4,15 +4,17 @@ declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Controllers;
 
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
+
+use BastienJcln\SwissCooking\Services\ConnexionService;
+
 use BastienJcln\SwissCooking\Core\Database;
 use BastienJcln\SwissCooking\Models\Category;
 use BastienJcln\SwissCooking\Models\Ingredient;
 use BastienJcln\SwissCooking\Models\Rating;
 use BastienJcln\SwissCooking\Models\Recipe;
 use BastienJcln\SwissCooking\Models\User;
-use BastienJcln\SwissCooking\Services\ConnexionService;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
 
 class RecipeController extends BaseController
 {
@@ -456,7 +458,6 @@ class RecipeController extends BaseController
         $pdo = Database::connection();
 
         try {
-
             $pdo->beginTransaction();
 
             $recipe->name        = $name;

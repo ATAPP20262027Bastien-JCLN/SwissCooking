@@ -3,6 +3,7 @@
 declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Controllers;
+
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 
@@ -44,6 +45,10 @@ class UserController extends BaseController
 
     public function publicProfile(Request $request, Response $response, array $args): Response
     {
+        if (!ConnexionService::connectedUser()) {
+            ConnexionService::redirectIfNotConnected($request, $response);
+        }
+
         $userId = (int) ($args['id'] ?? 0);
 
         if ($userId <= 0) {
@@ -72,7 +77,7 @@ class UserController extends BaseController
         $user = ConnexionService::connectedUser();
 
         if ($user === null) {
-            return $response->withHeader('Location', '/login')->withStatus(302);
+            return ConnexionService::redirectIfNotConnected($request, $response);
         }
 
         $data = $request->getParsedBody() ?? [];
@@ -110,7 +115,7 @@ class UserController extends BaseController
         $user = ConnexionService::connectedUser();
 
         if ($user === null) {
-            return $response->withHeader('Location', '/login')->withStatus(302);
+            return ConnexionService::redirectIfNotConnected($request, $response);
         }
 
         $data        = $request->getParsedBody() ?? [];
