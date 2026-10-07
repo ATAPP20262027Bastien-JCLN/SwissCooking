@@ -45,10 +45,6 @@ class UserController extends BaseController
 
     public function publicProfile(Request $request, Response $response, array $args): Response
     {
-        if (!ConnexionService::connectedUser()) {
-            ConnexionService::redirectIfNotConnected($request, $response);
-        }
-
         $userId = (int) ($args['id'] ?? 0);
 
         if ($userId <= 0) {

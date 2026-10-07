@@ -68,7 +68,7 @@
                                 <?php echo $user->id_role !== null ? escape((string) $roles[$user->id_role]->name ?? 'Unknown') : 'Unknown' ?>
                             </p>
                         </div>
-                        <?php if ($_SESSION['user_id'] === $user->id): ?>
+                        <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] === $user->id): ?>
                         <button type="button" id="edit-profile-button" class="btn btn-outline-primary">
                             Edit Profile
                         </button>
@@ -111,7 +111,7 @@
                             </div>
                         </form>
                     </div>
-                    <?php if ($_SESSION['user_id'] === $user->id): ?>
+                    <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] === $user->id): ?>
                     <hr class="my-4">
                     <h2 class="h4 mb-4">
                         Profile Picture
@@ -177,7 +177,7 @@
                         <h2 class="h4 mb-0">
                             <?php echo escape($user->name) ?>'s Recipes
                         </h2>
-                        <?php if ($_SESSION['user_id'] === $user->id): ?>
+                        <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] === $user->id): ?>
                         <a href="/recipe/create" class="btn btn-primary btn-sm">
                             + Add Recipe
                         </a>
