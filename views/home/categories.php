@@ -19,7 +19,7 @@
             </div>
             <?php else: ?>
             <div class="text-center py-5">
-                <p class="lead">No categories available.</p>
+                <p class="lead">Aucune catégorie disponible.</p>
             </div>
             <?php endif; ?>
         </div>

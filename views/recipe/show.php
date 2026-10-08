@@ -2,7 +2,7 @@
     <div class="row justify-content-center main-content">
         <div class="col-12 col-lg-9">
             <a href="/recipes" class="btn btn-outline-secondary mb-4">
-                ← Back to recipes
+                ← Retour aux recettes
             </a>
             <div class="card shadow-sm">
                 <div class="card-body p-4 p-md-5 position-relative">
@@ -13,19 +13,19 @@
                             class="d-inline">
                             <button type="submit"
                                 class="btn btn-sm <?php echo $isFavorite ? 'btn-danger' : 'btn-outline-danger'; ?>">
-                                <?php echo $isFavorite ? '♥ Favorited' : '♡ Favorite'; ?>
+                                <?php echo $isFavorite ? '♥' : '♡'; ?>
                             </button>
                         </form>
                         <?php endif; ?>
                         <?php endif; ?>
                         <?php if ((int) ($_SESSION['user_role'] ?? 0) === 1 || (int) $recipe->user_id === (int) ($_SESSION['user_id'] ?? 0)): ?>
                         <a href="/recipe/<?php echo escape($recipe->id) ?>/edit" class="btn btn-sm btn-outline-primary">
-                            Edit
+                            Modifier
                         </a>
                         <form action="/recipe/<?php echo escape($recipe->id) ?>/delete" method="POST" class="d-inline"
                             onsubmit="return confirm('Are you sure you want to delete this recipe?');">
                             <button type="submit" class="btn btn-sm btn-outline-danger">
-                                Delete
+                                Supprimer
                             </button>
                         </form>
                         <?php endif; ?>
@@ -40,7 +40,7 @@
                     </h1>
                     <?php if ($user): ?>
                     <p class="text-muted">
-                        Recipe by
+                        Recette de
                         <a href="/user/<?php echo escape($user->id ?? 0) ?>"
                             style="text-decoration: none; color: inherit;">
                             <span class="visually-hidden">View profile of </span>
@@ -82,7 +82,7 @@
                         </div>
                         <?php else: ?>
                         <p class="text-muted">
-                            No ingredients listed.
+                            Aucun ingrédient listé.
                         </p>
                         <?php endif; ?>
                     </div>
@@ -97,11 +97,11 @@
                         </p>
                         <?php else: ?>
                         <p class="text-muted">
-                            No instructions listed.
+                            Aucune instruction listée.
                         </p>
                         <?php endif; ?>
                     </div>
-                    <h3 class="mt-5">Rating</h3>
+                    <h3 class="mt-5">Note</h3>
                     <div class="mb-3">
                         <?php if ($recipe->averageRating !== null): ?>
                         <span class="fs-4">
@@ -109,7 +109,7 @@
                         </span>
                         <?php else: ?>
                         <span class="text-muted">
-                            No ratings yet.
+                            Aucune note.
                         </span>
                         <?php endif; ?>
                     </div>
@@ -117,10 +117,10 @@
                     <form action="/recipe/<?php echo escape($recipe->id); ?>/rate" method="POST">
                         <p class="mb-2">
                             <?php if ($userRating !== null): ?>
-                            Your rating:
+                            Votre note:
                             <strong><?php echo escape($userRating); ?>/5</strong>
                             <?php else: ?>
-                            Rate this recipe:
+                            Notez cette recette:
                             <?php endif; ?>
                         </p>
                         <div class="rating-stars">
@@ -130,13 +130,23 @@
                                 aria-label="Rate <?php echo $i; ?> out of 5">★
                             </button>
                             <?php endfor; ?>
+                            <?php if ($userRating !== null): ?>
                             <button type="submit" name="score" value="0" class="btn btn-sm btn-outline-secondary ms-2">
-                                Clear Rating
+                                Supprimer la note
                             </button>
+                            <?php endif; ?>
                         </div>
                     </form>
                     <?php endif; ?>
-                    <h3 class="mt-5">Comments</h3>
+                    <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
+                        <h3 class="mb-0">Commentaires</h3>
+                        <?php if (isset($_SESSION['user_id'])): ?>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#commentModal">
+                            + Ajouter un commentaire
+                        </button>
+                        <?php endif; ?>
+                    </div>
                     <?php if (! empty($recipe->comments)): ?>
                     <div class="comments-list">
                         <?php foreach ($recipe->comments as $comment): ?>
@@ -148,17 +158,27 @@
                                             alt="" class="rounded-circle" width="40" height="40">
                                         <a href="/user/<?php echo escape($comment->user_id ?? 0) ?>"
                                             style="text-decoration: none; color: inherit;">
-                                            <span class="visually-hidden">View profile of </span>
                                             <strong>
                                                 <?php echo escape($comment->user_name ?? 'Anonymous') ?>
                                             </strong>
                                         </a>
                                     </div>
-                                    <?php if (! empty($comment->created_at)): ?>
-                                    <small class="text-muted">
-                                        <?php echo escape($comment->created_at) ?>
-                                    </small>
-                                    <?php endif; ?>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <?php if (! empty($comment->created_at)): ?>
+                                        <small class="text-muted">
+                                            <?php echo escape($comment->created_at) ?>
+                                        </small>
+                                        <?php endif; ?>
+                                        <?php if (isset($_SESSION['user_id'])&& ((int) $_SESSION['user_id'] === (int) $comment->user_id|| (int) ($_SESSION['user_role'] ?? 0) === 1)): ?>
+                                        <form action="/comment/<?php echo escape($comment->id); ?>/delete" method="POST"
+                                            class="d-inline"
+                                            onsubmit="return confirm('Are you sure you want to delete this comment?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                Supprimer
+                                            </button>
+                                        </form>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                                 <p class="mb-0 mt-2">
                                     <?php echo nl2br(escape($comment->content ?? '')) ?>
@@ -169,7 +189,7 @@
                     </div>
                     <?php else: ?>
                     <p class="text-muted">
-                        No comments yet.
+                        Aucun commentaire pour le moment.
                     </p>
                     <?php endif; ?>
                 </div>
@@ -177,6 +197,40 @@
         </div>
     </div>
 </div>
+<?php if (isset($_SESSION['user_id'])): ?>
+<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentModalLabel">
+                    Ajouter un commentaire
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                </button>
+            </div>
+            <form action="/recipe/<?php echo escape($recipe->id); ?>/comment" method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="commentContent" class="form-label">
+                            Votre commentaire
+                        </label>
+                        <textarea class="form-control" id="commentContent" name="content" rows="5" maxlength="5000"
+                            required placeholder="Écrivez votre commentaire..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Publier le commentaire
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 
 <script>
 const stars = document.querySelectorAll('.rating-star');

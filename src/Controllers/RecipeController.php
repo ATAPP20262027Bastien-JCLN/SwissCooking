@@ -4,17 +4,16 @@ declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Controllers;
 
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-
-use BastienJcln\SwissCooking\Services\ConnexionService;
-
 use BastienJcln\SwissCooking\Core\Database;
 use BastienJcln\SwissCooking\Models\Category;
+use BastienJcln\SwissCooking\Models\Comment;
 use BastienJcln\SwissCooking\Models\Ingredient;
 use BastienJcln\SwissCooking\Models\Rating;
 use BastienJcln\SwissCooking\Models\Recipe;
 use BastienJcln\SwissCooking\Models\User;
+use BastienJcln\SwissCooking\Services\ConnexionService;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 
 class RecipeController extends BaseController
 {
@@ -520,5 +519,79 @@ class RecipeController extends BaseController
         }
 
         return $response->withHeader('Location', '/recipes')->withStatus(302);
+    }
+
+    public function comment(Request $request, Response $response, array $args): Response
+    {
+        $user = ConnexionService::connectedUser();
+
+        if ($user === null) {
+            return ConnexionService::redirectIfNotConnected($request, $response);
+        }
+
+        $recipeId = (int) ($args['id'] ?? 0);
+
+        $recipe = Recipe::findById($recipeId);
+
+        if ($recipe === null) {
+            return $response->withHeader('Location', '/404')->withStatus(302);
+        }
+
+        $data = (array) $request->getParsedBody();
+
+        $content = trim((string) ($data['content'] ?? ''));
+
+        if ($content === '') {
+            return $response->withHeader('Location', '/recipe/' . $recipeId . '?comment=empty')->withStatus(302);
+        }
+
+        if (strlen($content) > 5000) {
+            return $response->withHeader('Location', '/recipe/' . $recipeId . '?comment=too_long')->withStatus(302);
+        }
+
+        $comment = new Comment();
+
+        $comment->user_id   = (int) $user->id;
+        $comment->recipe_id = $recipeId;
+        $comment->content   = $content;
+
+        if (! $comment->insert()) {
+            return $response->withHeader('Location', '/500')->withStatus(302);
+        }
+
+        return $response->withHeader('Location', '/recipe/' . $recipeId)->withStatus(302);
+    }
+
+    public function deleteComment(Request $request, Response $response, array $args): Response
+    {
+        $user = ConnexionService::connectedUser();
+
+        if ($user === null) {
+            return ConnexionService::redirectIfNotConnected($request, $response);
+        }
+
+        $commentId = (int) ($args['commentId'] ?? 0);
+
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare('SELECT id, user_id, recipe_id FROM comments WHERE id = :id');
+
+        $stmt->execute([
+            'id' => $commentId,
+        ]);
+
+        $comment = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if ($comment === false) {
+            return $response->withHeader('Location', '/404')->withStatus(302);
+        }
+
+        if ((int) $comment['user_id'] !== (int) $user->id && (int) $user->id_role !== 1) {
+            return $response->withHeader('Location', '/403')->withStatus(302);
+        }
+
+        Comment::deleteComment($commentId);
+
+        return $response->withHeader('Location', '/recipe/' . (int) $comment['recipe_id'])->withStatus(302);
     }
 }

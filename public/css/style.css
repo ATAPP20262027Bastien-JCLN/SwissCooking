@@ -573,6 +573,10 @@ body {
     width: 100%;
   }
 
+  .step-row .input-group .btn {
+    min-height: 100%;
+  }
+
   .step-row .input-group-text {
     min-width: 38px;
     justify-content: center;
@@ -661,6 +665,10 @@ body {
     padding: 1rem !important;
   }
 
+  #user-recipes-list .card-body p {
+    display: none;
+  }
+
   #user-recipes-list .d-flex.justify-content-between {
     gap: 10px;
   }
@@ -681,6 +689,10 @@ body {
     flex-direction: column;
     align-items: stretch !important;
     gap: 15px;
+  }
+
+  #favoriteList .card-body .card-text {
+    display: none;
   }
 
   .favorites-header .btn {

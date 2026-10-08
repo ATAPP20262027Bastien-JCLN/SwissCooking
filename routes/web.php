@@ -26,6 +26,9 @@ $app->get('/recipe/{id}/edit', [RecipeController::class, 'editForm']);
 $app->post('/recipe/{id}/edit', [RecipeController::class, 'update']);
 $app->post('/recipe/{id}/favorite', [UserController::class, 'toggleFavorite']);
 $app->post('/recipe/{id}/rate', [RecipeController::class, 'rate']);
+$app->post('/recipe/{id}/comment', [RecipeController::class, 'comment']);
+
+$app->post('/comment/{commentId}/delete', [RecipeController::class, 'deleteComment']);
 
 $app->get('/favorites', [UserController::class, 'favorites']);
 

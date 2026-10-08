@@ -9,7 +9,7 @@
                     </div>
                     <p class="lead text-muted mb-4"><?php echo escape($message) ?></p>
                     <p class="text-muted mb-4"><?php echo escape($description) ?></p>
-                    <a href="/" class="btn btn-primary px-4"> Back to Home </a>
+                    <a href="/" class="btn btn-primary px-4"> Retour à l'accueil </a>
                 </div>
             </div>
         </div>

@@ -1,13 +1,13 @@
 <div class="container py-5">
     <div class="row justify-content-center mb-5">
         <div class="col-12 col-md-8 text-center">
-            <h1 class="mt-0">Welcome to Swiss Cooking</h1>
-            <p class="lead">Discover the best Swiss recipes and cooking tips!</p>
+            <h1 class="mt-0">Bienvenue sur Swiss Cooking</h1>
+            <p class="lead">Découvrez les meilleures recettes suisses et conseils de cuisine!</p>
         </div>
     </div>
     <div class="row justify-content-center">
         <div class="col-12 col-xl-10 text-center">
-            <h2 class="mb-2">Top Rated Recipes</h2>
+            <h2 class="mb-2">Meilleures recettes</h2>
             <?php if (! empty($recipes)): ?>
             <div class="row justify-content-center g-4">
                 <?php foreach ($recipes as $recipe): ?>
@@ -17,18 +17,18 @@
                             <div class="card-body p-4">
                                 <h5 class="card-title"><?php echo escape($recipe->name) ?></h5>
                                 <p class="card-text">
-                                    <strong>Category:</strong>
+                                    <strong>Catégorie:</strong>
                                     <?php echo escape($recipe->category) ?>
                                 </p>
                                 <p class="card-text">
-                                    <strong>Author:</strong>
-                                    <?php echo isset($users[$recipe->id]) ? escape($users[$recipe->id]->name) : 'Unknown' ?>
+                                    <strong>Auteur:</strong>
+                                    <?php echo isset($users[$recipe->id]) ? escape($users[$recipe->id]->name) : 'Inconnu' ?>
                                 </p>
                                 <p class="card-text"><?php echo escape($recipe->description) ?></p>
                                 <p class="card-text">
                                     <small class="text-muted">
-                                        <strong>Average Rating:</strong>
-                                        <?php echo $recipe->averageRating !== null ? number_format($recipe->averageRating, 2) : 'No ratings yet'; ?>
+                                        <strong>Note moyenne:</strong>
+                                        <?php echo $recipe->averageRating !== null ? number_format($recipe->averageRating, 2) : 'Pas encore de notes'; ?>
                                     </small>
                                 </p>
                             </div>
@@ -38,7 +38,7 @@
                 <?php endforeach; ?>
             </div>
             <?php else: ?>
-            <p>No recipes available.</p>
+            <p>Il n'y a pas encore de recettes disponibles.</p>
             <?php endif; ?>
         </div>
     </div>

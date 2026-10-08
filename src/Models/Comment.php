@@ -60,8 +60,7 @@ class Comment extends AbstractModel
 
     public \DateTime|string|null $updated_at = null {
         get {
-            return $this->updated_at instanceof \DateTime  ? $this->updated_at->format('Y-m-d H:i:s')
-                : $this->updated_at;
+            return $this->updated_at instanceof \DateTime  ? $this->updated_at->format('Y-m-d H:i:s') : $this->updated_at;
         }
         set {
             if (is_string($value)) {
@@ -136,12 +135,48 @@ class Comment extends AbstractModel
     #[Override]
     public function insert(): bool
     {
-        throw new \Exception('Not implemented');
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare(
+            'INSERT INTO comments (user_id, recipe_id, content)
+             VALUES (:user_id, :recipe_id, :content)'
+        );
+
+        return $stmt->execute([
+            'user_id'   => $this->user_id,
+            'recipe_id' => $this->recipe_id,
+            'content'   => $this->content,
+        ]);
     }
 
     #[Override]
     public function update(): bool
     {
-        throw new \Exception('Not implemented');
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare(
+            'UPDATE comments
+             SET content = :content
+             WHERE id = :id'
+        );
+
+        return $stmt->execute([
+            'id'      => $this->id,
+            'content' => $this->content,
+        ]);
+    }
+
+    public static function deleteComment(int $commentId): bool
+    {
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare(
+            'DELETE FROM comments
+             WHERE id = :id'
+        );
+
+        return $stmt->execute([
+            'id' => $commentId,
+        ]);
     }
 }

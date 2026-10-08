@@ -2,12 +2,12 @@
     <div class="row justify-content-center">
         <div class="col-12">
             <a href="/recipe/<?php echo escape($recipe->id) ?>" class="btn btn-outline-secondary mb-4">
-                ← Back to the recipe
+                ← Retour à la recette
             </a>
             <div class="card shadow-sm">
                 <div class="card-body p-4 p-md-5">
                     <h1 class="mb-4">
-                        Edit recipe
+                        Modifier la recette
                     </h1>
                     <?php if (! empty($error)): ?>
                     <div class="alert alert-danger" role="alert">
@@ -19,22 +19,22 @@
                             <div class="col-12 col-lg-4">
                                 <div class="border rounded p-4 recipe-panel">
                                     <h4 class="mb-4">
-                                        Recipe details
+                                        Détails de la recette
                                     </h4>
                                     <div class="mb-4">
                                         <label for="name" class="form-label">
-                                            Recipe name
+                                            Nom de la recette
                                         </label>
                                         <input type="text" class="form-control" id="name" name="name" maxlength="255"
                                             required value="<?php echo escape($recipe->name ?? '') ?>">
                                     </div>
                                     <div class="mb-4">
                                         <label for="category_id" class="form-label">
-                                            Category
+                                            Catégorie
                                         </label>
                                         <select class="form-select" id="category_id" name="category_id" required>
                                             <option value="">
-                                                Select a category
+                                                Selectionnez une catégorie
                                             </option>
                                             <?php foreach ($categories as $category): ?>
                                             <option value="<?php echo escape($category->id) ?>"
@@ -54,7 +54,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-4">
+                            <div class="col-12 col-lg-4"style="max-height: 50vh;">
                                 <div class="border rounded p-4 recipe-panel d-flex flex-column">
                                     <div class="recipe-panel-header">
                                         <h4 class="mb-4">
@@ -69,7 +69,7 @@
                                                 <div class="col-12">
                                                     <select class="form-select" name="ingredient_id[]" required>
                                                         <option value="">
-                                                            Select an ingredient
+                                                            Selectionnez un ingrédient
                                                         </option>
                                                         <?php foreach ($ingredients as $availableIngredient): ?>
                                                         <option value="<?php echo escape($availableIngredient->id) ?>"
@@ -81,13 +81,13 @@
                                                 </div>
                                                 <div class="col-5">
                                                     <input type="number" class="form-control" name="quantity[]"
-                                                        min="0.01" max="99999999.99" step="0.01" placeholder="Quantity"
+                                                        min="0.01" max="99999999.99" step="0.01" placeholder="Quantité"
                                                         required
                                                         value="<?php echo escape($recipeIngredient->quantity ?? '') ?>">
                                                 </div>
                                                 <div class="col-5">
                                                     <input type="text" class="form-control" name="unit[]"
-                                                        maxlength="100" placeholder="Unit" required
+                                                        maxlength="100" placeholder="Unité" required
                                                         value="<?php echo escape($recipeIngredient->unit ?? '') ?>">
                                                 </div>
                                                 <div class="col-2">
@@ -105,7 +105,7 @@
                                                 <div class="col-12">
                                                     <select class="form-select" name="ingredient_id[]" required>
                                                         <option value="">
-                                                            Select an ingredient
+                                                            Selectionnez un ingrédient
                                                         </option>
                                                         <?php foreach ($ingredients as $availableIngredient): ?>
                                                         <option value="<?php echo escape($availableIngredient->id) ?>">
@@ -116,12 +116,12 @@
                                                 </div>
                                                 <div class="col-5">
                                                     <input type="number" class="form-control" name="quantity[]"
-                                                        min="0.01" max="99999999.99" step="0.01" placeholder="Quantity"
+                                                        min="0.01" max="99999999.99" step="0.01" placeholder="Quantité"
                                                         required>
                                                 </div>
                                                 <div class="col-5">
                                                     <input type="text" class="form-control" name="unit[]"
-                                                        maxlength="100" placeholder="Unit" required>
+                                                        maxlength="100" placeholder="Unité" required>
                                                 </div>
                                                 <div class="col-2">
                                                     <button type="button"
@@ -136,12 +136,12 @@
                                     <div class="recipe-panel-footer pt-3">
                                         <button type="button" id="add-ingredient"
                                             class="btn btn-outline-secondary w-100">
-                                            + Add ingredient
+                                            + Ajouter un ingrédient
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-4">
+                            <div class="col-12 col-lg-4" style="max-height: 50vh;">
                                 <div class="border rounded p-4 recipe-panel d-flex flex-column">
                                     <div class="recipe-panel-header">
                                         <h4 class="mb-4">
@@ -157,7 +157,7 @@
                                                     1
                                                 </span>
                                                 <input type="text" class="form-control" name="steps[]"
-                                                    placeholder="Write a step" required
+                                                    placeholder="Écrire une étape" required
                                                     value="<?php echo escape(trim($step)) ?>">
                                                 <button type="button" class="btn btn-outline-danger remove-step">
                                                     ×
@@ -168,7 +168,7 @@
                                     </div>
                                     <div class="recipe-panel-footer pt-3">
                                         <button type="button" id="add-step" class="btn btn-outline-secondary w-100">
-                                            + Add step
+                                            + Ajouter une étape
                                         </button>
                                     </div>
                                 </div>
@@ -176,10 +176,10 @@
                         </div>
                         <div class="d-flex gap-2 mt-4">
                             <a href="/recipe/<?php echo $recipe->id; ?>" class="btn btn-outline-secondary">
-                                Cancel
+                                Annuler
                             </a>
                             <button type="submit" class="btn btn-primary">
-                                Save changes
+                                Enregistrer les modifications
                             </button>
                         </div>
                     </form>
@@ -242,7 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         row.innerHTML = `
             <div class="input-group">
                 <span class="input-group-text"></span>
-                <input type="text" class="form-control" name="steps[]" placeholder="Write a step" required>
+                <input type="text" class="form-control" name="steps[]" placeholder="Écrire une étape" required>
                 <button type="button" class="btn btn-outline-danger remove-step">
                     ×
                 </button>

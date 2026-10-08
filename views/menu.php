@@ -14,24 +14,24 @@
         <div class="collapse navbar-collapse"
             style="background-color: rgba(var(--bs-tertiary-bg-rgb),var(--bs-bg-opacity)) !important;" id="navbarNav">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="/">Accueil</a></li>
                 <li class="nav-item desktop-link-separator">
                     <div class="nav-link">|</div>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="/recipes">Recipes</a></li>
+                <li class="nav-item"><a class="nav-link" href="/recipes">Recettes</a></li>
                 <li class="nav-item desktop-link-separator">
                     <div class="nav-link">|</div>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="/categories">Categories</a></li>
+                <li class="nav-item"><a class="nav-link" href="/categories">Catégories</a></li>
                 <li class="nav-item desktop-link-separator">
                     <div class="nav-link">|</div>
                 </li>
                 <?php if (! empty($_SESSION['user_id'])): ?>
-                <li class="nav-item"><a class="nav-link" href="/favorites">Favorites</a></li>
+                <li class="nav-item"><a class="nav-link" href="/favorites">Favoris</a></li>
                 <li class="nav-item desktop-link-separator">
                     <div class="nav-link">|</div>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="/recipe/create">Create Recipe</a></li>
+                <li class="nav-item"><a class="nav-link" href="/recipe/create">Créer une recette</a></li>
                 <li class="nav-item desktop-link-separator">
                     <div class="nav-link">|</div>
                 </li>
@@ -43,13 +43,13 @@
                 <li class="nav-item desktop-link-separator">
                     <div class="nav-link">|</div>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+                <li class="nav-item"><a class="nav-link" href="/logout">Déconnexion</a></li>
                 <?php else: ?>
-                <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
+                <li class="nav-item"><a class="nav-link" href="/login">Connexion</a></li>
                 <li class="nav-item desktop-link-separator">
                     <div class="nav-link">|</div>
                 </li>
-                <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+                <li class="nav-item"><a class="nav-link" href="/register">Inscription</a></li>
                 <?php endif; ?>
             </ul>
         </div>

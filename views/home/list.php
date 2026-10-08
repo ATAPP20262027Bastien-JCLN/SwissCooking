@@ -3,31 +3,31 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
                 <div class="d-flex flex-row align-items-center gap-2 mb-2 mb-md-0">
-                    <h2 class="mb-0">All Recipes</h2>
+                    <h2 class="mb-0">Toutes les recettes</h2>
                     <?php if (! empty($fromCategory) && $fromCategory === true): ?>
                     <a href="/categories" class="btn btn-outline-secondary mt-2">
-                        ← Back to Categories
+                        ← Retour aux catégories
                     </a>
                     <?php endif; ?>
                 </div>
                 <form method="GET" action="/recipes" class="d-flex gap-2" style="max-width: 450px; width: 100%">
-                    <input type="text" name="search" class="form-control" placeholder="Search recipes..."
+                    <input type="text" name="search" class="form-control" placeholder="Rechercher des recettes..."
                         autocomplete="off" value="<?php echo escape($_GET['search'] ?? '') ?>" />
-                    <button type="submit" class="btn btn-primary">Search</button>
+                    <button type="submit" class="btn btn-primary">Rechercher</button>
                 </form>
             </div>
             <div class="d-flex gap-2 mb-4 flex-wrap pb-2">
                 <button type="button" class="btn btn-outline-primary sort-btn" data-sort="category">
-                    Sort by Category
+                    Filtrer par catégorie
                 </button>
                 <button type="button" class="btn btn-outline-primary sort-btn" data-sort="rating">
-                    Sort by Rating
+                    Filtrer par note
                 </button>
                 <button type="button" class="btn btn-outline-primary sort-btn" data-sort="user">
-                    Sort by User
+                    Filtrer par utilisateur
                 </button>
                 <button type="button" class="btn btn-outline-secondary" id="resetSort">
-                    Reset
+                    Réinitialiser le tri
                 </button>
             </div>
             <?php if (! empty($recipes)): ?>
@@ -36,16 +36,16 @@
                 <div class="col-12 col-md-6 col-lg-4 col-xl-3 recipe-card"
                     data-category="<?php echo escape($recipe->category) ?>"
                     data-rating="<?php echo $recipe->averageRating !== null ? escape((string) $recipe->averageRating) : '0' ?>"
-                    data-user="<?php echo isset($users[$recipe->id]) ? escape($users[$recipe->id]->name) : 'Unknown' ?>">
+                    data-user="<?php echo isset($users[$recipe->id]) ? escape($users[$recipe->id]->name) : 'Inconnu' ?>">
                     <div class="card h-100 shadow-sm">
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title"><?php echo escape($recipe->name) ?></h5>
                             <p class="card-text mb-2">
-                                <strong>Category:</strong> <?php echo escape($recipe->category) ?>
+                                <strong>Catégorie:</strong> <?php echo escape($recipe->category) ?>
                             </p>
                             <p class="card-text mb-2">
-                                <strong>Author:</strong>
-                                <?php echo isset($users[$recipe->id]) ? escape($users[$recipe->id]->name) : 'Unknown' ?>
+                                <strong>Auteur:</strong>
+                                <?php echo isset($users[$recipe->id]) ? escape($users[$recipe->id]->name) : 'Inconnu' ?>
                             </p>
                             <p class="card-text">
                                 <?php echo escape($recipe->description) ?>
@@ -53,16 +53,16 @@
                             <div class="mt-auto">
                                 <p class="card-text mb-3">
                                     <small class="text-muted">
-                                        <strong>Average Rating:</strong> <?php if ($recipe->averageRating !== null): ?>
+                                        <strong>Note moyenne:</strong> <?php if ($recipe->averageRating !== null): ?>
                                         <?php echo number_format($recipe->averageRating, 2) ?>/5
                                         <?php else: ?>
-                                        No ratings yet
+                                        Aucune note
                                         <?php endif; ?>
                                     </small>
                                 </p>
                                 <a href="/recipe/<?php echo escape((string) $recipe->id) ?>"
                                     class="btn btn-primary w-100">
-                                    View Recipe
+                                    Voir la recette
                                 </a>
                             </div>
                         </div>
@@ -72,7 +72,7 @@
             </div>
             <?php else: ?>
             <div class="text-center py-5">
-                <p class="lead">No recipes available.</p>
+                <p class="lead">Aucune recette disponible.</p>
             </div>
             <?php endif; ?>
         </div>

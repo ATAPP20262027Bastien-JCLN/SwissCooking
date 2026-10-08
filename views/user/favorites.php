@@ -3,17 +3,17 @@
         <div class="col-12 col-lg-10">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
-                    <h1 class="mb-1">My favorites</h1>
+                    <h1 class="mb-1">Mes favoris</h1>
                     <p class="text-muted mb-0">
-                        Recipes you have saved.
+                        Les recettes que vous avez ajoutées à vos favoris apparaîtront ici.
                     </p>
                 </div>
                 <a href="/recipes" class="btn btn-outline-secondary">
-                    Browse recipes
+                    Parcourir les recettes
                 </a>
             </div>
             <?php if (! empty($recipes)): ?>
-            <div class="row g-4">
+            <div id="favoriteList" class="row g-4">
                 <?php foreach ($recipes as $recipe): ?>
                 <div class="col-12 col-md-6">
                     <div class="card shadow-sm h-100">
@@ -28,7 +28,7 @@
                             </h3>
                             <?php if (isset($users[$recipe->id]) && $users[$recipe->id] !== null): ?>
                             <p class="text-muted mb-2">
-                                Recipe by
+                                Recette par
                                 <a href="/user/<?php echo escape($users[$recipe->id]->id) ?>"
                                     class="text-decoration-none">
                                     <?php echo escape($users[$recipe->id]->name) ?>
@@ -40,11 +40,11 @@
                             </p>
                             <div class="d-flex justify-content-between align-items-center mt-auto pt-4">
                                 <a href="/recipe/<?php echo escape($recipe->id) ?>" class="btn btn-primary">
-                                    View recipe
+                                    Voir la recette
                                 </a>
                                 <form action="/recipe/<?php echo escape($recipe->id) ?>/favorite" method="POST">
                                     <button type="submit" class="btn btn-outline-danger">
-                                        ♥ Remove
+                                        ♥ Supprimer des favoris
                                     </button>
                                 </form>
                             </div>
@@ -59,12 +59,12 @@
                     <div class="fs-1 mb-3">
                         ♡
                     </div>
-                    <h3>No favorite recipes yet</h3>
+                    <h3>Aucune recette favorite pour le moment</h3>
                     <p class="text-muted">
-                        Recipes you favorite will appear here.
+                        Les recettes que vous avez ajoutées en favoris apparaîtront ici.
                     </p>
                     <a href="/recipes" class="btn btn-primary mt-2">
-                        Browse recipes
+                        Parcourir les recettes
                     </a>
                 </div>
             </div>

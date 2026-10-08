@@ -3,9 +3,9 @@
         <div class="col-12 col-md-8 col-lg-5">
             <div class="card shadow-sm">
                 <div class="card-body p-4">
-                    <h1 class="text-center mb-4">Welcome Back</h1>
+                    <h1 class="text-center mb-4">Connexion</h1>
                     <p class="text-center text-muted mb-4">
-                        Log in to your Swiss Cooking account.
+                        Connectez-vous à votre compte Swiss Cooking.
                     </p>
                     <?php if (! empty($_SESSION['error'])): ?>
                     <div class="alert alert-danger" role="alert">
@@ -29,16 +29,16 @@
                                 required />
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="form-label"> Password </label>
+                            <label for="password" class="form-label"> Mot de passe </label>
                             <input type="password" class="form-control" id="password" name="password"
-                                placeholder="Enter your password" required />
+                                placeholder="Entrez votre mot de passe" required />
                         </div>
-                        <button type="submit" class="btn btn-success w-100">Log In</button>
+                        <button type="submit" class="btn btn-success w-100">Se connecter</button>
                     </form>
                     <div class="text-center mt-4">
                         <p class="mb-0">
-                            Don't have an account?
-                            <a href="/register">Create one</a>
+                            Pas encore de compte ?
+                            <a href="/register">Créer un compte</a>
                         </p>
                     </div>
                 </div>

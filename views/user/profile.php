@@ -4,11 +4,11 @@
         <div class="col-12">
             <div class="alert alert-success">
                 <?php if ($_GET['success'] === 'picture_updated'): ?>
-                Profile picture updated successfully.
+                Photo de profil mise à jour avec succès.
                 <?php elseif ($_GET['success'] === 'picture_deleted'): ?>
-                Profile picture deleted successfully.
+                Photo de profil supprimée avec succès.
                 <?php elseif ($_GET['success'] === 'profile_updated'): ?>
-                Profile information updated successfully.
+                Informations du profil mises à jour avec succès.
                 <?php endif; ?>
             </div>
         </div>
@@ -19,19 +19,19 @@
         <div class="col-12">
             <div class="alert alert-danger">
                 <?php if ($_GET['error'] === 'invalid_url'): ?>
-                Please provide a valid image URL.
+                Invalid image URL. Please provide a valid URL.
                 <?php elseif ($_GET['error'] === 'invalid_file'): ?>
-                Invalid image file. Please use PNG, JPG, JPEG, WEBP, or ICO.
+                Format de fichier invalide. Veuillez utiliser PNG, JPG, JPEG, WEBP, or ICO.
                 <?php elseif ($_GET['error'] === 'invalid_name'): ?>
-                Please provide a valid name.
+                Veuillez fournir un nom valide (maximum 100 caractères).
                 <?php elseif ($_GET['error'] === 'invalid_email'): ?>
-                Please provide a valid email address.
+                Veuillez fournir une adresse e-mail valide.
                 <?php elseif ($_GET['error'] === 'email_taken'): ?>
-                This email address is already being used.
+                Cette adresse e-mail est déjà utilisée. Veuillez en choisir une autre.
                 <?php elseif ($_GET['error'] === 'invalid_profile'): ?>
-                The profile information is invalid.
+                Les informations du profil sont invalides.
                 <?php elseif ($_GET['error'] === 'invalid_type'): ?>
-                Invalid profile picture type.
+                Format de photo de profil invalide.
                 <?php endif; ?>
             </div>
         </div>
@@ -42,12 +42,12 @@
             <div class="card shadow-sm">
                 <div class="card-body p-4">
                     <h2 class="h4 mb-4">
-                        Profile Information
+                        Informations du profil
                     </h2>
                     <div id="profile-information">
                         <div class="mb-4 d-flex justify-content-between align-items-center">
                             <div>
-                                <strong>Name</strong>
+                                <strong>Nom</strong>
                                 <p class="text-muted mb-0">
                                     <?php echo escape($user->name) ?>
                                 </p>
@@ -70,7 +70,7 @@
                         </div>
                         <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] === $user->id): ?>
                         <button type="button" id="edit-profile-button" class="btn btn-outline-primary">
-                            Edit Profile
+                            Modifier le profil
                         </button>
                         <?php endif; ?>
                     </div>
@@ -78,7 +78,7 @@
                         <form action="/profile/update" method="POST">
                             <div class="mb-3">
                                 <label for="profile_name" class="form-label">
-                                    Name
+                                    Nom
                                 </label>
                                 <input type="text" name="name" id="profile_name" class="form-control"
                                     value="<?php echo escape($user->name) ?>" maxlength="100" required>
@@ -98,15 +98,15 @@
                                     value="<?php echo $user->id_role !== null ? escape((string) $user->id_role) : 'Unknown' ?>"
                                     disabled>
                                 <div class="form-text">
-                                    Your role cannot be changed here.
+                                    Votre rôle ne peut pas être modifié depuis cette interface. Veuillez contacter un administrateur si vous souhaitez le changer.
                                 </div>
                             </div>
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-primary">
-                                    Save Changes
+                                    Enregistrer les modifications
                                 </button>
                                 <button type="button" id="cancel-edit-profile" class="btn btn-outline-secondary">
-                                    Cancel
+                                    Annuler
                                 </button>
                             </div>
                         </form>
@@ -114,31 +114,31 @@
                     <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] === $user->id): ?>
                     <hr class="my-4">
                     <h2 class="h4 mb-4">
-                        Profile Picture
+                        Photo de profil
                     </h2>
                     <form action="/profile/picture" method="POST" enctype="multipart/form-data">
                         <div class="mb-4">
                             <label class="form-label d-block">
-                                Picture source
+                                Sélectionnez le type de photo de profil
                             </label>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="picture_type" id="picture_type_file"
                                     value="file" checked>
                                 <label class="form-check-label" for="picture_type_file">
-                                    Upload file
+                                    Fichier image
                                 </label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="picture_type" id="picture_type_url"
                                     value="url">
                                 <label class="form-check-label" for="picture_type_url">
-                                    Image URL
+                                    URL de l'image
                                 </label>
                             </div>
                         </div>
                         <div id="file-picture-input" class="mb-3">
                             <label for="profile_picture" class="form-label">
-                                Choose an image
+                                Fichier image
                             </label>
                             <input type="file" name="profile_picture" id="profile_picture" class="form-control"
                                 accept=".png,.jpg,.jpeg,.webp,.ico">
@@ -148,21 +148,21 @@
                         </div>
                         <div id="url-picture-input" class="mb-3" style="display: none;">
                             <label for="profile_picture_url" class="form-label">
-                                Image URL
+                                URL de l'image
                             </label>
                             <input type="url" name="profile_picture_url" id="profile_picture_url" class="form-control"
                                 placeholder="https://example.com/image.jpg">
                             <div class="form-text">
-                                The URL must point directly to an image.
+                                L'URL doit pointer directement vers une image.
                             </div>
                         </div>
                         <button type="submit" class="btn btn-primary">
-                            Save Profile Picture
+                            Enregistrer la photo de profil
                         </button>
                         <?php if ($user->profile_picture !== null): ?>
                         <button type="button" class="btn btn-outline-danger"
                             onclick="if (confirm('Are you sure you want to delete your profile picture?')) {window.location.href = '/profile/picture/delete'; }">
-                            Delete Profile Picture
+                            Supprimer la photo de profil
                         </button>
                         <?php endif; ?>
                     </form>
@@ -175,11 +175,11 @@
                 <div class="card-body p-4">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h2 class="h4 mb-0">
-                            <?php echo escape($user->name) ?>'s Recipes
+                            Recettes de <?php echo escape($user->name) ?>
                         </h2>
                         <?php if (isset($_SESSION['user_id']) && $_SESSION['user_id'] === $user->id): ?>
                         <a href="/recipe/create" class="btn btn-primary btn-sm">
-                            + Add Recipe
+                            + Créer une recette
                         </a>
                         <?php endif; ?>
                     </div>
@@ -187,10 +187,10 @@
                         <?php if (empty($recipes)): ?>
                         <div class="text-center py-5">
                             <div class="text-muted mb-3">
-                                You haven't created any recipes yet.
+                                Vous n'avez pas encore créé de recettes.
                             </div>
                             <a href="/recipe/create" class="btn btn-outline-primary">
-                                Create your first recipe
+                                Créer votre première recette
                             </a>
                         </div>
                         <?php else: ?>
@@ -235,7 +235,7 @@
                                     </small>
                                     <a href="/recipe/<?php echo escape($recipe->id) ?>"
                                         class="btn btn-sm btn-outline-primary">
-                                        View recipe
+                                        Voir la recette
                                     </a>
                                 </div>
                             </div>
