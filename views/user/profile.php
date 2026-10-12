@@ -88,7 +88,7 @@
                                     Email
                                 </label>
                                 <input type="email" name="email" id="profile_email" class="form-control"
-                                    value="<?php echo escape($user->email) ?>" required>
+                                    value="<?php echo escape($user->email) ?>" required maxlength="255">
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">

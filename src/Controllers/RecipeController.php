@@ -27,14 +27,27 @@ class RecipeController extends BaseController
             return $response->withHeader('Location', '/404')->withStatus(302);
         }
 
+        $connectedUser = ConnexionService::connectedUser();
+
+        $isOwner = $connectedUser !== null
+        && (int) $connectedUser->id === (int) $recipe->user_id;
+
+        $isAdmin = $connectedUser !== null
+        && (int) $connectedUser->id_role === 1;
+
+        if ($recipe->status !== 'published' && ! $isOwner && ! $isAdmin) {
+            return $response
+                ->withHeader('Location', '/404')
+                ->withStatus(302);
+        }
+
         $user = null;
 
         if ($recipe->user_id !== null) {
             $user = User::findById($recipe->user_id);
         }
 
-        $connectedUser = ConnexionService::connectedUser();
-        $isFavorite    = false;
+        $isFavorite = false;
 
         if ($connectedUser === null) {
             $userRating = null;
@@ -160,27 +173,38 @@ class RecipeController extends BaseController
 
         $name        = trim((string) ($data['name'] ?? ''));
         $description = trim((string) ($data['description'] ?? ''));
-        $categoryId  = (int) ($data['category_id'] ?? 0);
+        $categoryId  = (int) ($data['category_id'] === "" ?? 1);
 
         $categories  = Category::getAllCategories();
         $ingredients = Ingredient::getAllIngredients();
 
-        if ($name === '') {
-            return $this->renderCreateForm($response, $categories, $ingredients, 'Recipe name is required.', $data);
-        }
+        $status = $data['status'] ?? 'draft';
+
+        $validStatuses = ['draft', 'private', 'published'];
+
+        // if ($name === '') {
+        //     return $this->renderCreateForm($response, $categories, $ingredients, 'Recipe name is required.', $data);
+        // }
 
         if (strlen($name) > 255) {
             return $this->renderCreateForm($response, $categories, $ingredients, 'Recipe name cannot exceed 255 characters.', $data);
         }
 
-        if ($description === '') {
-            return $this->renderCreateForm($response, $categories, $ingredients, 'Recipe description is required.', $data);
+        // if ($description === '') {
+        //     return $this->renderCreateForm($response, $categories, $ingredients, 'Recipe description is required.', $data);
+        // }
+        if (strlen($description) > 1000) {
+            return $this->renderCreateForm($response, $categories, $ingredients, 'Recipe description cannot exceed 1000 characters.', $data);
         }
 
         $steps = $data['steps'] ?? [];
 
-        if (! is_array($steps)) {
-            return $this->renderCreateForm($response, $categories, $ingredients, 'Invalid instruction data.', $data);
+        // if (! is_array($steps)) {
+        //     return $this->renderCreateForm($response, $categories, $ingredients, 'Invalid instruction data.', $data);
+        // }
+
+        if (! is_string($status) || ! in_array($status, $validStatuses, true)) {
+            return $this->renderCreateForm($response, $categories, $ingredients, 'Please select a valid recipe status.', $data);
         }
 
         $cleanSteps = [];
@@ -193,27 +217,31 @@ class RecipeController extends BaseController
             }
         }
 
-        if (count($cleanSteps) === 0) {
-            return $this->renderCreateForm($response, $categories, $ingredients, 'Please add at least one cooking step.', $data);
+        // if (count($cleanSteps) === 0) {
+        //     return $this->renderCreateForm($response, $categories, $ingredients, 'Please add at least one cooking step.', $data);
+        // }
+
+        if (strlen($step) > 1000) {
+            return $this->renderCreateForm($response, $categories, $ingredients, 'Each cooking step cannot exceed 1000 characters.', $data);
         }
 
         $steps = implode('|', $cleanSteps);
 
-        if (Category::findById($categoryId) === null) {
-            return $this->renderCreateForm($response, $categories, $ingredients, 'Please select a valid category.', $data);
-        }
+        // if (Category::findById($categoryId) === null) {
+        //     return $this->renderCreateForm($response, $categories, $ingredients, 'Please select a valid category.', $data);
+        // }
 
         $ingredientIds = $data['ingredient_id'] ?? [];
         $quantities    = $data['quantity'] ?? [];
         $units         = $data['unit'] ?? [];
 
-        if (! is_array($ingredientIds) || ! is_array($quantities) || ! is_array($units)) {
-            return $this->renderCreateForm($response, $categories, $ingredients, 'Invalid ingredient data.', $data);
-        }
+        // if (! is_array($ingredientIds) || ! is_array($quantities) || ! is_array($units)) {
+        //     return $this->renderCreateForm($response, $categories, $ingredients, 'Invalid ingredient data.', $data);
+        // }
 
-        if (count($ingredientIds) === 0) {
-            return $this->renderCreateForm($response, $categories, $ingredients, 'Please add at least one ingredient.', $data);
-        }
+        // if (count($ingredientIds) === 0) {
+        //     return $this->renderCreateForm($response, $categories, $ingredients, 'Please add at least one ingredient.', $data);
+        // }
 
         $recipeIngredients = [];
         $usedIngredients   = [];
@@ -271,6 +299,7 @@ class RecipeController extends BaseController
             $recipe->name        = $name;
             $recipe->description = $description;
             $recipe->steps       = $steps;
+            $recipe->status      = $status;
             $recipe->user_id     = $user->id;
             $recipe->category_id = $categoryId;
 
@@ -288,7 +317,8 @@ class RecipeController extends BaseController
                 $pdo->rollBack();
             }
 
-            return $this->renderCreateForm($response, $categories, $ingredients, 'An error occurred while creating the recipe.', $data);
+            // return $this->renderCreateForm($response, $categories, $ingredients, 'An error occurred while creating the recipe.', $data);
+            return $this->renderCreateForm($response, $categories, $ingredients, $e->getMessage(), $data);
         }
     }
 
@@ -356,6 +386,10 @@ class RecipeController extends BaseController
 
         $categoryId = (int) ($data['category_id'] ?? 0);
 
+        $status = $data['status'] ?? $recipe->status;
+
+        $validStatuses = ['draft', 'private', 'published'];
+
         if ($name === '') {
             return $this->renderUpdateForm($response, $recipe, $categories, $ingredients, 'Recipe name is required.', $data);
         }
@@ -376,6 +410,10 @@ class RecipeController extends BaseController
 
         if (! is_array($steps)) {
             return $this->renderUpdateForm($response, $recipe, $categories, $ingredients, 'Invalid instruction data.', $data);
+        }
+
+        if (! is_string($status) || ! in_array($status, $validStatuses, true)) {
+            return $this->renderUpdateForm($response, $recipe, $categories, $ingredients, 'Please select a valid recipe status.', $data);
         }
 
         $cleanSteps = [];
@@ -462,6 +500,7 @@ class RecipeController extends BaseController
             $recipe->name        = $name;
             $recipe->description = $description;
             $recipe->steps       = $steps;
+            $recipe->status = $status;
             $recipe->category_id = $categoryId;
 
             if (! $recipe->save()) {
@@ -545,7 +584,7 @@ class RecipeController extends BaseController
             return $response->withHeader('Location', '/recipe/' . $recipeId . '?comment=empty')->withStatus(302);
         }
 
-        if (strlen($content) > 5000) {
+        if (strlen($content) > 2000) {
             return $response->withHeader('Location', '/recipe/' . $recipeId . '?comment=too_long')->withStatus(302);
         }
 

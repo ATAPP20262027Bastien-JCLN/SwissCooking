@@ -38,6 +38,7 @@ INSERT INTO ingredients (name, description) VALUES
 -- =========================
 
 INSERT INTO categories (name, description) VALUES
+("Non classé", "Catégorie par défaut pour les recettes non classées."),
 ('Italian', 'Traditional Italian cuisine.'),
 ('Indian', 'Spicy and flavorful Indian dishes.'),
 ('Asian', 'Diverse dishes from various Asian countries.');
@@ -59,10 +60,11 @@ INSERT INTO users (name, email, password_hash, id_role) VALUES
 -- =========================
 
 
-INSERT INTO recipes (name, description, steps, user_id, category_id) VALUES
-('Spaghetti Bolognese', 'A classic Italian pasta dish with a rich meat sauce.', '1. Cook the spaghetti according to the package instructions. |2. In a large pan, brown the ground beef until no longer pink. |3. Add the tomato sauce and simmer for 10 minutes. |4. Serve the sauce over the cooked spaghetti.', 1, 1),
-('Chicken Curry', 'A flavorful and spicy chicken curry.', '1. In a large pan, cook the chicken until no longer pink. |2. Add the curry powder and cook for another minute. |3. Add the vegetables and cook until tender. |4. Serve hot with rice.', 2, 2),
-('Vegetable Stir Fry', 'A quick and healthy vegetable stir fry.', '1. Heat oil in a large pan over high heat. |2. Add the vegetables and stir-fry for 3-5 minutes until crisp-tender. |3. Add any desired seasonings and stir to combine. |4. Serve hot with rice or noodles.', 3, 3);
+
+INSERT INTO recipes (name, description, steps, status, user_id, category_id) VALUES
+('Spaghetti Bolognese', 'A classic Italian pasta dish with a rich meat sauce.', '1. Cook the spaghetti according to the package instructions. |2. In a large pan, brown the ground beef until no longer pink. |3. Add the tomato sauce and simmer for 10 minutes. |4. Serve the sauce over the cooked spaghetti.', 'published', 1, 1),
+('Chicken Curry', 'A flavorful and spicy chicken curry.', '1. In a large pan, cook the chicken until no longer pink. |2. Add the curry powder and cook for another minute. |3. Add the vegetables and cook until tender. |4. Serve hot with rice.', 'published', 2, 2),
+('Vegetable Stir Fry', 'A quick and healthy vegetable stir fry.', '1. Heat oil in a large pan over high heat. |2. Add the vegetables and stir-fry for 3-5 minutes until crisp-tender. |3. Add any desired seasonings and stir to combine. |4. Serve hot with rice or noodles.', 'published', 3, 3);
 
 
 -- =========================

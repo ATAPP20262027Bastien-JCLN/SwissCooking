@@ -56,7 +56,7 @@ class UserController extends BaseController
         if ($user === null) {
             return $response->withHeader('Location', '/404')->withStatus(302);
         }
-
+        
         $recipes = Recipe::getRecipesByUserId($user->id);
 
         $roles = Role::getAllRoles();
@@ -87,6 +87,10 @@ class UserController extends BaseController
 
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return $response->withHeader('Location', '/profile?error=invalid_email')->withStatus(302);
+        }
+
+        if (strlen($email) > 255) {
+            return $response->withHeader('Location', '/profile?error=email_too_long')->withStatus(302);
         }
 
         $existingUser = User::findByEmail($email);

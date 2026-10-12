@@ -52,6 +52,7 @@ VALUES
 
 INSERT INTO categories (name, description)
 VALUES
+("Non classé", "Catégorie par défaut pour les recettes non classées."),
 ('Entrées', 'Petites préparations à servir avant le repas'),
 ('Plats', 'Plats principaux'),
 ('Desserts', 'Desserts et préparations sucrées'),
@@ -164,6 +165,7 @@ INSERT INTO recipes (
     name,
     description,
     steps,
+    status,
     user_id,
     category_id
 )
@@ -244,7 +246,7 @@ SELECT
             'Préchauffer le four à 180°C. |Préparer la sauce tomate avec l''oignon, l''ail et les tomates. |Faire cuire les pâtes à lasagnes selon les indications du paquet. |Préparer la garniture avec la viande et les légumes. |Alterner les couches de pâtes, de sauce et de garniture dans un plat. |Recouvrir de fromage râpé. |Enfourner pendant environ 40 minutes. |Laisser reposer quelques minutes avant de servir.'
 
     END,
-
+    'published',
     u.id,
 
     c.id
@@ -254,7 +256,7 @@ FROM users u
 CROSS JOIN numbers n
 
 JOIN categories c
-    ON c.id = MOD(n.n - 1, 15) + 1
+    ON c.id = (MOD(n.n - 1, 15) + 1) + 1
 
 ORDER BY
     u.id,

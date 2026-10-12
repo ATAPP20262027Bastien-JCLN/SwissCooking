@@ -23,7 +23,7 @@
                         <div class="mb-3">
                             <label for="name" class="form-label"> Nom </label>
                             <input type="text" class="form-control" id="name" name="name" placeholder="Entrez votre nom"
-                                maxlength="255" value="<?php echo escape($_POST['name'] ?? '') ?>" required />
+                                maxlength="100" value="<?php echo escape($_POST['name'] ?? '') ?>" required />
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label"> Email </label>

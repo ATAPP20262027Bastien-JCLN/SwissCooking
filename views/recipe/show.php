@@ -214,7 +214,7 @@
                         <label for="commentContent" class="form-label">
                             Votre commentaire
                         </label>
-                        <textarea class="form-control" id="commentContent" name="content" rows="5" maxlength="5000"
+                        <textarea class="form-control" id="commentContent" name="content" rows="5" maxlength="2000"
                             required placeholder="Écrivez votre commentaire..."></textarea>
                     </div>
                 </div>

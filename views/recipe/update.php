@@ -52,6 +52,22 @@
                                             style="resize: none;"
                                             required><?php echo escape($recipe->description ?? '') ?></textarea>
                                     </div>
+                                    <div class="mb-4">
+                                        <label for="status" class="form-label">Recipe status</label>
+
+                                        <select class="form-select" id="status" name="status" required>
+                                            <?php foreach ([
+                                                    'draft'     => 'Draft',
+                                                    'private'   => 'Private',
+                                                    'published' => 'Published',
+                                            ] as $value => $label): ?>
+                                            <option value="<?php echo escape($value) ?>"
+                                                <?php echo($data['status'] ?? $recipe->status) === $value ? 'selected' : '' ?>>
+                                                <?php echo escape($label) ?>
+                                            </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-12 col-lg-4">
@@ -147,7 +163,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-4" >
+                            <div class="col-12 col-lg-4">
                                 <div class="border rounded p-4 recipe-panel d-flex flex-column recipe-panel-desktop">
                                     <div class="recipe-panel-header">
                                         <h4 class="mb-4">

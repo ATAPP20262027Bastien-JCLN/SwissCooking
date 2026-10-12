@@ -17,11 +17,11 @@
                                     <div class="mb-4">
                                         <label for="name" class="form-label">Nom de la recette</label>
                                         <input type="text" class="form-control" id="name" name="name" maxlength="255"
-                                            required value="<?php echo escape($data['name'] ?? '') ?>">
+                                            value="<?php echo escape($data['name'] ?? '') ?>">
                                     </div>
                                     <div class="mb-4">
                                         <label for="category_id" class="form-label">Catégorie</label>
-                                        <select class="form-select" id="category_id" name="category_id" required>
+                                        <select class="form-select" id="category_id" name="category_id">
                                             <option value>Selectionnez une catégorie</option>
                                             <?php foreach ($categories as $category): ?>
                                             <option value="<?php echo escape($category->id) ?>"
@@ -35,9 +35,28 @@
                                         <label for="description" class="form-label">
                                             Description
                                         </label>
-                                        <textarea class="form-control" id="description" name="description" rows="6"
-                                            style="resize: none;"
-                                            required><?php echo escape($data['description'] ?? '') ?></textarea>
+                                        <textarea class="form-control" id="description" name="description" rows="3"
+                                            style="resize: none;"><?php echo escape($data['description'] ?? '') ?></textarea>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="status" class="form-label">Statut</label>
+
+                                        <select class="form-select" id="status" name="status" required>
+                                            <option value="draft"
+                                                <?php echo($data['status'] ?? 'draft') === 'draft' ? 'selected' : '' ?>>
+                                                Brouillon
+                                            </option>
+
+                                            <option value="private"
+                                                <?php echo($data['status'] ?? 'draft') === 'private' ? 'selected' : '' ?>>
+                                                Privé
+                                            </option>
+
+                                            <option value="published"
+                                                <?php echo($data['status'] ?? 'draft') === 'published' ? 'selected' : '' ?>>
+                                                Publique
+                                            </option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
@@ -50,8 +69,7 @@
                                         <div class="ingredient-row mb-3">
                                             <div class="row g-2">
                                                 <div class="col-12">
-                                                    <select class="form-select ingredient-select" name="ingredient_id[]"
-                                                        required>
+                                                    <select class="form-select ingredient-select" name="ingredient_id[]">
                                                         <option value="" disabled selected>
                                                             Selectionnez un ingrédient
                                                         </option>
@@ -64,12 +82,11 @@
                                                 </div>
                                                 <div class="col-5">
                                                     <input type="number" class="form-control" name="quantity[]"
-                                                        min="0.01" max="99999999.99" step="0.01" placeholder="Quantité"
-                                                        required>
+                                                        min="0.01" max="99999999.99" step="0.01" placeholder="Quantité">
                                                 </div>
                                                 <div class="col-5">
                                                     <input type="text" class="form-control" name="unit[]"
-                                                        maxlength="100" placeholder="Unité" required>
+                                                        maxlength="100" placeholder="Unité">
                                                 </div>
                                                 <div class="col-2">
                                                     <button type="button"
@@ -104,7 +121,7 @@
                                                     1
                                                 </span>
                                                 <input type="text" class="form-control" name="steps[]"
-                                                    placeholder="Écrire une étape" required>
+                                                    placeholder="Écrire une étape">
                                                 <button type="button" class="btn btn-outline-danger remove-step">
                                                     ×
                                                 </button>

@@ -68,6 +68,24 @@ class LoginController extends BaseController
             ])->withStatus(200);
         }
 
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return $this->view->render($response, 'connexion/registration.php', [
+                'error' => 'Invalid email format',
+            ])->withStatus(200);
+        }
+
+        if (strlen($name) > 100) {
+            return $this->view->render($response, 'connexion/registration.php', [
+                'error' => 'Name cannot exceed 100 characters',
+            ])->withStatus(200);
+        }
+
+        if (strlen($email) > 255) {
+            return $this->view->render($response, 'connexion/registration.php', [
+                'error' => 'Email cannot exceed 255 characters',
+            ])->withStatus(200);
+        }
+
         $user                = new User();
         $user->name          = $name;
         $user->email         = $email;

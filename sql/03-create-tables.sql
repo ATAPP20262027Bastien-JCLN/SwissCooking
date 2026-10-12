@@ -28,9 +28,10 @@ CREATE TABLE ingredients (
 
 CREATE TABLE recipes (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL DEFAULT 'Sans nom',
     description TEXT,
-    steps TEXT NOT NULL,
+    steps TEXT NOT NULL DEFAULT 'Aucune instruction fournie.',
+    status ENUM('draft', 'private', 'published') NOT NULL DEFAULT 'draft',
     user_id INT NULL,
     category_id INT NULL
 );
