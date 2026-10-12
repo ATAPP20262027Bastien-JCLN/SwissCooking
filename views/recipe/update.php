@@ -54,8 +54,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-4"style="max-height: 50vh;">
-                                <div class="border rounded p-4 recipe-panel d-flex flex-column">
+                            <div class="col-12 col-lg-4">
+                                <div class="border rounded p-4 recipe-panel d-flex flex-column recipe-panel-desktop">
                                     <div class="recipe-panel-header">
                                         <h4 class="mb-4">
                                             Ingredients
@@ -67,9 +67,10 @@
                                         <div class="ingredient-row mb-3">
                                             <div class="row g-2">
                                                 <div class="col-12">
-                                                    <select class="form-select" name="ingredient_id[]" required>
-                                                        <option value="">
-                                                            Selectionnez un ingrédient
+                                                    <select class="form-select ingredient-select" name="ingredient_id[]"
+                                                        required>
+                                                        <option value="" disabled>
+                                                            Sélectionnez un ingrédient
                                                         </option>
                                                         <?php foreach ($ingredients as $availableIngredient): ?>
                                                         <option value="<?php echo escape($availableIngredient->id) ?>"
@@ -103,9 +104,10 @@
                                         <div class="ingredient-row mb-3">
                                             <div class="row g-2">
                                                 <div class="col-12">
-                                                    <select class="form-select" name="ingredient_id[]" required>
-                                                        <option value="">
-                                                            Selectionnez un ingrédient
+                                                    <select class="form-select ingredient-select" name="ingredient_id[]"
+                                                        required>
+                                                        <option value="" disabled selected>
+                                                            Sélectionnez un ingrédient
                                                         </option>
                                                         <?php foreach ($ingredients as $availableIngredient): ?>
                                                         <option value="<?php echo escape($availableIngredient->id) ?>">
@@ -134,6 +136,10 @@
                                         <?php endif; ?>
                                     </div>
                                     <div class="recipe-panel-footer pt-3">
+                                        <button type="button" class="btn btn-sm btn-outline-primary mt-2"
+                                            data-bs-toggle="modal" data-bs-target="#addIngredientModal">
+                                            + Créer un nouvel ingrédient
+                                        </button>
                                         <button type="button" id="add-ingredient"
                                             class="btn btn-outline-secondary w-100">
                                             + Ajouter un ingrédient
@@ -141,8 +147,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-4" style="max-height: 50vh;">
-                                <div class="border rounded p-4 recipe-panel d-flex flex-column">
+                            <div class="col-12 col-lg-4" >
+                                <div class="border rounded p-4 recipe-panel d-flex flex-column recipe-panel-desktop">
                                     <div class="recipe-panel-header">
                                         <h4 class="mb-4">
                                             Instructions
@@ -188,26 +194,123 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="addIngredientModal" tabindex="-1" aria-labelledby="addIngredientModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="new-ingredient-form">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addIngredientModalLabel">
+                        Créer un ingrédient
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+                </div>
 
+                <div class="modal-body">
+                    <div id="ingredient-message" class="alert d-none" role="alert"></div>
 
+                    <div class="mb-3">
+                        <label for="new-ingredient-name" class="form-label">
+                            Nom de l'ingrédient
+                        </label>
+                        <input type="text" class="form-control" id="new-ingredient-name" name="name" maxlength="255"
+                            required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="new-ingredient-description" class="form-label">
+                            Description
+                        </label>
+                        <textarea class="form-control" id="new-ingredient-description" name="description"
+                            rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Annuler
+                    </button>
+                    <button type="submit" id="save-ingredient" class="btn btn-primary">
+                        Créer l'ingrédient
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const ingredientContainer = document.getElementById('ingredients-container');
     const addIngredientButton = document.getElementById('add-ingredient');
 
+    function initializeIngredientSelect(select) {
+        if (select.tomselect) {
+            return;
+        }
+
+        new TomSelect(select, {
+            create: false,
+            placeholder: 'Rechercher un ingrédient...',
+            allowEmptyOption: false,
+            maxOptions: null,
+            sortField: {
+                field: 'text',
+                direction: 'asc'
+            }
+        });
+    }
+
+    ingredientContainer
+        .querySelectorAll('select[name="ingredient_id[]"]')
+        .forEach(initializeIngredientSelect);
+
     addIngredientButton.addEventListener('click', () => {
-        const firstIngredientRow = ingredientContainer.querySelector('.ingredient-row');
-        const row = firstIngredientRow.cloneNode(true);
+        const firstRow = ingredientContainer.querySelector('.ingredient-row');
+        const originalSelect = firstRow.querySelector('select');
 
-        row.querySelectorAll('input').forEach((input) => {
-            input.value = '';
+        const row = document.createElement('div');
+        row.className = 'ingredient-row mb-3';
+
+        row.innerHTML = `
+        <div class="row g-2">
+            <div class="col-12">
+                <select class="form-select ingredient-select"
+                        name="ingredient_id[]" required>
+                </select>
+            </div>
+            <div class="col-5">
+                <input type="number" class="form-control"
+                    name="quantity[]" min="0.01" max="99999999.99"
+                    step="0.01" placeholder="Quantité" required>
+            </div>
+            <div class="col-5">
+                <input type="text" class="form-control"
+                    name="unit[]" maxlength="100"
+                    placeholder="Unité" required>
+            </div>
+            <div class="col-2">
+                <button type="button"
+                    class="btn btn-outline-danger w-100 remove-ingredient">
+                    ×
+                </button>
+            </div>
+        </div>
+    `;
+
+        const newSelect = row.querySelector('select');
+
+        // Copy the options, without copying the existing selection.
+        originalSelect.querySelectorAll('option').forEach((option) => {
+            const newOption = option.cloneNode(true);
+            newOption.selected = false;
+            newSelect.appendChild(newOption);
         });
 
-        row.querySelectorAll('select').forEach((select) => {
-            select.selectedIndex = 0;
-        });
+        newSelect.selectedIndex = 0;
 
         ingredientContainer.appendChild(row);
+
+        initializeIngredientSelect(newSelect);
     });
 
     ingredientContainer.addEventListener('click', (event) => {

@@ -3,6 +3,7 @@
 use BastienJcln\SwissCooking\Controllers\CategoryController;
 use BastienJcln\SwissCooking\Controllers\ErrorController;
 use BastienJcln\SwissCooking\Controllers\HomeController;
+use BastienJcln\SwissCooking\Controllers\IngredientController;
 use BastienJcln\SwissCooking\Controllers\LoginController;
 use BastienJcln\SwissCooking\Controllers\RecipeController;
 use BastienJcln\SwissCooking\Controllers\UserController;
@@ -29,6 +30,8 @@ $app->post('/recipe/{id}/rate', [RecipeController::class, 'rate']);
 $app->post('/recipe/{id}/comment', [RecipeController::class, 'comment']);
 
 $app->post('/comment/{commentId}/delete', [RecipeController::class, 'deleteComment']);
+
+$app->post('/ingredients/create', [IngredientController::class, 'store']);
 
 $app->get('/favorites', [UserController::class, 'favorites']);
 

@@ -87,6 +87,11 @@ body {
   min-height: 50vh;
 }
 
+.recipe-panel-desktop {
+  max-height: 50vh;
+  min-height: 50vh;
+}
+
 .recipe-scroll {
   overflow-y: auto;
   overflow-x: hidden;
@@ -143,13 +148,89 @@ body {
   color: #ffc107;
 }
 
+/* Match Tom Select to Bootstrap 5 form controls */
+.ts-wrapper .ts-control {
+    display: flex;
+    align-items: center;
+    min-height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    box-shadow: none;
+}
+
+/* Search input */
+.ts-wrapper .ts-control > input {
+    color: var(--bs-body-color);
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+/* Placeholder */
+.ts-wrapper .ts-control > input::placeholder {
+    color: var(--bs-secondary-color);
+    opacity: 1;
+}
+
+/* Focus state: same blue glow as Bootstrap */
+.ts-wrapper.focus .ts-control,
+.ts-wrapper .ts-control:focus-within {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border-color: #86b7fe;
+    outline: 0;
+    box-shadow: 0 0 0 .25rem rgba(var(--bs-primary-rgb), .25);
+}
+
+/* Dropdown */
+.ts-dropdown {
+    color: var(--bs-body-color);
+    background-color: var(--bs-body-bg);
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    box-shadow: var(--bs-box-shadow);
+    margin-top: .125rem;
+}
+
+/* Dropdown options */
+.ts-dropdown .option {
+    padding: .375rem .75rem;
+    color: var(--bs-body-color);
+}
+
+/* Hovered option */
+.ts-dropdown .option:hover,
+.ts-dropdown .active {
+    color: var(--bs-dropdown-link-hover-color);
+    background-color: var(--bs-tertiary-bg);
+}
+
+/* Selected option */
+.ts-dropdown .selected {
+    color: var(--bs-white);
+    background-color: var(--bs-primary);
+}
+
+/* Disabled state */
+.ts-wrapper.disabled .ts-control {
+    background-color: var(--bs-secondary-bg);
+    opacity: 1;
+    cursor: not-allowed;
+}
+
 /* =========================================================
    TABLET
    ========================================================= */
 
 @media (max-width: 991.98px) {
   .recipe-panel {
-    height: auto;
+    height: auto !important;
     min-height: 0;
     max-height: none;
   }

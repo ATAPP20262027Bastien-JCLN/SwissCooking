@@ -113,7 +113,7 @@
                         </span>
                         <?php endif; ?>
                     </div>
-                    <?php if (isset($_SESSION['user_id'])): ?>
+                    <?php if (isset($_SESSION['user_id']) && $recipe->user_id !== $_SESSION['user_id']): ?>
                     <form action="/recipe/<?php echo escape($recipe->id); ?>/rate" method="POST">
                         <p class="mb-2">
                             <?php if ($userRating !== null): ?>
@@ -140,7 +140,7 @@
                     <?php endif; ?>
                     <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
                         <h3 class="mb-0">Commentaires</h3>
-                        <?php if (isset($_SESSION['user_id'])): ?>
+                        <?php if (isset($_SESSION['user_id']) && $recipe->user_id !== $_SESSION['user_id']): ?>
                         <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                             data-bs-target="#commentModal">
                             + Ajouter un commentaire
