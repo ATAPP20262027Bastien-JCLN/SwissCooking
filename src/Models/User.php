@@ -73,6 +73,16 @@ class User extends AbstractModel
         }
     }
 
+    public ?bool $blocked = false {
+        set {
+            if (is_bool($value)) {
+                $this->blocked = $value;
+            } else {
+                throw new \InvalidArgumentException('Blocked must be a boolean value');
+            }
+        }
+    }
+
     public static function getAllUsers(): array
     {
         $pdo  = Database::connection();
@@ -235,8 +245,8 @@ class User extends AbstractModel
         $pdo = Database::connection();
 
         $stmt = $pdo->prepare(
-            'INSERT INTO users (name, email, password_hash, id_role, profile_picture)
-            VALUES (:name, :email, :password_hash, :id_role, :profile_picture)'
+            'INSERT INTO users (name, email, password_hash, id_role, profile_picture, blocked)
+            VALUES (:name, :email, :password_hash, :id_role, :profile_picture, :blocked)'
         );
 
         $result = $stmt->execute([
@@ -245,6 +255,7 @@ class User extends AbstractModel
             'password_hash'   => $this->password_hash,
             'id_role'         => $this->id_role,
             'profile_picture' => $this->profile_picture,
+            'blocked'         => $this->blocked ? 1 : 0,
         ]);
 
         if ($result) {
@@ -266,7 +277,8 @@ class User extends AbstractModel
                 email = :email,
                 password_hash = :password_hash,
                 id_role = :id_role,
-                profile_picture = :profile_picture
+                profile_picture = :profile_picture,
+                blocked = :blocked
             WHERE id = :id'
         );
 
@@ -276,7 +288,21 @@ class User extends AbstractModel
             'password_hash'   => $this->password_hash,
             'id_role'         => $this->id_role,
             'profile_picture' => $this->profile_picture,
+            'blocked'         => $this->blocked ? 1 : 0,
             'id'              => $this->id,
         ]);
+    }
+
+    public function delete(): bool
+    {
+        if ($this->id === null) {
+            return false;
+        }
+
+        $pdo = Database::connection();
+
+        $stmt = $pdo->prepare('DELETE FROM users WHERE id = :id');
+
+        return $stmt->execute(['id' => $this->id]);
     }
 }

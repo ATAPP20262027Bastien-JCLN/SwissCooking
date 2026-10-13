@@ -12,7 +12,7 @@
                     <form method="POST" action="/recipe/create">
                         <div class="row g-4">
                             <div class="col-12 col-lg-4">
-                                <div class="border rounded p-4 recipe-panel">
+                                <div class="border rounded p-4 recipe-panel recipe-panel-desktop">
                                     <h4 class="mb-4">Détails de la recette</h4>
                                     <div class="mb-4">
                                         <label for="name" class="form-label">Nom de la recette</label>
@@ -35,7 +35,7 @@
                                         <label for="description" class="form-label">
                                             Description
                                         </label>
-                                        <textarea class="form-control" id="description" name="description" rows="3"
+                                        <textarea class="form-control mb-3" id="description" name="description" rows="3"
                                             style="resize: none;"><?php echo escape($data['description'] ?? '') ?></textarea>
                                     </div>
                                     <div class="mb-4">

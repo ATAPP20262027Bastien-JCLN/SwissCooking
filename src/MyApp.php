@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace BastienJcln\SwissCooking;
 
+require_once __DIR__  . '/Core/Constants.php';
+
 use Slim\App;
 use Slim\Factory\AppFactory;
 use Slim\Views\PhpRenderer;
@@ -19,7 +21,7 @@ class MyApp
     {
         $app = AppFactory::create();
 
-        ErrorMiddleware::register($app);
+        // ErrorMiddleware::register($app);
 
         $app->add(new SessionMiddleware());
 

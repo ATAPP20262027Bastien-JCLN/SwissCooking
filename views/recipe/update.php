@@ -17,7 +17,7 @@
                     <form method="POST" action="/recipe/<?php echo escape($recipe->id) ?>/edit">
                         <div class="row g-4">
                             <div class="col-12 col-lg-4">
-                                <div class="border rounded p-4 recipe-panel">
+                                <div class="border rounded p-4 recipe-panel recipe-panel-desktop">
                                     <h4 class="mb-4">
                                         Détails de la recette
                                     </h4>
@@ -48,7 +48,7 @@
                                         <label for="description" class="form-label">
                                             Description
                                         </label>
-                                        <textarea class="form-control" id="description" name="description" rows="6"
+                                        <textarea class="form-control mb-3" id="description" name="description" rows="3"
                                             style="resize: none;"
                                             required><?php echo escape($recipe->description ?? '') ?></textarea>
                                     </div>

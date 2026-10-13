@@ -120,10 +120,14 @@ class Recipe extends AbstractModel
         }
     }
 
-    public static function getAllRecipes(): array
+    public static function getAllRecipes(bool $includePrivate = false): array
     {
         $pdo  = Database::connection();
-        $stmt = $pdo->query("SELECT * FROM recipes WHERE status = 'published' ORDER BY id DESC");
+        if ($includePrivate) {
+            $stmt = $pdo->query("SELECT * FROM recipes WHERE status IN ('published', 'private') ORDER BY id DESC");
+        } else {
+            $stmt = $pdo->query("SELECT * FROM recipes WHERE status = 'published' ORDER BY id DESC");
+        }
 
         $ingredientsStmt = $pdo->prepare(
             'SELECT i.*, ri.quantity, ri.unit

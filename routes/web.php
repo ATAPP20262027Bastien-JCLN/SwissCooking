@@ -1,5 +1,6 @@
 <?php
 
+use BastienJcln\SwissCooking\Controllers\AdminController;
 use BastienJcln\SwissCooking\Controllers\CategoryController;
 use BastienJcln\SwissCooking\Controllers\ErrorController;
 use BastienJcln\SwissCooking\Controllers\HomeController;
@@ -7,6 +8,11 @@ use BastienJcln\SwissCooking\Controllers\IngredientController;
 use BastienJcln\SwissCooking\Controllers\LoginController;
 use BastienJcln\SwissCooking\Controllers\RecipeController;
 use BastienJcln\SwissCooking\Controllers\UserController;
+
+use BastienJcln\SwissCooking\Services\AdminService;
+use BastienJcln\SwissCooking\Services\ConnexionService;
+
+$admincontroller = new AdminController(new AdminService(), new ConnexionService());
 
 $app->get('/400', [ErrorController::class, 'badRequest']);
 $app->get('/401', [ErrorController::class, 'unauthorized']);
@@ -48,6 +54,24 @@ $app->post('/profile/update', [UserController::class, 'updateProfile']);
 $app->post('/profile/picture', [UserController::class, 'updateProfilePicture']);
 $app->get('/profile/picture/delete', [UserController::class, 'deleteProfilePicture']);
 $app->get('/logout', [UserController::class, 'logout']);
+
+$app->get('/admin', [$admincontroller, 'index']);
+
+$app->get('/admin/users', [$admincontroller, 'users']);
+$app->get('/admin/users/{id}/edit',[$admincontroller, 'editUser']);
+$app->post('/admin/users/{id}/edit', [$admincontroller, 'updateUser']);
+$app->post('/admin/users/{id}/block', [$admincontroller, 'blockUser']);
+$app->post('/admin/users/{id}/delete', [$admincontroller, 'deleteUser']);
+
+$app->get('/admin/recipes', [$admincontroller, 'recipes']);
+
+$app->get('/admin/ingredients', [$admincontroller, 'ingredients']);
+
+$app->get('/admin/categories', [$admincontroller, 'categories']);
+$app->get('/admin/categories/new', [$admincontroller, 'createCategory']);
+$app->get('/admin/categories/{id}/edit',[$admincontroller, 'editCategory']);
+$app->post('/admin/categories/save',[$admincontroller, 'saveCategory']);
+$app->post('/admin/categories/{id}/delete',[$admincontroller, 'deleteCategory']);
 
 // $app->get('/', [Controller_Class::class, 'Func Name'])
 //     ->add(new Middleware_Class());

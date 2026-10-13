@@ -11,7 +11,8 @@ CREATE TABLE users (
     email VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     id_role INT NOT NULL DEFAULT 1,
-    profile_picture VARCHAR(2048) NULL
+    profile_picture VARCHAR(2048) NULL,
+    blocked tinyint(1) NOT NULL DEFAULT 0
 );
 
 CREATE TABLE categories (

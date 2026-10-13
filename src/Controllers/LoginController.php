@@ -4,12 +4,10 @@ declare (strict_types = 1);
 
 namespace BastienJcln\SwissCooking\Controllers;
 
+use BastienJcln\SwissCooking\Models\User;
+use BastienJcln\SwissCooking\Services\ConnexionService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-
-use BastienJcln\SwissCooking\Services\ConnexionService;
-
-use BastienJcln\SwissCooking\Models\User;
 
 class LoginController extends BaseController
 {
@@ -30,6 +28,13 @@ class LoginController extends BaseController
         $password = $data['password'] ?? '';
 
         $user = User::findByEmail($email);
+
+        if ($user && $user->blocked) {
+            $_SESSION['error'] = 'Your account has been blocked. Please contact support.';
+            return $this->view->render($response, 'connexion/login.php', [
+                'error' => 'Your account has been blocked. Please contact support.',
+            ])->withStatus(200);
+        }
 
         if ($user && password_verify($password, $user->password_hash)) {
             ConnexionService::loginUser($user);
@@ -68,7 +73,7 @@ class LoginController extends BaseController
             ])->withStatus(200);
         }
 
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return $this->view->render($response, 'connexion/registration.php', [
                 'error' => 'Invalid email format',
             ])->withStatus(200);
@@ -90,6 +95,7 @@ class LoginController extends BaseController
         $user->name          = $name;
         $user->email         = $email;
         $user->password_hash = password_hash($password, PASSWORD_DEFAULT);
+        $user->blocked       = false;
         $user->id_role       = 2;
 
         if ($user->save()) {

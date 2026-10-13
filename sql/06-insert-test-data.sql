@@ -49,6 +49,7 @@ INSERT INTO categories (name, description) VALUES
 -- =========================
 
 INSERT INTO users (name, email, password_hash, id_role) VALUES
+    ('AdminSuper', 'admin.super@right.com', '$2y$12$.YAqEsb8xcPuU3tLnR461e1Mupqgtf89AaaGTnKhtmMwVMxyv.NNm', 0),
     ('Admin', 'admin.dev@right.com', '$2y$12$.YAqEsb8xcPuU3tLnR461e1Mupqgtf89AaaGTnKhtmMwVMxyv.NNm', 1),
     ('Alice', 'alice@example.com', '$2y$12$.YAqEsb8xcPuU3tLnR461e1Mupqgtf89AaaGTnKhtmMwVMxyv.NNm.', 2),
     ('Bob', 'bob@example.com', '$2y$12$.YAqEsb8xcPuU3tLnR461e1Mupqgtf89AaaGTnKhtmMwVMxyv.NNm', 2),

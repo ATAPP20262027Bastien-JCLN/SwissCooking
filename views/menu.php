@@ -13,7 +13,10 @@
         </button>
         <div class="collapse navbar-collapse"
             style="background-color: rgba(var(--bs-tertiary-bg-rgb),var(--bs-bg-opacity)) !important;" id="navbarNav">
+            <?php if (! empty($_SESSION['user_id'])): ?>
             <ul class="navbar-nav me-auto">
+                <?php if (\BastienJcln\SwissCooking\Models\User::findById($_SESSION['user_id'])->id_role !== SUPER_ADMIN_ROLE_ID): ?>
+
                 <li class="nav-item"><a class="nav-link" href="/">Accueil</a></li>
                 <li class="nav-item desktop-link-separator">
                     <div class="nav-link">|</div>
@@ -40,6 +43,15 @@
                         <?php echo escape(\BastienJcln\SwissCooking\Models\User::findById($_SESSION['user_id']) ? \BastienJcln\SwissCooking\Models\User::findById($_SESSION['user_id'])->name : 'Unknown') ?>
                     </a>
                 </li>
+                <?php endif; ?>
+                <?php if (\BastienJcln\SwissCooking\Models\User::findById($_SESSION['user_id'])->id_role === ADMIN_ROLE_ID): ?>
+                <li class="nav-item desktop-link-separator">
+                    <div class="nav-link">|</div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/admin">Administration</a>
+                </li>
+                <?php endif; ?>
                 <li class="nav-item desktop-link-separator">
                     <div class="nav-link">|</div>
                 </li>
