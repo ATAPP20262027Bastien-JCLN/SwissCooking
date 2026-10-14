@@ -26,6 +26,7 @@ class Role extends AbstractModel
     public static function getAllRoles(): array
     {
         $pdo = Database::connection();
+
         $stmt = $pdo->query('SELECT * FROM roles');
 
         $roles_db = $stmt->fetchAll(
@@ -36,6 +37,7 @@ class Role extends AbstractModel
         $roles = [];
         
         foreach ($roles_db as $role) {
+            if ($role->id === ADMIN_ROLE_ID) continue; // Skip the admin role
             $roles[$role->id] = $role;
         }
 

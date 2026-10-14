@@ -13,6 +13,12 @@
     margin: 0;
     box-sizing: border-box;
 
+    /* Prevents text from being selected when clicking on buttons or other elements */
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
     font-family: "Consolas", "Courier New", monospace, sans-serif;
     font-size: 0.875rem;
 }

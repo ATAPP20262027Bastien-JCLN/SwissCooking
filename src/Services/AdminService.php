@@ -17,6 +17,6 @@ class AdminService
 
         $role = Role::findById((int) $user->id_role);
 
-        return $role !== null && strtolower((string) $role->name) === 'admin';
+        return $role !== null && ($role->id === ADMIN_ROLE_ID || $role->id === MODERATOR_ROLE_ID);
     }
 }

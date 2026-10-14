@@ -89,14 +89,51 @@ class AdminController extends BaseController
         $users = User::getAllUsers();
 
         $currentUser = $this->connexionService->connectedUser();
+
+        $lockedUserFromPermission = [];
+
+        
+                    // $lockedUserFromPermission[]['modify'] = $user->id;
+                    // $lockedUserFromPermission[]['delete'] = $user->id;
+                    // $lockedUserFromPermission[]['block'] = $user->id;
+
         if ($currentUser !== null) {
-            $users = array_filter($users, function ($user) use ($currentUser) {
-                return $user->id !== $currentUser->id;
-            });
+            foreach ($users as $user) {
+                if ($user->id === $currentUser->id) {
+                    $lockedUserFromPermission[$user->id] = [
+                        'modify' => false,
+                        'delete' => false,
+                        'block'  => false,
+                    ];
+                }
+                if ($user->id_role === ADMIN_ROLE_ID) {
+                    $lockedUserFromPermission[$user->id] = [
+                        'modify' => false,
+                        'delete' => false,
+                        'block'  => false,
+                    ];
+                }
+                if ($user->id_role === MODERATOR_ROLE_ID) {
+                    if ($currentUser->id_role !== ADMIN_ROLE_ID) {
+                        $lockedUserFromPermission[$user->id] = [
+                            'modify' => false,
+                            'delete' => false,
+                            'block'  => false,
+                        ];
+                    } else {
+                        $lockedUserFromPermission[$user->id] = [
+                            'modify' => true,
+                            'delete' => true,
+                            'block'  => true,
+                        ];
+                    }
+                }
+            }
         }
 
         return $this->view->render($response, 'admin/users.php', [
             'users' => $users,
+            'lockedUserFromPermission' => $lockedUserFromPermission,
         ]);
     }
 

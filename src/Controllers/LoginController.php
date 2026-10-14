@@ -96,7 +96,7 @@ class LoginController extends BaseController
         $user->email         = $email;
         $user->password_hash = password_hash($password, PASSWORD_DEFAULT);
         $user->blocked       = false;
-        $user->id_role       = 2;
+        $user->id_role       = USER_ROLE_ID;
 
         if ($user->save()) {
             ConnexionService::loginUser($user);
